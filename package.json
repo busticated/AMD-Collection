@@ -1,0 +1,18 @@
+{
+  "author": "Matthew Mirande <itsbusticated@gmail.com>",
+  "name": "AMD-Collection",
+  "description": "Collection of AMD-type javascript modules",
+  "version": "0.0.1",
+  "homepage": "http://busticated.co",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/busticated/AMD-Collection.git"
+  },
+  "engines": {
+    "node": "~v0.4.12"
+  },
+  "dependencies": {
+    "requirejs" : "1.x.x"
+  },
+  "devDependencies": {}
+}

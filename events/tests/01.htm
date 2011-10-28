@@ -1,0 +1,100 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+
+    <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+    <script>
+        require([ "../events" ], function( events ) {
+            var evt1HasFired = false,
+                evt2HasFired = false,
+                evt3HasFired = false,
+                evt1 = events.on( 'test-01', function( state ){ evt1HasFired = state; });
+                evt2 = events.on( 'test-02', function( state ){ evt2HasFired = state; });
+                evt3 = events.on( 'test-01', function( state ){ evt3HasFired = state; });
+
+            //setup & initialize
+            test( "setup and initialize", function() {
+                //evt1 setup
+                ok( typeof evt1 === "object", "Event 1 is an object" );
+                ok( typeof evt1._handle[ 0 ] === "string", "Event 1 has an event name" );
+                ok( typeof evt1._handle[ 1 ] === "function", "Event 1 has a callback" );
+                ok( typeof evt1.off === "function", "Event 1 has an 'off' method" );
+                ok( typeof evt1.do === "function", "Event 1 has a 'do' method" );
+                ok( evt1HasFired === false, "Event 1 has not been triggered" );
+
+                //evt2 setup
+                ok( typeof evt2 === "object", "Event 2 is an object" );
+                ok( typeof evt2._handle[ 0 ] === "string", "Event 2 has an event name" );
+                ok( typeof evt2._handle[ 1 ] === "function", "Event 2 has a callback" );
+                ok( typeof evt2.off === "function", "Event 2 has an 'off' method" );
+                ok( typeof evt2.do === "function", "Event 2 has a 'do' method" );
+                ok( evt2HasFired === false, "Event 2 has not been triggered" );
+
+                //evt3 setup
+                ok( typeof evt3 === "object", "Event 3 is an object" );
+                ok( typeof evt3._handle[ 0 ] === "string", "Event 3 has an event name" );
+                ok( typeof evt3._handle[ 1 ] === "function", "Event 3 has a callback" );
+                ok( typeof evt3.off === "function", "Event 3 has an 'off' method" );
+                ok( typeof evt3.do === "function", "Event 3 has a 'do' method" );
+                ok( evt3HasFired === false, "Event 3 has not been triggered" );
+            });
+
+            //Trigger events
+            test( "trigger events", function() {
+                var testVal = "Event Has Been Triggered";
+
+                evt1.do( true );
+                evt2.do( true );
+                evt3.do( true );
+
+                ok( evt1HasFired === true, "Callback for Event 1 was successfully fired via .do() method" );
+                ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .do() method" );
+                ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .do() method" );
+
+                events.trigger( "test-01", testVal );
+
+                ok( evt1HasFired === testVal && evt3HasFired === testVal, "Callbacks for Event 1 & Event 3 were fired via main event trigger method" );
+                ok( evt2HasFired === true, "Callback for Event 2 was not fired" );
+
+                events.trigger( "test-02", testVal );
+
+                ok( evt2HasFired === testVal, "Callback for Event 2 was fired via main event trigger method" );
+            });
+
+            //Remove event listeners
+            test( "remove event listeners", function() {
+                evt1HasFired = false;
+                evt2HasFired = false;
+                evt3HasFired = false;
+
+                evt1.off();
+                events.off( evt3._handle );
+
+                events.trigger( "test-01", true );
+
+                ok( evt1HasFired === false, "Event 1 was successfully removed via .off() method" );
+                ok( evt3HasFired === false, "Event 3 was successfully removed via main event off method" );
+
+                events.trigger( "test-02", true );
+
+                ok( evt2HasFired === true, "Callback for Event 2 was fired via main event trigger method" );
+
+                events.off( evt2._handle );
+
+                events.trigger( "test-02", false );
+
+                ok( evt2HasFired === true, "Event 2 was successfully removed via main event off method" );
+
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1 id="qunit-header">Events AMD Module: Test Suite</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>
