@@ -50,24 +50,28 @@
                     xGoal = 5,
                     y = "",
                     yGoal = 'awwww yeaaaah!',
+                    isRunning = false,
                     loopLength = 10,
                     testDuration = 500,
-                    testFunc1 = function(){ n = n + 1; if ( n === nGoal ) { return false; } },
-                    testFunc2 = function(){ x = x + 1; if ( x === xGoal ) { return false; } },
-                    testFunc3 = function(){ if ( n === 10 ) { y = yGoal; } };
+                    testFunc1 = function(){ isRunning = true; n = n + 1; if ( n === nGoal ) { return false; } },
+                    testFunc2 = function(){ isRunning = true; x = x + 1; if ( x === xGoal ) { return false; } },
+                    testFunc3 = function(){ isRunning = true; if ( n === 10 ) { y = yGoal; } };
 
                 looper.add( testFunc3 );
                 looper.start( testFunc1, loopLength );
 
                 setTimeout(function(){
                     looper.add( testFunc2 );
+                    ok( isRunning === true, 'looper is running @ ' + Date.now() );
                 }, 200 );
 
                 setTimeout(function(){
                     looper.stop();
+                    isRunning = false;
                 }, 400 );
 
                 setTimeout(function(){
+                    ok( isRunning === false, 'looper is stopped @ ' + Date.now()  );
                     ok( n === nGoal, 'testFunc1 ran successfully - n = ' + n );
                     ok( x === xGoal, 'testFunc2 ran successfully - x = ' + x );
                     ok( y === yGoal, 'testFunc2 ran successfully - y = ' + yGoal );
