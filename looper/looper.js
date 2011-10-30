@@ -4,6 +4,8 @@ define( function(){
         isRunning = false,
         timerId = null,
 
+        //reports looper state
+        state = function(){ if( isRunning ){ return "running"; } return "stopped"; },
         //starts loop, adds funcion to funcs cache (opt) & set loopDuration (opt)
         start = function( func, spd ){
             if ( typeof func === 'function' ) {
@@ -11,7 +13,7 @@ define( function(){
             }
 
             if ( isRunning ) {
-                return;
+                return func;
             }
 
             isRunning = true;
@@ -20,6 +22,8 @@ define( function(){
                 function(){
                     _loop();
             }, loopDuration );
+
+            return func;
         },
 
         //stops loop immediately
@@ -36,14 +40,22 @@ define( function(){
             start();
         },
 
-        add = function( func ) { funcs.push( func ); },
+        add = function( func ) { funcs.push( func ); return func; },
+        remove = function( func ){
+            for ( var i = -1, l = funcs.length; ++i < l; ) {
+                if ( func === funcs[ i ] ){
+                    console.log("remove func");
+                    funcs.splice( i );
+                }
+            }
+        },
         clear = function() { funcs = []; },
         _loop = function(){
             if ( ! isRunning ){
                 return;
             }
 
-            for ( var i = 0, length = funcs.length; i < length; i = i + 1 ) {
+            for ( var i = 0, l = funcs.length; i < l; i = i + 1 ) {
                 if ( typeof funcs[ i ] === 'function' && funcs[ i ]() === false ){
                     funcs.splice( i );
                 }
@@ -54,10 +66,12 @@ define( function(){
 
     // public api /////////////////////////////////////////////////////////////
     return {
+        state : state,
         start : start,
         stop : stop,
         clear: clear,
         add : add,
+        remove : remove,
         rate : rate
     }
 });
