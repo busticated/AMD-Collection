@@ -5,13 +5,13 @@
 
     <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
     <script>
-        require([ "../events" ], function( events ) {
+        require([ "../eventer" ], function( eventer ) {
             var evt1HasFired = false,
                 evt2HasFired = false,
                 evt3HasFired = false,
-                evt1 = events.on( 'test-01', function( state ){ evt1HasFired = state; });
-                evt2 = events.on( 'test-02', function( state ){ evt2HasFired = state; });
-                evt3 = events.on( 'test-01', function( state ){ evt3HasFired = state; });
+                evt1 = eventer.on( 'test-01', function( state ){ evt1HasFired = state; });
+                evt2 = eventer.on( 'test-02', function( state ){ evt2HasFired = state; });
+                evt3 = eventer.on( 'test-01', function( state ){ evt3HasFired = state; });
 
             //setup & initialize
             test( "setup and initialize", function() {
@@ -40,8 +40,8 @@
                 ok( evt3HasFired === false, "Event 3 has not been triggered" );
             });
 
-            //Trigger events
-            test( "trigger events", function() {
+            //Trigger eventer
+            test( "trigger eventer", function() {
                 var testVal = "Event Has Been Triggered";
 
                 evt1.do( true );
@@ -52,12 +52,12 @@
                 ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .do() method" );
                 ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .do() method" );
 
-                events.trigger( "test-01", testVal );
+                eventer.trigger( "test-01", testVal );
 
                 ok( evt1HasFired === testVal && evt3HasFired === testVal, "Callbacks for Event 1 & Event 3 were fired via main event trigger method" );
                 ok( evt2HasFired === true, "Callback for Event 2 was not fired" );
 
-                events.trigger( "test-02", testVal );
+                eventer.trigger( "test-02", testVal );
 
                 ok( evt2HasFired === testVal, "Callback for Event 2 was fired via main event trigger method" );
             });
@@ -69,20 +69,20 @@
                 evt3HasFired = false;
 
                 evt1.off();
-                events.off( evt3._handle );
+                eventer.off( evt3._handle );
 
-                events.trigger( "test-01", true );
+                eventer.trigger( "test-01", true );
 
                 ok( evt1HasFired === false, "Event 1 was successfully removed via .off() method" );
                 ok( evt3HasFired === false, "Event 3 was successfully removed via main event off method" );
 
-                events.trigger( "test-02", true );
+                eventer.trigger( "test-02", true );
 
                 ok( evt2HasFired === true, "Callback for Event 2 was fired via main event trigger method" );
 
-                events.off( evt2._handle );
+                eventer.off( evt2._handle );
 
-                events.trigger( "test-02", false );
+                eventer.trigger( "test-02", false );
 
                 ok( evt2HasFired === true, "Event 2 was successfully removed via main event off method" );
 
@@ -91,7 +91,7 @@
     </script>
 </head>
 <body>
-    <h1 id="qunit-header">Events AMD Module: Test Suite</h1>
+    <h1 id="qunit-header">eventer AMD Module: Test Suite</h1>
     <h2 id="qunit-banner"></h2>
     <div id="qunit-testrunner-toolbar"></div>
     <h2 id="qunit-userAgent"></h2>
