@@ -44,7 +44,7 @@ define( function(){
     },
 
     //fire event callbacks
-    trigger = function( eventName, data ){
+    emit = function( eventName, data ){
         if ( ! eventCache[ eventName ] ){
             return;
         }
@@ -58,6 +58,6 @@ define( function(){
     return {
         on: on,
         off: off,
-        trigger: trigger
+        emit: emit
     }
 });

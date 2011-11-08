@@ -40,9 +40,9 @@
                 ok( evt3HasFired === false, "Event 3 has not been triggered" );
             });
 
-            //Trigger eventer
-            test( "trigger eventer", function() {
-                var testVal = "Event Has Been Triggered";
+            //Trigger events
+            test( "emit events", function() {
+                var testVal = "Event Has Been emitted";
 
                 evt1.do( true );
                 evt2.do( true );
@@ -52,14 +52,14 @@
                 ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .do() method" );
                 ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .do() method" );
 
-                eventer.trigger( "test-01", testVal );
+                eventer.emit( "test-01", testVal );
 
-                ok( evt1HasFired === testVal && evt3HasFired === testVal, "Callbacks for Event 1 & Event 3 were fired via main event trigger method" );
+                ok( evt1HasFired === testVal && evt3HasFired === testVal, "Callbacks for Event 1 & Event 3 were fired via main event emit method" );
                 ok( evt2HasFired === true, "Callback for Event 2 was not fired" );
 
-                eventer.trigger( "test-02", testVal );
+                eventer.emit( "test-02", testVal );
 
-                ok( evt2HasFired === testVal, "Callback for Event 2 was fired via main event trigger method" );
+                ok( evt2HasFired === testVal, "Callback for Event 2 was fired via main event emit method" );
             });
 
             //Remove event listeners
@@ -71,18 +71,18 @@
                 evt1.off();
                 eventer.off( evt3._handle );
 
-                eventer.trigger( "test-01", true );
+                eventer.emit( "test-01", true );
 
                 ok( evt1HasFired === false, "Event 1 was successfully removed via .off() method" );
                 ok( evt3HasFired === false, "Event 3 was successfully removed via main event off method" );
 
-                eventer.trigger( "test-02", true );
+                eventer.emit( "test-02", true );
 
-                ok( evt2HasFired === true, "Callback for Event 2 was fired via main event trigger method" );
+                ok( evt2HasFired === true, "Callback for Event 2 was fired via main event emit method" );
 
                 eventer.off( evt2._handle );
 
-                eventer.trigger( "test-02", false );
+                eventer.emit( "test-02", false );
 
                 ok( evt2HasFired === true, "Event 2 was successfully removed via main event off method" );
 
