@@ -1,0 +1,40 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+
+    <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+    <script>
+        require([ "../kcode" ], function( kcode ) {
+
+            //setup & initialize
+            test( "setup & initialize", function(){
+
+                //confirm expected methods
+                ok( typeof kcode === 'function', 'kcode is loaded' );
+
+                //test random codes
+                var codes = [ '0', 'd', 'enter', '2', '9', 'l', 'semi-colon', 'w', 'left', 'right' ],
+                    ids = [ 87, 51, 186, 190, 37, 34, 17, 13, 9, 46, 49 ];
+
+                //confirm codes
+                for ( var code in codes ){
+                    ok( kcode( kcode( codes[ code ] ) ) === codes[ code ], 'key code "' + codes[ code ] + '" matches the kcode value of ' + kcode( kcode( codes[ code ] ) ) );
+                }
+
+                //confirm ids
+                for ( var id in ids ){
+                    ok( kcode( kcode( ids [ id ] ) ) === ids[ id ], 'key id "' + ids[ id ] + '" matches the kcode id of ' + kcode( kcode( ids[ id ] ) ) );
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1 id="qunit-header">Looper AMD Module: Test Suite</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>
