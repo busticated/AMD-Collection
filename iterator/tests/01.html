@@ -1,0 +1,91 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+
+    <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+    <script>
+        require([ '../iterator' ], function( Iterator ) {
+
+            //setup & initialize
+            var items = [ 10, 20, 30, 40, 50, 60 ],
+                list = new Iterator( items ),
+                myList = new Iterator( [ 70 ] );
+
+            test( 'setup & initialize', function(){
+                var methods = [ 'current', 'has', 'hasNext', 'next', 'prev', 'add', 'remove', 'replace', 'first', 'last', 'filter' ],
+                    properties = [ 'idx', 'length' ];
+
+                //confirm expected methods
+                ok( typeof Iterator === 'function', 'Iterator constructor is available' );
+                ok( typeof list.collection === 'object', 'myList collection is available' );
+
+                for ( var method in methods ){
+                    ok( typeof list[ methods[ method ] ] === 'function', 'list includes the "' + methods[ method ] + '" method' )
+                }
+            });
+
+            // has / hasNext tests
+            test( 'has & hasNext', function(){
+                ok( list.has( 0 ), 'list includes index 0' );
+                ok( ! list.has( 999 ), 'list does not include index 999' );
+
+                ok( list.hasNext(), 'next item is available' );
+
+                //strictEqual( myList.has( 0 ), defaults.name, 'DEFAULT pop-up name is set properly' );
+            });
+
+            // current / next / previous
+            test( 'current, next, prev, first, & last', function(){
+                strictEqual( list.current(), 10, 'current item is correct' );
+                strictEqual( list.next(), 20, 'next item is correct' );
+                strictEqual( list.prev(), 10, 'previous item is correct' );
+
+                while( list.hasNext() ){
+                    ok( typeof list.current() !== 'undefined', 'iterating list forward - current item = ' + list.current() );
+                    list.next();
+                }
+
+                while( list.prev() ){
+                    ok( typeof list.current() !== 'undefined', 'iterating list backward - current item = ' + list.current() );
+                }
+
+                strictEqual( list.last(), 60, 'last item is correct');
+                strictEqual( list.current(), 60, 'current item is correct');
+
+                strictEqual( list.first(), 10, 'first item is correct');
+                strictEqual( list.current(), 10, 'current item is correct');
+            });
+
+            // add / remove / replace
+            test( 'add, remove, & replace items', function(){
+                var newItems = [ 0, 10, 20, 30, 40 ],
+                    moreNewItems = [ 80, 90 ],
+                    yetMoreNewItems = [ 50, 60 ];
+
+                myList.add( newItems, 0 );
+                strictEqual( myList.first(), 0, 'added items to start of collection, first item is correct' );
+
+                myList.add( moreNewItems );
+                strictEqual( myList.last(), 90, 'added items to end of collection, last item is correct' );
+
+                myList.first();
+                myList.add( yetMoreNewItems, 5 );
+
+                for ( var i = 0, l = myList.length; i < l; i = i + 1 ){
+                    console.log( i );
+                    strictEqual( myList.current() / 10, i, 'list order is correct' );
+                    myList.next();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1 id="qunit-header">Iterator AMD Module: Test Suite</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+</body>
+</html>
