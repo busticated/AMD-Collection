@@ -73,8 +73,7 @@
                 myList.add( yetMoreNewItems, 5 );
 
                 for ( var i = 0, l = myList.length; i < l; i = i + 1 ){
-                    console.log( i );
-                    strictEqual( myList.current() / 10, i, 'list order is correct' );
+                    strictEqual( myList.current(), i * 10, 'item ' + i + ' is in the correct position' );
                     myList.next();
                 }
             });

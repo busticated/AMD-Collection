@@ -1,6 +1,6 @@
 define( function(){
     var It = function( collection ){
-        if( ! ( instanceof It ) ){
+        if ( ! ( this instanceof It ) ){
             return new It( collection );
         }
         this.collection = collection || [];
@@ -51,12 +51,12 @@ define( function(){
 
     It.prototype.first = function(){
         this.idx = 0;
-        return this.collection[ this.idx ];
+        return this.current();
     };
 
     It.prototype.last = function(){
         this.idx = this.length - 1;
-        return this.collection[ this.idx ];
+        return this.current();
     };
 
 
@@ -74,11 +74,18 @@ define( function(){
             this.collection.splice( idx + i, 0, items[ i ] );
         }
         this.length = this.collection.length;
-        console.log( 'added items' );
     };
 
     //remove an item from the collection
-    It.prototype.remove = function(){};
+    It.prototype.remove = function( idx ){
+        if ( typeof idx === 'number' ) {
+            this.collection.splice( idx, 1 );
+        }
+        if ( typeof idx === 'object' ) {
+            // this.collection.splice( idx[ 0 ], idx.length );
+        }
+        this.length = this.collection.length;
+    };
 
     //replace one or more items in collection
     //idx can be either an int or an array. if init, single item is replaced. otherwise, multiple
