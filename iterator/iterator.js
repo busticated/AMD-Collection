@@ -38,7 +38,7 @@ define( function(){
         if ( ! this.hasNext() ){
             return null;
         }
-        return this.collection[ this.idx ];
+        return this.current();
     };
 
     It.prototype.prev = function(){
@@ -46,7 +46,7 @@ define( function(){
         if ( ! this.hasNext() ){
             return null;
         }
-        return this.collection[ this.idx ];
+        return this.current();
     };
 
     It.prototype.first = function(){
