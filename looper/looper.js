@@ -1,33 +1,35 @@
 define( function(){
     var funcs = [], //cache of functions to run each iteration
         loopDuration = 1000, //in ms
-        isRunning = false,
+        _isRunning = false,
         timerId = null,
 
-        //reports looper state
-        state = function(){ if( isRunning ){ return "running"; } return "stopped"; },
-        //starts loop, adds funcion to funcs cache (opt) & set loopDuration (opt)
+        //report looper state
+        isRunning = function(){ return _isRunning; },
+
+        state = function(){ if ( isRunning() ){ return "running"; } return "stopped"; },
+
+        //start loop, add funcion to funcs cache (opt) & set loopDuration (opt)
         start = function( func, spd ){
             if ( typeof func === 'function' ) {
                 add( func );
             }
 
-            if ( isRunning ) {
+            if ( isRunning() ) {
                 return func;
             }
 
-            isRunning = true;
+            _isRunning = true;
             loopDuration = spd || loopDuration;
-            setTimeout(
-                function(){
-                    _loop();
+            setTimeout( function(){
+                _loop();
             }, loopDuration );
 
             return func;
         },
 
         //stops loop immediately
-        stop = function(){ isRunning = false; clearTimeout( timerId ); },
+        stop = function(){ _isRunning = false; clearTimeout( timerId ); },
 
         //gets & sets loopDuration, restarts loop after setting loopDuration
         rate = function( spd ){
@@ -41,6 +43,7 @@ define( function(){
         },
 
         add = function( func ) { funcs.push( func ); return func; },
+
         remove = function( func ){
             for ( var i = -1, l = funcs.length; ++i < l; ) {
                 if ( func === funcs[ i ] ){
@@ -49,9 +52,12 @@ define( function(){
                 }
             }
         },
+
         clear = function() { funcs = []; },
+
+        //todo - set and pass in current time to 'func' callback
         _loop = function(){
-            if ( ! isRunning ){
+            if ( ! isRunning() ){
                 return;
             }
 
@@ -66,6 +72,7 @@ define( function(){
 
     // public api /////////////////////////////////////////////////////////////
     return {
+        isRunning : isRunning,
         state : state,
         start : start,
         stop : stop,
