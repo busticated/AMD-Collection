@@ -14,24 +14,26 @@
                 ok( typeof kcode === 'function', 'kcode is loaded' );
 
                 //test random codes
-                var codes = [ '0', 'd', 'enter', '2', '9', 'l', 'semi-colon', 'w', 'left', 'right' ],
-                    ids = [ 87, 51, 186, 190, 37, 34, 17, 13, 9, 46, 49 ];
+                var names = [ '0', 'd', 'enter', '2', '9', 'l', 'semi-colon', 'w', 'left', 'right' ],
+                    codes = [ 87, 51, 186, 190, 37, 34, 17, 13, 9, 46, 49, 188 ];
 
                 //confirm codes
                 for ( var code in codes ){
-                    ok( kcode( kcode( codes[ code ] ) ) === codes[ code ], 'key code "' + codes[ code ] + '" matches the kcode value of ' + kcode( kcode( codes[ code ] ) ) );
+                    strictEqual( kcode( kcode( codes[ code ] ) ), codes[ code ], 'key name "' + kcode( codes[ code ] ) + '" was matched to correct code');
+                    // ok( kcode( kcode( codes[ code ] ) ) === codes[ code ], 'key code "' + codes[ code ] + '" matches the kcode value of ' + kcode( kcode( codes[ code ] ) ) );
                 }
 
                 //confirm ids
-                for ( var id in ids ){
-                    ok( kcode( kcode( ids [ id ] ) ) === ids[ id ], 'key id "' + ids[ id ] + '" matches the kcode id of ' + kcode( kcode( ids[ id ] ) ) );
+                for ( var name in names ){
+                    strictEqual( kcode( kcode( names [ name ] ) ), names[ name ], 'key code ' + kcode( names [ name ] ) + ' was matched to correct name');
+                    // ok( kcode( kcode( ids [ id ] ) ) === ids[ id ], 'key id "' + ids[ id ] + '" matches the kcode id of ' + kcode( kcode( ids[ id ] ) ) );
                 }
             });
         });
     </script>
 </head>
 <body>
-    <h1 id="qunit-header">Looper AMD Module: Test Suite</h1>
+    <h1 id="qunit-header">KCode AMD Module: Test Suite</h1>
     <h2 id="qunit-banner"></h2>
     <div id="qunit-testrunner-toolbar"></div>
     <h2 id="qunit-userAgent"></h2>
