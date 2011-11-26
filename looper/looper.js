@@ -1,15 +1,15 @@
 define( function(){
-    var funcs = [], //cache of functions to run each iteration
-        loopDuration = 1000, //in ms
+    var _funcs = [], //cache of functions to run each iteration
+        _loopDuration = 1000, //in ms
         _isRunning = false,
-        timerId = null,
+        _timerId = null,
 
         //report looper state
         isRunning = function(){ return _isRunning; },
 
         state = function(){ if ( isRunning() ){ return "running"; } return "stopped"; },
 
-        //start loop, add funcion to funcs cache (opt) & set loopDuration (opt)
+        //start loop, add funcion to _funcs cache (opt) & set _loopDuration (opt)
         start = function( func, spd ){
             if ( typeof func === 'function' ) {
                 add( func );
@@ -20,40 +20,40 @@ define( function(){
             }
 
             _isRunning = true;
-            loopDuration = spd || loopDuration;
+            _loopDuration = spd || _loopDuration;
             setTimeout( function(){
                 _loop();
-            }, loopDuration );
+            }, _loopDuration );
 
             return func;
         },
 
         //stops loop immediately
-        stop = function(){ _isRunning = false; clearTimeout( timerId ); },
+        stop = function(){ _isRunning = false; clearTimeout( _timerId ); },
 
-        //gets & sets loopDuration, restarts loop after setting loopDuration
+        //gets & sets _loopDuration, restarts loop after setting _loopDuration
         rate = function( spd ){
             if ( typeof spd === 'undefined' ){
-                return loopDuration;
+                return _loopDuration;
             }
 
-            loopDuration = spd;
+            _loopDuration = spd;
             stop();
             start();
         },
 
-        add = function( func ) { funcs.push( func ); return func; },
+        add = function( func ) { _funcs.push( func ); return func; },
 
         remove = function( func ){
-            for ( var i = -1, l = funcs.length; ++i < l; ) {
-                if ( func === funcs[ i ] ){
+            for ( var i = -1, l = _funcs.length; ++i < l; ) {
+                if ( func === _funcs[ i ] ){
                     console.log("remove func");
-                    funcs.splice( i );
+                    _funcs.splice( i );
                 }
             }
         },
 
-        clear = function() { funcs = []; },
+        clear = function() { _funcs = []; },
 
         //todo - set and pass in current time to 'func' callback
         _loop = function(){
@@ -61,13 +61,13 @@ define( function(){
                 return;
             }
 
-            for ( var i = 0, l = funcs.length; i < l; i = i + 1 ) {
-                if ( typeof funcs[ i ] === 'function' && funcs[ i ]() === false ){
-                    funcs.splice( i );
+            for ( var i = 0, l = _funcs.length; i < l; i = i + 1 ) {
+                if ( typeof _funcs[ i ] === 'function' && _funcs[ i ]() === false ){
+                    _funcs.splice( i );
                 }
             }
 
-            timerId = setTimeout( _loop, loopDuration );
+            _timerId = setTimeout( _loop, _loopDuration );
         };
 
     // public api /////////////////////////////////////////////////////////////
