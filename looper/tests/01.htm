@@ -17,29 +17,55 @@
                 }
             });
 
-            // isRunning
-            test( 'method - "isRunning"', function(){
+            // method: isRunning
+            test( 'method - ".isRunning()"', function(){
                 looper.start();
                 strictEqual( looper.isRunning(), true, 'looper is running' );
                 looper.stop();
                 strictEqual( looper.isRunning(), false, 'looper is stopped' );
             });
 
-            // state
-            test( 'method - "state"', function(){
+            // method: state
+            test( 'method - ".state()"', function(){
                 looper.start();
                 strictEqual( looper.state(), 'running', 'looper state is running' );
                 looper.stop();
                 strictEqual( looper.state(), 'stopped', 'looper state is stopped' );
             });
 
-            // start
-            test( 'method - "start"', function(){
+            // method: start, stop, & clear
+            asyncTest( 'method - ".start()" ".stop()" ".clear()"', function(){
+                var runCounter = 0,
+                    testFunc = function(){
+                        runCounter = runCounter + 1;
+                        ok( true, 'added function on loop start' );
+                        return false;
+                    };
+
+                looper.start( testFunc, 10 );
+
+                strictEqual( looper.isRunning(), true, 'looper is running' );
+                strictEqual( looper.rate(), 10, 'looper speed is correct' );
+
+                setTimeout( function(){
+                    strictEqual( runCounter, 1, 'looper ran the test func the correct number of times ( returning false successfully removed test func from queue )' );
+                    looper.stop();
+                    strictEqual( looper.isRunning(), false, 'looper is stopped' );
+                    looper.start( testFunc );
+                    looper.clear();
+                }, 200 );
+
+                setTimeout( function(){
+                    strictEqual( looper.isRunning(), true, 'looper restarted' );
+                    strictEqual( runCounter, 1, 'looper cleared' );
+                    looper.stop();
+                    start();
+                }, 400 );
+
             });
 
-
             //start & run loop
-            test( 'start & run loop', function(){
+            asyncTest( 'start & run loop', function(){
                 var n = 0,
                     loopLength = 10,
                     testDuration = 400,
@@ -51,7 +77,6 @@
 
                 strictEqual( looper.state(), 'running', 'looper state is correct' );
                 strictEqual( looper.rate(), loopLength, 'looper is running at the expected rate' );
-                stop();
 
                 setTimeout(function(){
                     looper.stop();
