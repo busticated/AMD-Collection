@@ -18,6 +18,14 @@ define( function(){
         return this.idx < this.length;
     };
 
+    It.prototype.isFirst = function( idx ){
+        return idx === 0;
+    };
+
+    It.prototype.isLast = function( idx ){
+        return idx === this.length;
+    };
+
     /*
      * iteration methods - get next / prev item from collection
      *
@@ -60,6 +68,15 @@ define( function(){
     };
 
 
+
+    It.prototype.loopAroundIf = function( idx ){
+        if ( this.isLast( idx ) ){
+            this.first();
+        }
+        if ( this.isFirst( idx ) ){
+            this.last();
+        }
+    };
     /*
      * update methods - add / remove / replace items from collection
      *

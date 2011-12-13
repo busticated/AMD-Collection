@@ -32,7 +32,6 @@
 
                 ok( list.hasNext(), 'next item is available' );
 
-                //strictEqual( myList.has( 0 ), defaults.name, 'DEFAULT pop-up name is set properly' );
             });
 
             // current / next / previous
@@ -41,6 +40,7 @@
                 strictEqual( list.next(), 20, 'next item is correct' );
                 strictEqual( list.prev(), 10, 'previous item is correct' );
 
+				//what happens if there's a 0 in the .next() slot? Does .hasNext() return falsy?
                 while( list.hasNext() ){
                     ok( typeof list.current() !== 'undefined', 'iterating list forward - current item = ' + list.current() );
                     list.next();
