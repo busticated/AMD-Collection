@@ -13,9 +13,12 @@ define( function(){
         return this.collection[ idx ] ? true : false;
     };
 
-    //test if next item is available
     It.prototype.hasNext = function(){
         return this.idx < this.length;
+    };
+
+    It.prototype.hasPrev = function(){
+        return ! this.isLast();
     };
 
     It.prototype.isFirst = function( idx ){
@@ -23,7 +26,7 @@ define( function(){
     };
 
     It.prototype.isLast = function( idx ){
-        return idx === this.length;
+        return idx === this.length - 1;
     };
 
     /*
@@ -42,19 +45,21 @@ define( function(){
     };
 
     It.prototype.next = function(){
-        this.idx = this.idx + 1;
-        if ( ! this.hasNext() ){
+        if ( this.hasNext() ){
+            this.idx = this.idx + 1;
+            return this.current();
+        } else {
             return null;
         }
-        return this.current();
     };
 
     It.prototype.prev = function(){
-        this.idx = this.idx - 1;
-        if ( ! this.hasNext() ){
+        if ( this.hasPrev() ){
+            this.idx = this.idx - 1;
+            return this.current();
+        } else {
             return null;
         }
-        return this.current();
     };
 
     It.prototype.first = function(){
@@ -79,6 +84,8 @@ define( function(){
     };
     /*
      * update methods - add / remove / replace items from collection
+     *
+     * these are the funcs you need to make the viewer work better
      *
      */
 
