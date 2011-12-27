@@ -1,0 +1,74 @@
+<!doctype html>
+<head>
+	<meta http-equiv="Expires" CONTENT="Mon, 06 Jan 1990 00:00:01 GMT" />
+	<meta http-equiv="PRAGMA" CONTENT="NO-CACHE" />
+	<meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE" />
+
+	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+
+	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+	<script>
+		//setup QUnit
+		//QUnit.config.testTimeout = 2000;
+		//QUnit.config.reorder = false;
+
+		require([ "../simplate" ], function( simplate ) {
+			var model = {
+					name: 'johnny',
+					age: 59,
+					hasFunk: false,
+					bad: '!@#$%^&*():"[]{}',
+					friend: { name: 'ben' },
+					foo: { bar: { baz: 'fiddly' } }
+				};
+
+			var tmpl = [
+					'Hi! My name is <a href="http://example.com/{{{name}}}">{{name}}</a>. I am {{age}} years old.',
+					'Hi! My name is <a href="http://example.com/' + model.name + '">' + model.name + '</a>. I am ' + model.age + ' years old.'
+				],
+				tmplFalsyValues = [
+					'Q: {{name}} is funky? A: {{hasFunk}}',
+					'Q: ' + model.name + ' is funky? A: ' + model.hasFunk,
+				],
+				tmplMissingParam = [
+					'Hi! My name is <a href="http://example.com/{{{nameZZ}}}">{{nameZZ}}</a>. I am {{age}} years old.',
+					'Hi! My name is <a href="http://example.com/{{{nameZZ}}}">{{nameZZ}}</a>. I am ' + model.age + ' years old.'
+				],
+				tmplEscaped = [
+					'This is escapable data {{{bad}}} - {{bad}}',
+					'This is escapable data ' + model.bad + ' - ' + escape( model.bad )
+				],
+				tmplSubProperty = [
+					'This uses a sub-property -> {{{friend.name}}} - {{friend.name}}',
+					'This uses a sub-property -> ' + model.friend.name + ' - ' + model.friend.name
+				],
+				tmplSubSubProperty = [
+					'This uses a sub-property & sub-sub-property -> {{foo.bar.baz}} - {{friend.name}}',
+					'This uses a sub-property & sub-sub-property -> ' + model.foo.bar.baz + ' - ' + model.friend.name
+				],
+				tmplUnknownSubSubProperty = [
+					'This uses a sub-property & sub-sub-property -> {{foo.barZZ.baz}} - {{friend.name}}',
+					'This uses a sub-property & sub-sub-property -> {{foo.barZZ.baz}} - ' + model.friend.name
+				];
+
+			test( 'Render template', function(){
+				strictEqual( simplate.render( tmpl[ 0 ], model ), tmpl[ 1 ], 'basic template rendered properly' );
+				strictEqual( simplate.render( tmplFalsyValues[ 0 ], model ), tmplFalsyValues[ 1 ], 'template w/ falsy values rendered properly' );
+				strictEqual( simplate.render( tmplMissingParam[ 0 ], model ), tmplMissingParam[ 1 ], 'template w/ unknown parameter rendered properly' );
+				strictEqual( simplate.render( tmplEscaped[ 0 ], model, escape ), tmplEscaped[ 1 ], 'template w/ escaped & unescaped parameters renderd properly' );
+				strictEqual( simplate.render( tmplSubProperty[ 0 ], model ), tmplSubProperty[ 1 ], 'template w/ sub-property parameters rendered properly' );
+				strictEqual( simplate.render( tmplSubSubProperty[ 0 ], model ), tmplSubSubProperty[ 1 ], 'template w/ two-level property parameters rendered properly' );
+				strictEqual( simplate.render( tmplUnknownSubSubProperty[ 0 ], model ), tmplUnknownSubSubProperty[ 1 ], 'template w/ unknown two-level property parameters rendered properly' );
+			});
+		});
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">Simplate AMD Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>
