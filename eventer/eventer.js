@@ -1,14 +1,14 @@
 define( function(){
     //main event hash
-    var eventCache = {},
+    var _eventCache = {},
 
     //add an event and callback
     on = function( eventName, callback ){
-        if ( ! eventCache[ eventName ] ) {
-            eventCache[ eventName ] = [];
+        if ( ! _eventCache[ eventName ] ) {
+            _eventCache[ eventName ] = [];
         }
 
-        eventCache[ eventName ].push( callback );
+        _eventCache[ eventName ].push( callback );
 
         //simple version - just return an event object
         //return [ eventName, callback ];
@@ -32,25 +32,25 @@ define( function(){
     off = function( eventHandle ){
         var eventName = eventHandle[ 0 ];
 
-        if ( ! eventCache[ eventName ] ){
+        if ( ! _eventCache[ eventName ] ){
             return;
         }
 
-        for ( var i = 0; i < eventCache[ eventName ].length; i = i + 1 ) {
-            if ( eventCache[ eventName ][ i ] === eventHandle[ 1 ] ){
-                eventCache[ eventName ].splice( i, 1 );
+        for ( var i = 0; i < _eventCache[ eventName ].length; i = i + 1 ) {
+            if ( _eventCache[ eventName ][ i ] === eventHandle[ 1 ] ){
+                _eventCache[ eventName ].splice( i, 1 );
             }
         }
     },
 
     //fire event callbacks
     emit = function( eventName, data ){
-        if ( ! eventCache[ eventName ] ){
+        if ( ! _eventCache[ eventName ] ){
             return;
         }
 
-        for ( var i = 0; i < eventCache[ eventName ].length; i = i + 1 ) {
-            eventCache[ eventName ][ i ].call( this, data );
+        for ( var i = 0; i < _eventCache[ eventName ].length; i = i + 1 ) {
+            _eventCache[ eventName ][ i ].call( this, data );
         }
     };
 
