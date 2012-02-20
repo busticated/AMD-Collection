@@ -1,154 +1,169 @@
 <!doctype html>
 <head>
-    <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
 
-    <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
-    <script>
-        require([ "../looper" ], function( looper ) {
+	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+	<script>
+		require([ '../looper' ], function( looper ) {
 
-            //setup & initialize
-            test( "setup & initialize", function(){
-                var methods = [ 'isRunning', 'state', 'start', 'stop', 'rate', 'add', 'remove', 'clear' ];
+			test( "basics", function(){
+				var methods = [ 'isRunning', 'start', 'stop', 'rate', 'add', 'remove', 'clear' ];
 
-                //confirm expected methods
-                for ( var method in methods ){
-                    ok( typeof looper[ methods[ method ] ] === 'function', 'looper includes the "' + methods[ method ] + '" method' )
-                }
-            });
+				expect( 1 + methods.length );
 
-            // method: isRunning
-            test( 'method - ".isRunning()"', function(){
-                looper.start();
-                strictEqual( looper.isRunning(), true, 'looper is running' );
-                looper.stop();
-                strictEqual( looper.isRunning(), false, 'looper is stopped' );
-            });
+				ok( window.location.protocol !== 'file:', 'Not running tests under the "file:" protocol' );
 
-            // method: state
-            test( 'method - ".state()"', function(){
-                looper.start();
-                strictEqual( looper.state(), 'running', 'looper state is running' );
-                looper.stop();
-                strictEqual( looper.state(), 'stopped', 'looper state is stopped' );
-            });
+				for ( var method in methods ){
+					ok( typeof looper[ methods[ method ] ] === 'function', 'looper includes the "' + methods[ method ] + '" method' )
+				}
+			});
 
-            // method: start, stop, & clear
-            asyncTest( 'method - ".start()" ".stop()" ".clear()"', function(){
-                var runCounter = 0,
-                    testFunc = function(){
-                        runCounter = runCounter + 1;
-                        ok( true, 'added function on loop start' );
-                        return false;
-                    };
+			test( 'method - .isRunning()', function(){
+				looper.start();
+				strictEqual( looper.isRunning(), true, 'looper is running' );
+				looper.stop();
+				strictEqual( looper.isRunning(), false, 'looper is stopped' );
+			});
 
-                looper.start( testFunc, 10 );
+			asyncTest( 'methods - .start() .stop() .clear()', function(){
+				var runCounter = 0,
+					testFunc = function(){
+						runCounter = runCounter + 1;
+						ok( true, 'added function on loop start' );
+						return false;
+					};
 
-                strictEqual( looper.isRunning(), true, 'looper is running' );
-                strictEqual( looper.rate(), 10, 'looper speed is correct' );
+				looper.start( testFunc, 10 );
 
-                setTimeout( function(){
-                    strictEqual( runCounter, 1, 'looper ran the test func the correct number of times ( returning false successfully removed test func from queue )' );
-                    looper.stop();
-                    strictEqual( looper.isRunning(), false, 'looper is stopped' );
-                    looper.start( testFunc );
-                    looper.clear();
-                }, 200 );
+				strictEqual( looper.isRunning(), true, 'looper is running' );
+				strictEqual( looper.rate(), 10, 'looper speed is correct' );
 
-                setTimeout( function(){
-                    strictEqual( looper.isRunning(), true, 'looper restarted' );
-                    strictEqual( runCounter, 1, 'looper cleared' );
-                    looper.stop();
-                    start();
-                }, 400 );
+				setTimeout( function(){
+					strictEqual( runCounter, 1, 'looper ran the test func the correct number of times ( returning false successfully removed test func from queue )' );
+					looper.stop();
+					strictEqual( looper.isRunning(), false, 'looper is stopped' );
+					looper.start();
+					looper.clear();
+				}, 200 );
 
-            });
+				setTimeout( function(){
+					strictEqual( looper.isRunning(), true, 'looper restarted' );
+					strictEqual( runCounter, 1, 'looper cleared' );
+					looper.stop();
+					start();
+				}, 400 );
 
-            //start & run loop
-            asyncTest( 'start & run loop', function(){
-                var n = 0,
-                    loopLength = 10,
-                    testDuration = 400,
-                    startTime = Date.now(),
-                    endTime = Date.now(),
-                    testFunc1 = function(){ n = n + 1; endTime = Date.now(); };
+			});
 
-                looper.start( testFunc1, loopLength );
+			asyncTest( 'start & run loop', function(){
+				var loopCount = 0,
+					loopIterations = 20,
+					loopSpeed = 10,
+					lastRun = 0;
 
-                strictEqual( looper.state(), 'running', 'looper state is correct' );
-                strictEqual( looper.rate(), loopLength, 'looper is running at the expected rate' );
+				var funcToLoop = function( date ){
+						loopCount = loopCount + 1;
+						//console.log( date.getTime() - lastRun );
+						lastRun = date.getTime();
+						if ( loopCount === loopIterations ){
+							setTimeout(function(){
+								runAssertions( date );
+							}, 0);
+							return false;
+						}
+					};
 
-                setTimeout(function(){
-                    looper.stop();
+				var runAssertions = function( lastRun ){
+					strictEqual( typeof lastRun.getTime, 'function', 'looper passed date object to looped function' );
+					looper.stop();
+					strictEqual( looper.isRunning(), false, 'looper is stopped @ ' + Date.now() );
+					strictEqual( loopCount, loopIterations, 'looper ran the correct number of times' );
+					start();
+				};
 
-                    strictEqual( looper.state(), 'stopped', 'looper state is correct' );
-                    ok( n > 0 && n <= ( testDuration / loopLength ), 'looper ran ' + n + ' times' );
-                    ok( endTime - startTime, 'looper ran in ' + ( endTime - startTime ) + ' miliseconds' );
+				looper.start( funcToLoop, loopSpeed );
 
-                    looper.clear();
-                    start();
-                }, testDuration );
-            });
+				strictEqual( looper.isRunning(), true, 'looper is running @ ' + Date.now() );
+				strictEqual( looper.rate(), loopSpeed, 'looper is running at the expected rate' );
+			});
 
-            //add & remove multiple functions to looper
-            asyncTest( 'add & remove functions to running loop', function(){
-                var n = 0,
-                    nGoal = 25,
-                    x = 0,
-                    xGoal = 5,
-                    y = "",
-                    yGoal = 'awwww yeaaaah!',
-                    isRunning = false,
-                    loopLength = 10,
-                    testDuration = 500,
-                    testFunc1Added = false,
-                    testFunc1 = function(){ isRunning = true; testFunc1Added = true; n = n + 1; if ( n === nGoal ) { return false; } },
-                    testFunc2Added = false,
-                    testFunc2 = function(){ isRunning = true; testFunc2Added = true; x = x + 1; if ( x === xGoal ) { return false; } },
-                    testFunc3Added = false,
-                    testFunc3 = function(){ isRunning = true; testFunc3Added = true; if ( n === 10 ) { y = yGoal; } };
+			asyncTest( 'add & remove functions to running loop', function(){
+				var loopSpeed = 10,
+					testDuration = 500;
 
-                looper.add( testFunc3 );
+				var xOutput = 0;
+				var xGoal = 5;
+				var xWasAdded = false;
+				var x = function(){
+						xWasAdded = true;
+						++ xOutput;
 
-                strictEqual( looper.isRunning(), false, 'looper is stopped @ ' + Date.now() );
-                strictEqual( looper.state(), 'stopped', 'looper is state is correct' );
+						if ( xOutput === xGoal ) {
+							return false;
+						}
+					};
 
-                looper.start( testFunc1, loopLength );
+				var yOutput = '';
+				var yGoal = 'awwww yeaaaah!';
+				var yWasAdded = false;
+				var y = function(){
+						yWasAdded = true;
 
-                strictEqual( looper.isRunning(), true, 'looper is running @ ' + Date.now() );
-                strictEqual( looper.state(), 'running', 'looper state is correct' );
+						if ( zOutput === 10 ) {
+							yOutput = yGoal;
+							return false;
+						}
+					};
 
-                setTimeout(function(){
-                    looper.add( testFunc2 );
-                    strictEqual( testFunc1Added && testFunc3Added, true, 'first two functions added to loop successfully' );
-                    strictEqual( looper.isRunning(), true, 'looper is running @ ' + Date.now() );
-                    strictEqual( looper.state(), 'running', 'looper state is correct' );
-                }, 200 );
+				var zOutput = 0;
+				var zGoal = 25;
+				var zWasAdded = false;
+				var z = function(){
+						zWasAdded = true;
+						++ zOutput;
 
-                setTimeout(function(){
-                    strictEqual( testFunc2Added, true, 'third function added to loop successfully' );
-                    looper.stop();
-                    strictEqual( looper.isRunning(), false, 'looper is stopped @ ' + Date.now() );
-                    strictEqual( looper.state(), 'stopped', 'looper is state is correct' );
-                }, 400 );
+						if ( zOutput === zGoal ) {
+							return false;
+						}
+					};
 
-                setTimeout(function(){
-                    ok( n === nGoal, 'testFunc1 ran successfully - n = ' + n );
-                    ok( x === xGoal, 'testFunc2 ran successfully - x = ' + x );
-                    ok( y === yGoal, 'testFunc2 ran successfully - y = ' + yGoal );
 
-                    start();
-                }, testDuration );
-            });
+				looper.add( y );
 
-        });
-    </script>
+				strictEqual( looper.isRunning(), false, 'looper is stopped @ ' + Date.now() );
+
+				looper.start( z, loopSpeed );
+
+				strictEqual( looper.isRunning(), true, 'looper is running @ ' + Date.now() );
+
+				setTimeout(function(){
+					looper.add( x );
+					strictEqual( zWasAdded && yWasAdded, true, 'functions "z" & "y" added to loop successfully' );
+					strictEqual( looper.isRunning(), true, 'looper is running @ ' + Date.now() );
+				}, 100 );
+
+				setTimeout(function(){
+					strictEqual( xWasAdded, true, 'function "x" added to loop successfully' );
+					looper.stop();
+					strictEqual( looper.isRunning(), false, 'looper is stopped @ ' + Date.now() );
+				}, 300 );
+
+				setTimeout(function(){
+					strictEqual( xOutput, xGoal, 'x ran successfully' );
+					strictEqual( yOutput, yGoal, 'y ran successfully' );
+					strictEqual( zOutput, zGoal, 'z ran successfully' );
+					start();
+				}, testDuration );
+			});
+		});
+	</script>
 </head>
 <body>
-    <h1 id="qunit-header">Looper AMD Module: Test Suite</h1>
-    <h2 id="qunit-banner"></h2>
-    <div id="qunit-testrunner-toolbar"></div>
-    <h2 id="qunit-userAgent"></h2>
-    <ol id="qunit-tests"></ol>
+	<h1 id="qunit-header">Looper AMD Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
 </body>
 </html>

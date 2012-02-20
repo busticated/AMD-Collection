@@ -1,16 +1,15 @@
 define( function(){
     var _funcs = [], //cache of functions to run each iteration
-        _loopDuration = 1000, //in ms
+        _loopDuration = 1000 / 60,
         _isRunning = false,
-        _timerId = null,
+        _timerId = null
+        _lastRun = 0;
 
-        //report looper state
-        isRunning = function(){ return _isRunning; },
+    //report looper state
+    var isRunning = function(){ return _isRunning; };
 
-        state = function(){ if ( isRunning() ){ return "running"; } return "stopped"; },
-
-        //start loop, add funcion to _funcs cache (opt) & set _loopDuration (opt)
-        start = function( func, spd ){
+    //start loop, add funcion to _funcs cache (opt) & set _loopDuration (opt)
+    var start = function( func, spd ){
             if ( typeof func === 'function' ) {
                 add( func );
             }
@@ -21,18 +20,16 @@ define( function(){
 
             _isRunning = true;
             _loopDuration = spd || _loopDuration;
-            setTimeout( function(){
-                _loop();
-            }, _loopDuration );
+            _loop();
 
             return func;
-        },
+        };
 
-        //stops loop immediately
-        stop = function(){ _isRunning = false; clearTimeout( _timerId ); },
+    //stops loop immediately
+    var stop = function(){ _isRunning = false; clearTimeout( _timerId ); };
 
-        //gets & sets _loopDuration, restarts loop after setting _loopDuration
-        rate = function( spd ){
+    //gets & sets _loopDuration, restarts loop after setting _loopDuration
+    var rate = function( spd ){
             if ( typeof spd === 'undefined' ){
                 return _loopDuration;
             }
@@ -40,40 +37,44 @@ define( function(){
             _loopDuration = spd;
             stop();
             start();
-        },
+        };
 
-        add = function( func ) { _funcs.push( func ); return func; },
+    var add = function( func ) { _funcs.push( func ); return func; };
 
-        remove = function( func ){
+    // todo - reliable way to compare functions?
+    var remove = function( func ){
             for ( var i = -1, l = _funcs.length; ++i < l; ) {
                 if ( func === _funcs[ i ] ){
-                    console.log("remove func");
-                    _funcs.splice( i );
+                    _funcs.splice( i, 1 );
                 }
             }
-        },
+        };
 
-        clear = function() { _funcs = []; },
+    var clear = function() { _funcs = []; };
 
-        //todo - set and pass in current time to 'func' callback
-        _loop = function(){
+    var _loop = function(){
+            var now = new Date().getTime(),
+                timeToRun;
+
             if ( ! isRunning() ){
                 return;
             }
 
             for ( var i = 0, l = _funcs.length; i < l; i = i + 1 ) {
-                if ( typeof _funcs[ i ] === 'function' && _funcs[ i ]() === false ){
-                    _funcs.splice( i );
+                if ( typeof _funcs[ i ] === 'function' && _funcs[ i ]( new Date() ) === false ){
+                    _funcs.splice( i, 1 );
                 }
             }
 
-            _timerId = setTimeout( _loop, _loopDuration );
+            timeToRun = Math.max(0, _loopDuration - ( now - _lastRun ) ); // compensate for time taken to execute _funcs
+
+            _timerId = setTimeout( _loop, timeToRun );
+            _lastRun = now + timeToRun;
         };
 
     // public api /////////////////////////////////////////////////////////////
     return {
         isRunning : isRunning,
-        state : state,
         start : start,
         stop : stop,
         clear: clear,
