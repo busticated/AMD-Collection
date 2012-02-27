@@ -1,100 +1,176 @@
 <!doctype html>
 <head>
-    <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
 
-    <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
-    <script>
-        require([ "../eventer" ], function( eventer ) {
-            var evt1HasFired = false,
-                evt2HasFired = false,
-                evt3HasFired = false,
-                evt1 = eventer.on( 'test-01', function( state ){ evt1HasFired = state; });
-                evt2 = eventer.on( 'test-02', function( state ){ evt2HasFired = state; });
-                evt3 = eventer.on( 'test-01', function( state ){ evt3HasFired = state; });
+	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+	<script>
+		require([ "../eventer" ], function( Eventer ) {
+			var evt1HasFired = false,
+				evt2HasFired = false,
+				evt3HasFired = false,
+				evtHub1 = new Eventer(),
+				evt1 = evtHub1.on( 'test-01', function( state ){ evt1HasFired = state; }),
+				evt2 = evtHub1.on( 'test-02', function( state ){ evt2HasFired = state; }),
+				evt3 = evtHub1.on( 'test-01', function( state ){ evt3HasFired = state; }),
+				evtHub2 = new Eventer();
 
-            //setup & initialize
-            test( "setup and initialize", function() {
-                //evt1 setup
-                ok( typeof evt1 === "object", "Event 1 is an object" );
-                ok( typeof evt1._handle[ 0 ] === "string", "Event 1 has an event name" );
-                ok( typeof evt1._handle[ 1 ] === "function", "Event 1 has a callback" );
-                ok( typeof evt1.off === "function", "Event 1 has an 'off' method" );
-                ok( typeof evt1.do === "function", "Event 1 has a 'do' method" );
-                ok( evt1HasFired === false, "Event 1 has not been triggered" );
+			test( "basics", function(){
+				var methods = [ 'on', 'off', 'emit' ];
 
-                //evt2 setup
-                ok( typeof evt2 === "object", "Event 2 is an object" );
-                ok( typeof evt2._handle[ 0 ] === "string", "Event 2 has an event name" );
-                ok( typeof evt2._handle[ 1 ] === "function", "Event 2 has a callback" );
-                ok( typeof evt2.off === "function", "Event 2 has an 'off' method" );
-                ok( typeof evt2.do === "function", "Event 2 has a 'do' method" );
-                ok( evt2HasFired === false, "Event 2 has not been triggered" );
+				expect( 3 + ( methods.length * 2) );
 
-                //evt3 setup
-                ok( typeof evt3 === "object", "Event 3 is an object" );
-                ok( typeof evt3._handle[ 0 ] === "string", "Event 3 has an event name" );
-                ok( typeof evt3._handle[ 1 ] === "function", "Event 3 has a callback" );
-                ok( typeof evt3.off === "function", "Event 3 has an 'off' method" );
-                ok( typeof evt3.do === "function", "Event 3 has a 'do' method" );
-                ok( evt3HasFired === false, "Event 3 has not been triggered" );
-            });
+				ok( window.location.protocol !== 'file:', 'Not running tests under the "file:" protocol' );
+				strictEqual( evtHub1.length, methods.lenth, 'evtHub1 has the correct number of methods' );
+				strictEqual( evtHub2.length, methods.lenth, 'evtHub1 has the correct number of methods' );
 
-            //Trigger events
-            test( "emit events", function() {
-                var testVal = "Event Has Been emitted";
+				for ( var method in methods ){
+					strictEqual( typeof evtHub1[ methods[ method ] ], 'function', 'evtHub1 includes the "' + methods[ method ] + '" method' );
+					strictEqual( typeof evtHub2[ methods[ method ] ], 'function', 'evtHub2 includes the "' + methods[ method ] + '" method' )
+				}
+			});
 
-                evt1.do( true );
-                evt2.do( true );
-                evt3.do( true );
+			//setup & initialize
+			test( "setup and initialize", function() {
+				//evt1 setup
+				strictEqual( typeof evt1, "object", "Event 1 is an object");
+				strictEqual( typeof evt1._handle[ 0 ], "string", "Event 1 has an event name" );
+				strictEqual( typeof evt1._handle[ 1 ], "function", "Event 1 has a callback" );
+				strictEqual( typeof evt1.off, "function", "Event 1 has an 'off' method" );
+				strictEqual( typeof evt1.do, "function", "Event 1 has a 'do' method" );
+				strictEqual( evt1HasFired, false, "Event 1 has not been triggered" );
 
-                ok( evt1HasFired === true, "Callback for Event 1 was successfully fired via .do() method" );
-                ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .do() method" );
-                ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .do() method" );
+				//evt2 setup
+				strictEqual( typeof evt2, "object", "Event 2 is an object" );
+				strictEqual( typeof evt2._handle[ 0 ], "string", "Event 2 has an event name" );
+				strictEqual( typeof evt2._handle[ 1 ], "function", "Event 2 has a callback" );
+				strictEqual( typeof evt2.off, "function", "Event 2 has an 'off' method" );
+				strictEqual( typeof evt2.do, "function", "Event 2 has a 'do' method" );
+				strictEqual( evt2HasFired, false, "Event 2 has not been triggered" );
 
-                eventer.emit( "test-01", testVal );
+				//evt3 setup
+				strictEqual( typeof evt3, "object", "Event 3 is an object" );
+				strictEqual( typeof evt3._handle[ 0 ], "string", "Event 3 has an event name" );
+				strictEqual( typeof evt3._handle[ 1 ], "function", "Event 3 has a callback" );
+				strictEqual( typeof evt3.off, "function", "Event 3 has an 'off' method" );
+				strictEqual( typeof evt3.do, "function", "Event 3 has a 'do' method" );
+				strictEqual( evt3HasFired, false, "Event 3 has not been triggered" );
+			});
 
-                ok( evt1HasFired === testVal && evt3HasFired === testVal, "Callbacks for Event 1 & Event 3 were fired via main event emit method" );
-                ok( evt2HasFired === true, "Callback for Event 2 was not fired" );
+			test( "emit events", function() {
+				var testVal = "Event Has Been emitted";
 
-                eventer.emit( "test-02", testVal );
+				evt1.do( true );
+				evt2.do( true );
+				evt3.do( true );
 
-                ok( evt2HasFired === testVal, "Callback for Event 2 was fired via main event emit method" );
-            });
+				ok( evt1HasFired === true, "Callback for Event 1 was successfully fired via .do() method" );
+				ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .do() method" );
+				ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .do() method" );
 
-            //Remove event listeners
-            test( "remove event listeners", function() {
-                evt1HasFired = false;
-                evt2HasFired = false;
-                evt3HasFired = false;
+				evtHub1.emit( "test-01", testVal );
 
-                evt1.off();
-                eventer.off( evt3._handle );
+				ok( evt1HasFired === testVal && evt3HasFired === testVal, "Callbacks for Event 1 & Event 3 were fired via main event emit method" );
+				ok( evt2HasFired === true, "Callback for Event 2 was not fired" );
 
-                eventer.emit( "test-01", true );
+				evtHub1.emit( "test-02", testVal );
 
-                ok( evt1HasFired === false, "Event 1 was successfully removed via .off() method" );
-                ok( evt3HasFired === false, "Event 3 was successfully removed via main event off method" );
+				ok( evt2HasFired === testVal, "Callback for Event 2 was fired via main event emit method" );
+			});
 
-                eventer.emit( "test-02", true );
+			test( "remove event listeners", function() {
+				evt1HasFired = false;
+				evt2HasFired = false;
+				evt3HasFired = false;
 
-                ok( evt2HasFired === true, "Callback for Event 2 was fired via main event emit method" );
+				evt1.off();
+				evtHub1.off( evt3._handle );
 
-                eventer.off( evt2._handle );
+				evtHub1.emit( "test-01", true );
 
-                eventer.emit( "test-02", false );
+				ok( evt1HasFired === false, "Event 1 was successfully removed via .off() method" );
+				ok( evt3HasFired === false, "Event 3 was successfully removed via main event off method" );
 
-                ok( evt2HasFired === true, "Event 2 was successfully removed via main event off method" );
+				evtHub1.emit( "test-02", true );
 
-            });
-        });
-    </script>
+				ok( evt2HasFired === true, "Callback for Event 2 was fired via main event emit method" );
+
+				evtHub1.off( evt2._handle );
+
+				evtHub1.emit( "test-02", false );
+
+				ok( evt2HasFired === true, "Event 2 was successfully removed via main event off method" );
+
+			});
+
+			test( 'event queues are isolated from each other', function(){
+				var shouldBeFalse = false,
+					hub1 = new Eventer(),
+					hub2 = Eventer();
+
+				hub1.on( 'testevent', function(){ shouldBeFalse = true; });
+				hub2.on( 'testevent', function(){
+					ok( true, 'event hub2\'s callback ran' );
+				});
+				hub2.on( 'testevent', function(){
+					strictEqual( shouldBeFalse, false, 'event hub1\'s callback was not triggered' );
+				});
+
+				expect( hub2._eventCache.testevent.length );
+				hub2.emit( 'testevent' );
+			});
+
+			test( 'event callbacks receive event data', function(){
+				var hub = Eventer(),
+					evtData = {
+						foo: 'bar',
+						baz: [ 1, 2, 3, 4 ]
+					};
+
+				hub.on( 'testevent', function( data ){
+					ok( true, '1st event callback ran' );
+					strictEqual( typeof data, 'object', '1st event receive correct data object' );
+				});
+				hub.on( 'testevent', function( data ){
+					ok( true, '2nd event callback ran' );
+					strictEqual( data.foo, 'bar', '2nd event received correct data object property' );
+				});
+				hub.on( 'testevent', function( data ){
+					ok( true, '3rd event callback ran' );
+					strictEqual( data.baz[ 1 ], 2, '3rd event received correct data object property' );
+				});
+
+				hub.emit( 'testevent', evtData );
+			});
+
+			test( 'individual event callbacks can be removed', function(){
+				var hub = new Eventer(),
+					wasFired = false,
+					myEvent;
+
+				myEvent = hub.on( 'chongo', function( data ){
+					wasFired = data;
+				});
+
+				hub.on( 'chongo', function( data ){
+					strictEqual( data, true, '2nd event callback ran' );
+					strictEqual( wasFired, false, '1st event callback was removed' );
+					strictEqual( hub._eventCache.chongo.length, 1, 'after removing callback, event queue has the correct number of callbacks' );
+				});
+
+				strictEqual( hub._eventCache.chongo.length, 2, 'before removing callback, event queue has the correct number of callbacks' );
+				myEvent.off();
+
+				hub.emit( 'chongo', true );
+			});
+		});
+	</script>
 </head>
 <body>
-    <h1 id="qunit-header">eventer AMD Module: Test Suite</h1>
-    <h2 id="qunit-banner"></h2>
-    <div id="qunit-testrunner-toolbar"></div>
-    <h2 id="qunit-userAgent"></h2>
-    <ol id="qunit-tests"></ol>
+	<h1 id="qunit-header">Eventer AMD Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
 </body>
 </html>
