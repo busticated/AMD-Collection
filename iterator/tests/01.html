@@ -1,11 +1,11 @@
 <!doctype html>
 <head>
-    <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
 
-    <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
-    <script>
-        require([ '../iterator' ], function( Iterator ) {
+	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+	<script>
+		require([ '../iterator' ], function( Iterator ) {
 
 			test( 'setup & initialize', function(){
 				var l,
@@ -336,14 +336,14 @@
 				strictEqual( newL instanceof Iterator, true, 'filtered instance is a child of Iterator' );
 				strictEqual( newL.current(), 10, 'filtered instance has correct current item' );
 			});
-        });
-    </script>
+		});
+	</script>
 </head>
 <body>
-    <h1 id="qunit-header">Iterator AMD Module: Test Suite</h1>
-    <h2 id="qunit-banner"></h2>
-    <div id="qunit-testrunner-toolbar"></div>
-    <h2 id="qunit-userAgent"></h2>
-    <ol id="qunit-tests"></ol>
+	<h1 id="qunit-header">Iterator AMD Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
 </body>
 </html>

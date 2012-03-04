@@ -119,11 +119,6 @@ define( function(){
         this.collection[ idx ] = item;
     };
 
-
-    /*
-     * filter arg is a func that runs against each collection item to determine whether or not to include
-     * new instance is returned with only qualified items from original instance
-     */
     It.prototype.filter = function( filter ){
         var newCollection = [];
 
