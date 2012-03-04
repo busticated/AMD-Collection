@@ -8,46 +8,50 @@ define( function(){
         this.length = this.collection.length;
     };
 
-    //test if arbitrary item is available
+
+    // test methods - return bool
     It.prototype.has = function( idx ){
         return this.collection[ idx ] ? true : false;
     };
 
     It.prototype.hasNext = function(){
-        return this.idx < this.length;
-    };
-
-    It.prototype.hasPrev = function(){
         return ! this.isLast();
     };
 
+    It.prototype.hasPrev = function(){
+        return ! this.isFirst();
+    };
+
     It.prototype.isFirst = function( idx ){
+        if ( typeof idx === 'undefined' ){
+            return this.isFirst( this.idx );
+        }
         return idx === 0;
     };
 
     It.prototype.isLast = function( idx ){
+        if ( typeof idx === 'undefined' ){
+            return this.isLast( this.idx );
+        }
         return idx === this.length - 1;
     };
 
-    /*
-     * iteration methods - get next / prev item from collection
-     *
-     * @todo - provide a filter argument to use arbitrary criteria
-     * to establish 'next' or 'prev' item.
-     *
-     * @todo - provide an inc argument to enable skipping ahead / back mutliple indexes
-     *
-     */
 
-    //return current item from collection
+    // iteration methods - return collection item(s)
+    It.prototype.get = function( idx ){
+        return this.collection[ idx ];
+    };
+
     It.prototype.current = function(){
-        return this.collection[ this.idx ];
+        return this.get( this.idx );
     };
 
     It.prototype.next = function(){
         if ( this.hasNext() ){
-            this.idx = this.idx + 1;
-            return this.current();
+            return this.setIdx( this.idx + 1 ).current();
+        } else if  ( this.isLooping ) {
+            this.isLooping = false;
+            return this.first();
         } else {
             return null;
         }
@@ -55,41 +59,42 @@ define( function(){
 
     It.prototype.prev = function(){
         if ( this.hasPrev() ){
-            this.idx = this.idx - 1;
-            return this.current();
+            return this.setIdx( this.idx - 1 ).current();
+        } else if ( this.isLooping ){
+            this.isLooping = false;
+            return this.last();
         } else {
             return null;
         }
     };
 
     It.prototype.first = function(){
-        this.idx = 0;
+        this.setIdx( 0 );
         return this.current();
     };
 
     It.prototype.last = function(){
-        this.idx = this.length - 1;
+        this.setIdx( this.length - 1 );
         return this.current();
     };
 
 
-
-    It.prototype.loopAroundIf = function( idx ){
-        if ( this.isLast( idx ) ){
-            this.first();
+    // chainable methods
+    It.prototype.setIdx = function( idx ){
+        if ( ! this.has( idx ) ){
+            throw new Error( 'idx must be available in collection' );
         }
-        if ( this.isFirst( idx ) ){
-            this.last();
-        }
+        this.idx = idx;
+        return this;
     };
-    /*
-     * update methods - add / remove / replace items from collection
-     *
-     * these are the funcs you need to make the viewer work better
-     *
-     */
 
-    //add an item to the collection
+    It.prototype.loop = function(){
+        this.isLooping = true;
+        return this;
+    };
+
+
+    // collection modification methods
     It.prototype.add = function( items, idx ){
         if ( typeof idx === 'undefined' || ! this.has( idx ) ){
             idx = this.length;
@@ -100,25 +105,35 @@ define( function(){
         this.length = this.collection.length;
     };
 
-    //remove an item from the collection
     It.prototype.remove = function( idx ){
         if ( typeof idx === 'number' ) {
             this.collection.splice( idx, 1 );
         }
-        if ( typeof idx === 'object' ) {
-            // this.collection.splice( idx[ 0 ], idx.length );
-        }
         this.length = this.collection.length;
     };
 
-    //replace one or more items in collection
-    //idx can be either an int or an array. if init, single item is replaced. otherwise, multiple
-    It.prototype.replace = function(){};
-    It.prototype.filter = function( filter ){};
+    It.prototype.update = function( item, idx ){
+        if ( ! this.has( idx ) ){
+            throw new Error( 'idx must be available in collection' );
+        }
+        this.collection[ idx ] = item;
+    };
 
 
+    /*
+     * filter arg is a func that runs against each collection item to determine whether or not to include
+     * new instance is returned with only qualified items from original instance
+     */
+    It.prototype.filter = function( filter ){
+        var newCollection = [];
 
-
+        for ( var i = 0, l = this.length; i < l; i = i + 1 ){
+            if ( filter( this.collection[ i ] ) ){
+                newCollection.push( this.collection[ i ] );
+            }
+        }
+        return new It( newCollection );
+    };
 
 
     // public api /////////////////////////////////////////////////////////////

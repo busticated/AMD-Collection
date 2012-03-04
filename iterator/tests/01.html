@@ -7,76 +7,335 @@
     <script>
         require([ '../iterator' ], function( Iterator ) {
 
-            //setup & initialize
-            var items = [ 10, 20, 30, 40, 50, 60 ],
-                list = new Iterator( items ),
-                myList = new Iterator( [ 70 ] );
+			test( 'setup & initialize', function(){
+				var l,
+					methods = [ 'has', 'hasNext', 'hasPrev', 'isFirst', 'isLast', 'get', 'current', 'next', 'prev', 'first', 'last', 'setIdx', 'loop', 'add', 'remove', 'update', 'filter' ],
+					properties = [ 'idx', 'length' ];
 
-            test( 'setup & initialize', function(){
-                var methods = [ 'current', 'has', 'hasNext', 'next', 'prev', 'add', 'remove', 'replace', 'first', 'last', 'filter' ],
-                    properties = [ 'idx', 'length' ];
+				expect( 4 + methods.length + properties.length );
 
-                //confirm expected methods
-                ok( typeof Iterator === 'function', 'Iterator constructor is available' );
-                ok( typeof list.collection === 'object', 'myList collection is available' );
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined' );
+				notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+				strictEqual( typeof Iterator, 'function', 'Iterator constructor is available' );
 
-                for ( var method in methods ){
-                    ok( typeof list[ methods[ method ] ] === 'function', 'list includes the "' + methods[ method ] + '" method' )
-                }
-            });
+				l = Iterator( [ 'fe', 'fi', 'fo', 'fum' ] );
 
-            // has / hasNext tests
-            test( 'has & hasNext', function(){
-                ok( list.has( 0 ), 'list includes index 0' );
-                ok( ! list.has( 999 ), 'list does not include index 999' );
+				strictEqual( typeof l.collection, 'object', 'collection is available within iterator instance' );
 
-                ok( list.hasNext(), 'next item is available' );
+				for ( var method in methods ){
+					strictEqual( typeof l[ methods[ method ] ], 'function', 'iterator instance includes the "' + methods[ method ] + '" method' )
+				}
+				
+				for ( var prop in properties ){
+					strictEqual( typeof l[ properties[ prop ] ], 'number', 'iterator instance includes the "' + properties[ prop ] + '" property' )
+				}
+			});
 
-            });
+			test( 'property - .idx', function(){
+				var l;
 
-            // current / next / previous
-            test( 'current, next, prev, first, & last', function(){
-                strictEqual( list.current(), 10, 'current item is correct' );
-                strictEqual( list.next(), 20, 'next item is correct' );
-                strictEqual( list.prev(), 10, 'previous item is correct' );
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
 
-				//what happens if there's a 0 in the .next() slot? Does .hasNext() return falsy?
-                while( list.hasNext() ){
-                    ok( typeof list.current() !== 'undefined', 'iterating list forward - current item = ' + list.current() );
-                    list.next();
-                }
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
-                while( list.prev() ){
-                    ok( typeof list.current() !== 'undefined', 'iterating list backward - current item = ' + list.current() );
-                }
+				strictEqual( l.idx, 0, 'initial .idx value is correct' );
+				l.last();
+				strictEqual( l.idx, 4, '.idx value is correct after calling .last()' );
+				l.first();
+				strictEqual( l.idx, 0, '.idx value is correct after calling .first()' );
+				l.next();
+				strictEqual( l.idx, 1, '.idx value is correct after calling .next()' );
+				l.prev();
+				strictEqual( l.idx, 0, '.idx value is correct after calling .prev()' );
+				l.setIdx( 3 );
+				strictEqual( l.idx, 3, '.idx value is correct after calling .setIdx()' );
+			});
 
-                strictEqual( list.last(), 60, 'last item is correct');
-                strictEqual( list.current(), 60, 'current item is correct');
+			test( 'property - .length', function(){
+				var l;
 
-                strictEqual( list.first(), 10, 'first item is correct');
-                strictEqual( list.current(), 10, 'current item is correct');
-            });
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
 
-            // add / remove / replace
-            test( 'add, remove, & replace items', function(){
-                var newItems = [ 0, 10, 20, 30, 40 ],
-                    moreNewItems = [ 80, 90 ],
-                    yetMoreNewItems = [ 50, 60 ];
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
-                myList.add( newItems, 0 );
-                strictEqual( myList.first(), 0, 'added items to start of collection, first item is correct' );
+				strictEqual( l.length, 5, 'newly initialized iterator instance has correct length' );
+				l.add( [ 6 ] );
+				strictEqual( l.length, 6, 'instance has correct length after adding an item to the collection' );
+				l.remove( 0 );
+				strictEqual( l.length, 5, 'instance has correct length after removing item to the collection' );
+				l.add( [ 7, 8, 9 ] );
+				strictEqual( l.length, 8, 'instance has correct length after adding multiple items to the collection' );
+			});
 
-                myList.add( moreNewItems );
-                strictEqual( myList.last(), 90, 'added items to end of collection, last item is correct' );
+			test( 'method - .has()', function(){
+				var l;
 
-                myList.first();
-                myList.add( yetMoreNewItems, 5 );
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
 
-                for ( var i = 0, l = myList.length; i < l; i = i + 1 ){
-                    strictEqual( myList.current(), i * 10, 'item ' + i + ' is in the correct position' );
-                    myList.next();
-                }
-            });
+				l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ] );
+
+				strictEqual( l.has( 0 ), true, 'has zero idx - .has( 0 )' );
+				strictEqual( l.has( 7 ), true, 'has 7th idx - .has( 7 )' );
+				strictEqual( l.has( 13 ), false, 'does not have 13th idx - .has( 13 )' );
+			});
+
+			test( 'method - .hasNext()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+
+				strictEqual( l.hasNext(), true, 'newly initialized iterator instance has next item' );
+				l.last();
+				strictEqual( l.hasNext(), false, 'next item is not available when current item is last' );
+				l.setIdx( 3 );
+				strictEqual( l.hasNext(), true, 'next item is available when current item is in the middle of the collection' );
+				l.first();
+				strictEqual( l.hasNext(), true, 'next item is available when current item is first' );
+			});
+
+			test( 'method - .hasPrev()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+
+				strictEqual( l.hasPrev(), false, 'previous item is not available when using a newly initialized iterator instance' );
+				l.last();
+				strictEqual( l.hasPrev(), true, 'previous item is available when current item is last' );
+				l.setIdx( 3 );
+				strictEqual( l.hasPrev(), true, 'previous item is available when current item is in the middle of the collection' );
+				l.first();
+				strictEqual( l.hasPrev(), false, 'previous item is not available when current item is first' );
+			});
+
+			test( 'method - .isFirst()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+
+				strictEqual( l.isFirst(), true, 'isFirst() returns true when called on a newly initialized iterator instance' );
+				l.last();
+				strictEqual( l.isFirst(), false, 'isFirst() returns false when current item is last item' );
+				l.setIdx( 3 );
+				strictEqual( l.isFirst(), false, 'isFirst() returns false when current item is in the middle of the collection' );
+				l.first();
+				strictEqual( l.isFirst(), true, 'isFirst() returns true when current item is first' );
+				l.last();
+				strictEqual( l.isFirst( 0 ), true, 'isFirst( 0 ) returns true' );
+				strictEqual( l.isFirst( 3 ), false, 'isFirst( 3 ) returns false' );
+			});
+
+			test( 'method - .isLast()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+
+				strictEqual( l.isLast(), false, 'isLast() returns false when called on a newly initialized iterator instance' );
+				l.last();
+				strictEqual( l.isLast(), true, 'isLast() returns true when current item is last item' );
+				l.setIdx( 3 );
+				strictEqual( l.isLast(), false, 'isLast() returns false when current item is in the middle of the collection' );
+				l.first();
+				strictEqual( l.isLast(), false, 'isLast() returns false when current item is first' );
+				strictEqual( l.isLast( 0 ), false, 'isFirst( 0 ) returns false' );
+				strictEqual( l.isLast( 3 ), false, 'isFirst( 3 ) returns false' );
+				strictEqual( l.isLast( l.length - 1 ), true, 'isFirst( l.length -1 ) returns true' );
+			});
+
+			test( 'method - .get()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				
+				strictEqual( l.get( 0 ), 1, 'got 1st item' );
+				strictEqual( l.get( 3 ), 4, 'got 3rd item' );
+				strictEqual( typeof l.get( 999 ), 'undefined', 'undefined returned when getting unavailable idx' );
+			});
+
+			test( 'method - .current()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ] );
+
+				strictEqual( l.current(), 1, 'initial .current() value is correct' );
+				l.next();
+				strictEqual( l.current(), 2, 'after requesting .next(), .current() value is correct' );
+				l.last();
+				strictEqual( l.current(), 13, 'after requesting .last(), .current() value is correct' );
+				l.first();
+				strictEqual( l.current(), 1, 'after requesting .first(), .current() value is correct' );
+				l.setIdx( 6 );
+				strictEqual( l.current(), 7, 'after setting a arbitrary index via .setIdx(), .current() value is correct' );
+				l.last();
+				l.loop().next();
+				strictEqual( l.current(), 1, 'after looping to 1st via .loop().next(), .current() value is correct' );
+				l.first();
+				l.loop().prev();
+				strictEqual( l.current(), 13, 'after looping to last via .loop().prev(), .current() value is correct' );
+			});
+
+			test( 'method - .next()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+
+				strictEqual( l.current(), 1, 'current item is correct [' + l.current() + ']' );
+				while ( l.hasNext() ){
+					strictEqual( typeof l.next(), 'number', 'able to retreive next item [' + l.current() + ']' );
+				}
+				strictEqual( l.isLast(), true, 'current item is last item' );
+				strictEqual( l.next(), null, '.next() returns null when current item is last item' );
+			});
+
+			test( 'method - .prev()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				l.last();
+
+				strictEqual( l.current(), 5, 'current item is correct [' + l.current() + ']' );
+				while ( l.hasPrev() ){
+					strictEqual( typeof l.prev(), 'number', 'able to retreive prev item [' + l.current() + ']' );
+				}
+				strictEqual( l.isFirst(), true, 'current item is first item' );
+				strictEqual( l.prev(), null, '.prev() returns null when current item is first item' );
+			});
+
+			test( 'method - .first()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				
+				l.last();
+				strictEqual( l.isLast(), true, 'current item is last item' );
+				l.first();
+				strictEqual( l.isFirst(), true, 'current item is first item' );
+			});
+
+			test( 'method - .last()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				
+				strictEqual( l.isFirst(), true, 'current item is first item' );
+				l.last();
+				strictEqual( l.isLast(), true, 'current item is last item' );
+			});
+
+			test( 'method - .setIdx()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				
+				strictEqual( l.first(), 1, 'newly initialized iterator instance has the correct first item' );
+				strictEqual( l.setIdx( 3 ).current(), 4, 'current item is correct after setting new index' );
+				raises( function(){ l.setIdx( 666 ) }, 'setting index to an unknown / unavailable item throws an error' );
+			});
+
+			test( 'method - .loop()', function(){
+				var l = Iterator(['00','01','02','03','04','05','06','07','08','09']);
+
+				strictEqual( l.current(), '00', 'current item is correct' );
+				strictEqual( l.loop().next(), '01', '.next() returns correct item' );
+				strictEqual( l.last(), '09', 'last item is correct' );
+				strictEqual( l.loop().next(), '00', 'requesting .next() at end of collection returns 1st item' );
+				strictEqual( l.current(), '00', 'current item is correct' );
+				strictEqual( l.loop().next(), '01', '.next() returns correct item' );
+
+				strictEqual( l.setIdx( 3 ).prev(), '02', 'setting an idx and requesting .prev() returns correct item' );
+				strictEqual( l.first(), '00', 'first item is correct' );
+				strictEqual( l.loop().prev(), '09', 'requesting .prev() at start of collection returns last item' );
+				strictEqual( l.current(), '09', 'current item is correct' );
+				strictEqual( l.loop().prev(), '08', '.prev() returns correct item' );
+
+				l = Iterator(['00','01','02','03','04','05','06','07','08','09']);
+				strictEqual( l.loop().prev(), '09', 'requsting .prev() after initializing a collection returns correct item' );
+				strictEqual( l.current(), '09', 'current item is correct' );
+
+			});
+
+			test( 'method - .add()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 'matt', 'mirande' ] );
+
+				strictEqual( l.length, 2, 'newly initialized iterator instance has correct length' );
+				l.add( [ 'edward' ], 1 );
+				strictEqual( l.get( 1 ), 'edward', 'item added at the correct index' );
+				strictEqual( l.length, 3, 'updated collection has the correct length' );
+				strictEqual( l.collection.join( ' ' ), 'matt edward mirande', 'contents of the collection are correct' );
+				l.add( [ 'rulez' ] );
+				strictEqual( l.last(), 'rulez', 'new item added to end of collection by default' );
+				strictEqual( l.collection.join( ' ' ), 'matt edward mirande rulez', 'contents of the collection are correct' );
+				l.add( [ '!', '!', '!', '!' ] );
+				strictEqual( l.collection.join( ' ' ), 'matt edward mirande rulez ! ! ! !', 'contents of the collection are correct after adding multiple items' );
+			});
+
+			test( 'method - .remove()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 'a', 'b', 'c', 'd', 'e' ] );
+
+				strictEqual( l.length, 5, 'newly initialized iterator instance has correct length' );
+				l.remove( 1 )
+				strictEqual( l.collection.join( '' ), 'acde', 'target item removed properly' );
+			});
+
+			test( 'method - .update()', function(){
+				var l;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 'a', 'b', 'c' ] );
+
+				l.update( 'b', 0 )
+				l.update( 'd', 2 )
+				l.update( 'a', 1 )
+
+				strictEqual( l.collection.join( '' ), 'bad', 'target items updated properly' );
+			});
+
+			test( 'method - .filter()', function(){
+				var l,
+					newL;
+
+				strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
+
+				l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 ] );
+
+				strictEqual( l.length, 30, 'newly initialized iterator instance is the correct length' );
+
+				newL = l.filter( function( item ){ return item >= 10 && item < 20; } );
+
+				strictEqual( newL.length, 10, 'filtered instance is the correct length' );
+				strictEqual( newL instanceof Iterator, true, 'filtered instance is a child of Iterator' );
+				strictEqual( newL.current(), 10, 'filtered instance has correct current item' );
+			});
         });
     </script>
 </head>
