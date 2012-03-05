@@ -82,7 +82,7 @@ define( function(){
     // chainable methods
     It.prototype.setIdx = function( idx ){
         if ( ! this.has( idx ) ){
-            throw new Error( 'idx must be available in collection' );
+            throw new Error( 'idx out of bounds - collection does not include that index' );
         }
         this.idx = idx;
         return this;
@@ -114,7 +114,7 @@ define( function(){
 
     It.prototype.update = function( item, idx ){
         if ( ! this.has( idx ) ){
-            throw new Error( 'idx must be available in collection' );
+            throw new Error( 'idx out of bounds - collection does not include that index' );
         }
         this.collection[ idx ] = item;
     };

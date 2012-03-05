@@ -318,6 +318,7 @@
 				l.update( 'a', 1 )
 
 				strictEqual( l.collection.join( '' ), 'bad', 'target items updated properly' );
+				raises( function(){ l.update( 'nope', 666 ) }, 'updating an unknown index throws an error' );
 			});
 
 			test( 'method - .filter()', function(){
