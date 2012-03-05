@@ -1,4 +1,8 @@
+/*global define: false, require: false */
+
 define( function(){
+    'use strict';
+
     var It = function( collection ){
         if ( ! ( this instanceof It ) ){
             return new It( collection );

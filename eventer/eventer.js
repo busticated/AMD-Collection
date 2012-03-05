@@ -1,4 +1,8 @@
+/*global define: false, require: false */
+
 define( function(){
+    'use strict';
+
     var Eventer = function(){
         if ( ! ( this instanceof Eventer ) ){
             return new Eventer();
@@ -28,10 +32,10 @@ define( function(){
             off : function(){
                 self.off( [ eventName, callback ] );
             },
-            do : function( data ){
+            run : function( data ){
                 callback( data );
             }
-        }
+        };
     };
 
     //remove callback and event if appropriate

@@ -1,8 +1,12 @@
+/*global define: false, require: false */
+
 define( function(){
+    'use strict';
+
     var _funcs = [], //cache of functions to run each iteration
         _loopDuration = 1000 / 60,
         _isRunning = false,
-        _timerId = null
+        _timerId = null,
         _lastRun = 0;
 
     //report looper state
@@ -81,5 +85,5 @@ define( function(){
         add : add,
         remove : remove,
         rate : rate
-    }
+    };
 });

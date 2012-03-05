@@ -37,7 +37,7 @@
 				strictEqual( typeof evt1._handle[ 0 ], "string", "Event 1 has an event name" );
 				strictEqual( typeof evt1._handle[ 1 ], "function", "Event 1 has a callback" );
 				strictEqual( typeof evt1.off, "function", "Event 1 has an 'off' method" );
-				strictEqual( typeof evt1.do, "function", "Event 1 has a 'do' method" );
+				strictEqual( typeof evt1.run, "function", "Event 1 has a 'run' method" );
 				strictEqual( evt1HasFired, false, "Event 1 has not been triggered" );
 
 				//evt2 setup
@@ -45,7 +45,7 @@
 				strictEqual( typeof evt2._handle[ 0 ], "string", "Event 2 has an event name" );
 				strictEqual( typeof evt2._handle[ 1 ], "function", "Event 2 has a callback" );
 				strictEqual( typeof evt2.off, "function", "Event 2 has an 'off' method" );
-				strictEqual( typeof evt2.do, "function", "Event 2 has a 'do' method" );
+				strictEqual( typeof evt2.run, "function", "Event 2 has a 'run' method" );
 				strictEqual( evt2HasFired, false, "Event 2 has not been triggered" );
 
 				//evt3 setup
@@ -53,20 +53,20 @@
 				strictEqual( typeof evt3._handle[ 0 ], "string", "Event 3 has an event name" );
 				strictEqual( typeof evt3._handle[ 1 ], "function", "Event 3 has a callback" );
 				strictEqual( typeof evt3.off, "function", "Event 3 has an 'off' method" );
-				strictEqual( typeof evt3.do, "function", "Event 3 has a 'do' method" );
+				strictEqual( typeof evt3.run, "function", "Event 3 has a 'run' method" );
 				strictEqual( evt3HasFired, false, "Event 3 has not been triggered" );
 			});
 
 			test( "emit events", function() {
 				var testVal = "Event Has Been emitted";
 
-				evt1.do( true );
-				evt2.do( true );
-				evt3.do( true );
+				evt1.run( true );
+				evt2.run( true );
+				evt3.run( true );
 
-				ok( evt1HasFired === true, "Callback for Event 1 was successfully fired via .do() method" );
-				ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .do() method" );
-				ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .do() method" );
+				ok( evt1HasFired === true, "Callback for Event 1 was successfully fired via .run() method" );
+				ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .run() method" );
+				ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .run() method" );
 
 				evtHub1.emit( "test-01", testVal );
 

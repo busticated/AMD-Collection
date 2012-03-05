@@ -1,4 +1,8 @@
+/*global define: false, require: false */
+
 define( function(){
+    'use strict';
+
     var _noop = function( match ){ return match; },
         _filterFn,
         _viewModel;
