@@ -49,6 +49,8 @@
 				strictEqual( l.idx, 0, '.idx value is correct after calling .prev()' );
 				l.setIdx( 3 );
 				strictEqual( l.idx, 3, '.idx value is correct after calling .setIdx()' );
+				l.get( 3 );
+				strictEqual( l.idx, 3, '.idx value should not change after calling .get()' );
 			});
 
 			test( 'property - .length', function(){
