@@ -134,6 +134,23 @@ define( function(){
         return new It( newCollection );
     };
 
+    It.prototype.each = function( callback, context ){
+        var ctx;
+
+        if ( typeof callback != 'function' ){
+            throw new Error( 'callback is of type ' + typeof callback + ' expected a function' );
+        }
+
+        if ( context ){
+            ctx = context;
+        }
+
+        for ( var i = 0, l = this.length; i < l; i = i + 1 ){
+            callback.call( ctx, this.collection[ i ], i );
+        }
+        return this;
+    };
+
 
     // public api /////////////////////////////////////////////////////////////
     return It;
