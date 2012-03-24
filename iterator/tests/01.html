@@ -36,10 +36,43 @@
 				}
 			});
 
-			test( 'property - .idx', function(){
-				var l;
+			test( 'argument coercion', function(){
+				var l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
-				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				strictEqual( l.length, 5, 'passing an array to constructor creates a collection with the correct number of items' );
+				strictEqual( l.get( 2 ), 3, 'collection contents are correct' );
+
+				l = new Iterator();
+				strictEqual( l.length, 0, 'calling constructor without any arguments creates a collection without any items' );
+
+				l = Iterator( 'q' );
+				strictEqual( l.length, 1, 'passing a single, non-array argument to constructor creates a collection with one item' );
+				strictEqual( l.get( 0 ), 'q', 'collection contents are correct' );
+
+				l = new Iterator( 'a', 'b', 'c', 'd' );
+				strictEqual( l.length, 4, 'passing multiple arguments to constructor creates a collection with the correct number of items' );
+				strictEqual( l.get( 2 ), 'c', 'collection contents are correct' );
+
+				l = Iterator({ a:1, b:2, c: 3 });
+				strictEqual( l.length, 1, 'passing a single object to constructor creates a collection with one item' );
+				strictEqual( l.get( 0 ).b, 2, 'collection contents are correct' );
+
+				l = new Iterator({ a:1, b:2, c: 3 }, { e:4, f:5, g:6 });
+				strictEqual( l.length, 2, 'passing two object to constructor creates a collection with two items' );
+				strictEqual( l.get( 1 ).f, 5, 'collection contents are correct' );
+
+				l = Iterator();
+				strictEqual( l.length, 0, 'iterator instance was reset' );
+				l.add( 'hello there!' );
+				strictEqual( l.length, 1, 'passing a single, non-array argument to .add() adds an item to the collection' );
+				strictEqual( l.get( 0 ), 'hello there!', 'collection contents are correct' );
+				l.add({ a:1, b:2, c: 3 });
+				strictEqual( l.length, 2, 'passing a single object to .add() adds an object to the collection' );
+				strictEqual( l.get( 1 ).b, 2, 'collection contents are correct' );
+			});
+
+			test( 'property - .idx', function(){
+				var l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
 				strictEqual( l.idx, 0, 'initial .idx value is correct' );
 				l.last();

@@ -3,13 +3,24 @@
 define( function(){
     'use strict';
 
+    var _isArray = function( arg ){
+        return Object.prototype.toString.call( arguments[ 0 ] ) === '[object Array]';
+    };
+
     var It = function( collection ){
         if ( ! ( this instanceof It ) ){
-            return new It( collection );
+            return It.apply( new It(), arguments );
         }
-        this.collection = collection || [];
+
+        if ( _isArray( arguments[ 0 ] ) ){
+            this.collection = Array.prototype.slice.call( arguments[ 0 ] );
+        } else {
+            this.collection = Array.prototype.slice.call( arguments );
+        }
+
         this.idx = 0;
         this.length = this.collection.length;
+        return this;
     };
 
 
@@ -100,6 +111,10 @@ define( function(){
 
     // collection modification methods
     It.prototype.add = function( items, idx ){
+        if ( ! _isArray( items ) ){
+            items = [ items ];
+        }
+
         if ( typeof idx === 'undefined' || ! this.has( idx ) ){
             idx = this.length;
         }
