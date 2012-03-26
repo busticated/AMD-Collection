@@ -7,39 +7,41 @@
 	<script>
 		require([ '../iterator' ], function( Iterator ) {
 
-			module("module1", {
+			module("Iterator", {
 				setup: function() {
 					strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
 				}
 			});
 
-			test( 'setup & initialize', function(){
+			test( 'environment', function(){
+				notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+			});
+
+			test( 'basics - setup & initialize', function(){
 				var l,
-					methods = [ 'has', 'hasNext', 'hasPrev', 'isFirst', 'isLast', 'get', 'current', 'next', 'prev', 'first', 'last', 'setIdx', 'loop', 'add', 'remove', 'update', 'filter' ],
+					methods = [ 'has', 'hasNext', 'hasPrev', 'isFirst', 'isLast', 'get', 'current', 'next', 'prev', 'first', 'last', 'setIdx', 'loop', 'add', 'remove', 'update', 'filter', 'each' ],
 					properties = [ 'idx', 'length' ];
 
-				expect( 4 + methods.length + properties.length );
-
-				notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
-				strictEqual( typeof Iterator, 'function', 'Iterator constructor is available' );
+				expect( 1 + methods.length + properties.length );
 
 				l = Iterator( [ 'fe', 'fi', 'fo', 'fum' ] );
-
-				strictEqual( typeof l.collection, 'object', 'collection is available within iterator instance' );
 
 				for ( var method in methods ){
 					strictEqual( typeof l[ methods[ method ] ], 'function', 'iterator instance includes the "' + methods[ method ] + '" method' )
 				}
-				
+
 				for ( var prop in properties ){
 					strictEqual( typeof l[ properties[ prop ] ], 'number', 'iterator instance includes the "' + properties[ prop ] + '" property' )
 				}
 			});
 
-			test( 'argument coercion', function(){
+			test( 'constructor - new Iterator()', function(){
+				strictEqual( typeof Iterator, 'function', 'Iterator constructor is available' );
+
 				var l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
 				strictEqual( l.length, 5, 'passing an array to constructor creates a collection with the correct number of items' );
+				strictEqual( typeof l.collection, 'object', 'collection is available within iterator instance' );
 				strictEqual( l.get( 2 ), 3, 'collection contents are correct' );
 
 				l = new Iterator();
@@ -61,14 +63,14 @@
 				strictEqual( l.length, 2, 'passing two objects to constructor creates a collection with two items' );
 				strictEqual( l.get( 1 ).f, 5, 'collection contents are correct' );
 
-				l = Iterator();
-				strictEqual( l.length, 0, 'iterator instance was reset' );
-				l.add( 'hello there!' );
-				strictEqual( l.length, 1, 'passing a single, non-array argument to .add() adds an item to the collection' );
-				strictEqual( l.get( 0 ), 'hello there!', 'collection contents are correct' );
-				l.add({ a:1, b:2, c: 3 });
-				strictEqual( l.length, 2, 'passing a single object to .add() adds an object to the collection' );
-				strictEqual( l.get( 1 ).b, 2, 'collection contents are correct' );
+				l = Iterator( { a:1, b:2 }, 10, 11, 12, 'a', 'b', 'c')
+				strictEqual( l.length, 7, 'passing arguments of multiple types to constructor creates a collection with the correct number of items' );
+				ok(
+					l.get( 0 ).b === 2 &&
+					l.get( 2 ) === 11 &&
+					l.get( 4 ) === 'a',
+					'collection contents are correct'
+				);
 			});
 
 			test( 'property - .idx', function(){
@@ -302,6 +304,15 @@
 				strictEqual( l.collection.join( ' ' ), 'matt edward mirande rulez', 'contents of the collection are correct' );
 				l.add( [ '!', '!', '!', '!' ] );
 				strictEqual( l.collection.join( ' ' ), 'matt edward mirande rulez ! ! ! !', 'contents of the collection are correct after adding multiple items' );
+
+				l = Iterator();
+				strictEqual( l.length, 0, 'iterator instance was reset' );
+				l.add( 'hello there!' );
+				strictEqual( l.length, 1, 'passing a single, non-array argument to .add() adds an item to the collection' );
+				strictEqual( l.get( 0 ), 'hello there!', 'collection contents are correct' );
+				l.add({ a:1, b:2, c: 3 });
+				strictEqual( l.length, 2, 'passing a single object to .add() adds an object to the collection' );
+				strictEqual( l.get( 1 ).b, 2, 'collection contents are correct' );
 			});
 
 			test( 'method - .remove()', function(){
