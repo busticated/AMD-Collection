@@ -98,7 +98,7 @@ define( function(){
         each : function( callback, context ){
             var ctx;
 
-            if ( typeof callback != 'function' ){
+            if ( typeof callback !== 'function' ){
                 throw new Error( 'callback is of type ' + typeof callback + ' expected a function' );
             }
 

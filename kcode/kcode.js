@@ -1,4 +1,6 @@
 define( function(){
+    'use strict';
+
     var codes = {
             'backspace' : 8,
             'tab' : 9,
@@ -129,7 +131,7 @@ define( function(){
             '}' : 221,
             'closeBraket' : 221,
             '"' : 222,
-            'singleQuote' : 222,
+            'singleQuote' : 222
         },
         keyNums,
 
