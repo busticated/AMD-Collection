@@ -1,42 +1,44 @@
 <!doctype html>
 <head>
-    <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+	<title>KCode AMD Module: Test Suite</title>
 
-    <script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
-    <script>
-        require([ "../kcode" ], function( kcode ) {
+	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
+	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
 
-            //setup & initialize
-            test( "setup & initialize", function(){
+	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+	<script>
+		require([ "../kcode" ], function( kcode ) {
 
-                //confirm expected methods
-                ok( typeof kcode === 'function', 'kcode is loaded' );
+				//setup & initialize
+				test( "setup & initialize", function(){
 
-                //test random codes
-                var names = [ '0', 'd', 'enter', '2', '9', 'l', 'semi-colon', 'w', 'left', 'right' ],
-                    codes = [ 87, 51, 186, 190, 37, 34, 17, 13, 9, 46, 49, 188 ];
+					//confirm expected methods
+					ok( typeof kcode === 'function', 'kcode is loaded' );
 
-                //confirm codes
-                for ( var code in codes ){
-                    strictEqual( kcode( kcode( codes[ code ] ) ), codes[ code ], 'key name "' + kcode( codes[ code ] ) + '" was matched to correct code');
-                    // ok( kcode( kcode( codes[ code ] ) ) === codes[ code ], 'key code "' + codes[ code ] + '" matches the kcode value of ' + kcode( kcode( codes[ code ] ) ) );
-                }
+					//test random codes
+					var names = [ '0', 'd', 'enter', '2', '9', 'l', 'semi-colon', 'w', 'left', 'right' ],
+					codes = [ 87, 51, 186, 190, 37, 34, 17, 13, 9, 46, 49, 188 ];
 
-                //confirm ids
-                for ( var name in names ){
-                    strictEqual( kcode( kcode( names [ name ] ) ), names[ name ], 'key code ' + kcode( names [ name ] ) + ' was matched to correct name');
-                    // ok( kcode( kcode( ids [ id ] ) ) === ids[ id ], 'key id "' + ids[ id ] + '" matches the kcode id of ' + kcode( kcode( ids[ id ] ) ) );
-                }
-            });
-        });
-    </script>
+					//confirm codes
+					for ( var code in codes ){
+					strictEqual( kcode( kcode( codes[ code ] ) ), codes[ code ], 'key name "' + kcode( codes[ code ] ) + '" was matched to correct code');
+					// ok( kcode( kcode( codes[ code ] ) ) === codes[ code ], 'key code "' + codes[ code ] + '" matches the kcode value of ' + kcode( kcode( codes[ code ] ) ) );
+					}
+
+					//confirm ids
+					for ( var name in names ){
+					strictEqual( kcode( kcode( names [ name ] ) ), names[ name ], 'key code ' + kcode( names [ name ] ) + ' was matched to correct name');
+					// ok( kcode( kcode( ids [ id ] ) ) === ids[ id ], 'key id "' + ids[ id ] + '" matches the kcode id of ' + kcode( kcode( ids[ id ] ) ) );
+					}
+					});
+		});
+</script>
 </head>
 <body>
-    <h1 id="qunit-header">KCode AMD Module: Test Suite</h1>
-    <h2 id="qunit-banner"></h2>
-    <div id="qunit-testrunner-toolbar"></div>
-    <h2 id="qunit-userAgent"></h2>
-    <ol id="qunit-tests"></ol>
+	<h1 id="qunit-header">KCode AMD Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
 </body>
 </html>
