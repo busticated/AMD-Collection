@@ -3,8 +3,8 @@
 define( function(){
     'use strict';
 
-    var _isArray = function( arg ){
-        return Object.prototype.toString.call( arguments[ 0 ] ) === '[object Array]';
+    var _isArray = function( a ){
+        return Object.prototype.toString.call( a ) === '[object Array]';
     };
 
     var It = function( collection ){
