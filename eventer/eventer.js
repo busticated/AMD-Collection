@@ -1,6 +1,6 @@
 /*global define: false, require: false */
 
-define( function(){
+define(function(){
     'use strict';
 
     var eventCache = {};
