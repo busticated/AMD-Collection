@@ -105,23 +105,6 @@
 
 			});
 
-			test( 'event queues are isolated from each other', function(){
-				var shouldBeFalse = false,
-					hub1 = new Eventer(),
-					hub2 = Eventer();
-
-				hub1.on( 'testevent', function(){ shouldBeFalse = true; });
-				hub2.on( 'testevent', function(){
-					ok( true, 'event hub2\'s callback ran' );
-				});
-				hub2.on( 'testevent', function(){
-					strictEqual( shouldBeFalse, false, 'event hub1\'s callback was not triggered' );
-				});
-
-				expect( hub2._eventCache.testevent.length );
-				hub2.emit( 'testevent' );
-			});
-
 			test( 'event callbacks receive event data', function(){
 				var hub = Eventer(),
 					evtData = {
@@ -157,10 +140,10 @@
 				hub.on( 'chongo', function( data ){
 					strictEqual( data, true, '2nd event callback ran' );
 					strictEqual( wasFired, false, '1st event callback was removed' );
-					strictEqual( hub._eventCache.chongo.length, 1, 'after removing callback, event queue has the correct number of callbacks' );
+					strictEqual( hub.__getEventCache().chongo.length, 1, 'after removing callback, event queue has the correct number of callbacks' );
 				});
 
-				strictEqual( hub._eventCache.chongo.length, 2, 'before removing callback, event queue has the correct number of callbacks' );
+				strictEqual( hub.__getEventCache().chongo.length, 2, 'before removing callback, event queue has the correct number of callbacks' );
 				myEvent.off();
 
 				hub.emit( 'chongo', true );
