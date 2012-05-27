@@ -9,7 +9,7 @@
     "url": "git://github.com/busticated/AMD-Collection.git"
   },
   "engines": {
-    "node": "~v0.4.12"
+    "node": "0.x.x"
   },
   "dependencies": {
     "requirejs" : "1.x.x"
