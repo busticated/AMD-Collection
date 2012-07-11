@@ -26,7 +26,7 @@ define( function(){
     It.prototype = {
         // test methods - return bool
         has : function( idx ){
-            return this.collection[ idx ] ? true : false;
+            return idx < this.length;
         },
         hasNext : function(){
             return ! this.isLast();

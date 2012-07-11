@@ -110,11 +110,11 @@
 			test( 'method - .has()', function(){
 				var l;
 
-				l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ] );
+				l = Iterator( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 ] );
 
 				strictEqual( l.has( 0 ), true, 'has zero idx - .has( 0 )' );
 				strictEqual( l.has( 7 ), true, 'has 7th idx - .has( 7 )' );
-				strictEqual( l.has( 13 ), false, 'does not have 13th idx - .has( 13 )' );
+				strictEqual( l.has( 15 ), false, 'does not have 15th idx - .has( 15 )' );
 			});
 
 			test( 'method - .hasNext()', function(){
