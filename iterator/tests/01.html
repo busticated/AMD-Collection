@@ -259,11 +259,30 @@
 				strictEqual( l.isLast(), true, 'current item is last item' );
 			});
 
+			test( 'method - .indexOf()', function(){
+				var l,
+					first = { first: 'first' },
+					second = { second: 'second' },
+					third = { third: 'third' };
+
+				l = Iterator( [ 0, 'a', 'b', 'c', 'd', 'e', 'f' ] );
+
+				strictEqual( l.indexOf( 0 ), 0, 'first item has correct index' );
+				strictEqual( l.indexOf( 'f' ), 6, 'last item has correct index' );
+				strictEqual( l.indexOf( 'd', 4 ), 4, 'item\'s index is correct when providing "fromIdx" argument' );
+
+				l = new Iterator([ first, second, third ]);
+
+				strictEqual( l.indexOf( first ), 0, 'using a collection of objects, first item has correct index' );
+				strictEqual( l.indexOf( third ), 2, 'using a collection of objects, last item has correct index' );
+				strictEqual( l.indexOf( second, 1 ), 1, 'using a collection of objects, item\'s index is correct when providing "fromIdx" argument' );
+			});
+
 			test( 'method - .setIdx()', function(){
 				var l;
 
 				l = Iterator( [ 1, 2, 3, 4, 5 ] );
-				
+
 				strictEqual( l.first(), 1, 'newly initialized iterator instance has the correct first item' );
 				strictEqual( l.setIdx( 3 ).current(), 4, 'current item is correct after setting new index' );
 				raises( function(){ l.setIdx( 666 ) }, 'setting index to an unknown / unavailable item throws an error' );

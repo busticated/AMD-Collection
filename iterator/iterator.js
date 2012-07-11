@@ -84,6 +84,22 @@ define( function(){
         },
 
         // utility methods
+        indexOf: function( item, fromIdx ){
+            fromIdx = fromIdx || 0;
+            fromIdx = fromIdx < 0 ? Math.max( 0, this.length + fromIdx ) : fromIdx;
+
+            if ( Array.prototype.indexOf ) {
+                return this.collection.indexOf( item, fromIdx );
+            }
+
+            for ( var i = fromIdx, l = this.length; i < l; i += 1 ){
+                if ( item === this.collection[ i ] ){
+                    return i;
+                }
+            }
+
+            return -1;
+        },
         setIdx : function( idx ){
             if ( ! this.has( idx ) ){
                 throw new Error( 'idx out of bounds - collection does not include that index' );
