@@ -150,7 +150,7 @@ define( function(){
             this.length = this.collection.length;
             return this;
         },
-        update : function( item, idx ){
+        update : function( idx, item ){
             if ( ! this.has( idx ) ){
                 throw new Error( 'idx out of bounds - collection does not include that index' );
             }

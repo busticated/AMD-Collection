@@ -351,9 +351,9 @@
 
 				l = Iterator( [ 'a', 'b', 'c' ] );
 
-				l.update( 'b', 0 )
-				l.update( 'd', 2 )
-				l.update( 'a', 1 )
+				l.update( 0, 'b' );
+				l.update( 2, 'd' );
+				l.update( 1, 'a' );
 
 				strictEqual( l.collection.join( '' ), 'bad', 'target items updated properly' );
 				raises( function(){ l.update( 'nope', 666 ) }, 'updating an unknown index throws an error' );
