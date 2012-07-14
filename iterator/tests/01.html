@@ -183,10 +183,36 @@
 				var l;
 
 				l = Iterator( [ 1, 2, 3, 4, 5 ] );
-				
+
 				strictEqual( l.get( 0 ), 1, 'got 1st item' );
 				strictEqual( l.get( 3 ), 4, 'got 3rd item' );
 				strictEqual( typeof l.get( 999 ), 'undefined', 'undefined returned when getting unavailable idx' );
+			});
+
+			test( 'method - .getNext()', function(){
+				var l;
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				l.setIdx( 2 );
+
+				strictEqual( l.getNext(), 4, 'got next item' );
+				strictEqual( l.idx, 2, 'calling .getNext() does not increment idx' );
+
+				l.last();
+				strictEqual( typeof l.getNext(), 'undefined', 'undefined returned when next item is unavailable' );
+			});
+
+			test( 'method - .getPrev()', function(){
+				var l;
+
+				l = Iterator( [ 1, 2, 3, 4, 5 ] );
+				l.setIdx( 3 );
+
+				strictEqual( l.getPrev(), 3, 'got previous item' );
+				strictEqual( l.idx, 3, 'calling .getNext() does not increment idx' );
+
+				l.first();
+				strictEqual( typeof l.getPrev(), 'undefined', 'undefined returned when previous item is unavailable' );
 			});
 
 			test( 'method - .current()', function(){
@@ -292,22 +318,26 @@
 				var l = Iterator(['00','01','02','03','04','05','06','07','08','09']);
 
 				strictEqual( l.current(), '00', 'current item is correct' );
+				strictEqual( l.loop().getNext(), '01', '.getNext() returns correct item' );
 				strictEqual( l.loop().next(), '01', '.next() returns correct item' );
 				strictEqual( l.last(), '09', 'last item is correct' );
-				strictEqual( l.loop().next(), '00', 'requesting .next() at end of collection returns 1st item' );
+				strictEqual( l.loop().getNext(), '00', 'requesting .getNext() at end of collection returns 1st item' );
+				strictEqual( l.loop().next(), '00', 'requesting .next() at end of collection returns 1st item and increments the collection\'s idx' );
 				strictEqual( l.current(), '00', 'current item is correct' );
 				strictEqual( l.loop().next(), '01', '.next() returns correct item' );
 
 				strictEqual( l.setIdx( 3 ).prev(), '02', 'setting an idx and requesting .prev() returns correct item' );
 				strictEqual( l.first(), '00', 'first item is correct' );
-				strictEqual( l.loop().prev(), '09', 'requesting .prev() at start of collection returns last item' );
+				strictEqual( l.loop().getPrev(), '09', 'requesting .getPrev() at start of collection returns last item' );
+				strictEqual( l.loop().prev(), '09', 'requesting .prev() at start of collection returns last item and increments the collection\'s idx' );
 				strictEqual( l.current(), '09', 'current item is correct' );
+				strictEqual( l.loop().getPrev(), '08', '.getPrev() returns correct item' );
 				strictEqual( l.loop().prev(), '08', '.prev() returns correct item' );
 
 				l = Iterator(['00','01','02','03','04','05','06','07','08','09']);
-				strictEqual( l.loop().prev(), '09', 'requsting .prev() after initializing a collection returns correct item' );
+				strictEqual( l.loop().getPrev(), '09', 'requsting .getPrev() after initializing a collection returns correct item' );
+				strictEqual( l.loop().prev(), '09', 'requsting .prev() after initializing a collection returns correct item and increments the collection\'s idx' );
 				strictEqual( l.current(), '09', 'current item is correct' );
-
 			});
 
 			test( 'method - .add()', function(){

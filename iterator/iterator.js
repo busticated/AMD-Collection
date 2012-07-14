@@ -51,6 +51,26 @@ define( function(){
         get : function( idx ){
             return this.collection[ idx ];
         },
+        getNext : function(){
+            var idx = this.idx + 1;
+
+            if ( this.isLooping && ! this.hasNext() ){
+                this.isLooping = false;
+                idx = 0;
+            }
+
+            return this.get( idx );
+        },
+        getPrev : function(){
+            var idx = this.idx - 1;
+
+            if ( this.isLooping && ! this.hasPrev() ){
+                this.isLooping = false;
+                idx = this.length - 1;
+            }
+
+            return this.get( idx );
+        },
         current : function(){
             return this.get( this.idx );
         },
