@@ -76,7 +76,7 @@ define( function(){
         },
         next : function(){
             if ( this.hasNext() ){
-                return this.setIdx( this.idx + 1 ).current();
+                return this.setIndex( this.idx + 1 ).current();
             }
             if  ( this.isLooping ) {
                 this.isLooping = false;
@@ -86,7 +86,7 @@ define( function(){
         },
         prev : function(){
             if ( this.hasPrev() ){
-                return this.setIdx( this.idx - 1 ).current();
+                return this.setIndex( this.idx - 1 ).current();
             }
             if ( this.isLooping ){
                 this.isLooping = false;
@@ -95,11 +95,11 @@ define( function(){
             return null;
         },
         first : function(){
-            this.setIdx( 0 );
+            this.setIndex( 0 );
             return this.current();
         },
         last : function(){
-            this.setIdx( this.length - 1 );
+            this.setIndex( this.length - 1 );
             return this.current();
         },
 
@@ -120,7 +120,7 @@ define( function(){
 
             return -1;
         },
-        setIdx : function( idx ){
+        setIndex : function( idx ){
             if ( ! this.has( idx ) ){
                 throw new Error( 'idx out of bounds - collection does not include that index' );
             }

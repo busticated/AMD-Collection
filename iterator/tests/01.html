@@ -46,7 +46,7 @@
 						'first': 'function',
 						'last': 'function',
 						'indexOf': 'function',
-						'setIdx': 'function',
+						'setIndex': 'function',
 						'loop': 'function',
 						'add': 'function',
 						'remove': 'function',
@@ -119,8 +119,8 @@
 				strictEqual( l.idx, 1, '.idx value is correct after calling .next()' );
 				l.prev();
 				strictEqual( l.idx, 0, '.idx value is correct after calling .prev()' );
-				l.setIdx( 3 );
-				strictEqual( l.idx, 3, '.idx value is correct after calling .setIdx()' );
+				l.setIndex( 3 );
+				strictEqual( l.idx, 3, '.idx value is correct after calling .setIndex()' );
 				l.get( 3 );
 				strictEqual( l.idx, 3, '.idx value should not change after calling .get()' );
 			});
@@ -157,7 +157,7 @@
 				strictEqual( l.hasNext(), true, 'newly initialized iterator instance has next item' );
 				l.last();
 				strictEqual( l.hasNext(), false, 'next item is not available when current item is last' );
-				l.setIdx( 3 );
+				l.setIndex( 3 );
 				strictEqual( l.hasNext(), true, 'next item is available when current item is in the middle of the collection' );
 				l.first();
 				strictEqual( l.hasNext(), true, 'next item is available when current item is first' );
@@ -171,7 +171,7 @@
 				strictEqual( l.hasPrev(), false, 'previous item is not available when using a newly initialized iterator instance' );
 				l.last();
 				strictEqual( l.hasPrev(), true, 'previous item is available when current item is last' );
-				l.setIdx( 3 );
+				l.setIndex( 3 );
 				strictEqual( l.hasPrev(), true, 'previous item is available when current item is in the middle of the collection' );
 				l.first();
 				strictEqual( l.hasPrev(), false, 'previous item is not available when current item is first' );
@@ -185,7 +185,7 @@
 				strictEqual( l.isFirst(), true, 'isFirst() returns true when called on a newly initialized iterator instance' );
 				l.last();
 				strictEqual( l.isFirst(), false, 'isFirst() returns false when current item is last item' );
-				l.setIdx( 3 );
+				l.setIndex( 3 );
 				strictEqual( l.isFirst(), false, 'isFirst() returns false when current item is in the middle of the collection' );
 				l.first();
 				strictEqual( l.isFirst(), true, 'isFirst() returns true when current item is first' );
@@ -202,7 +202,7 @@
 				strictEqual( l.isLast(), false, 'isLast() returns false when called on a newly initialized iterator instance' );
 				l.last();
 				strictEqual( l.isLast(), true, 'isLast() returns true when current item is last item' );
-				l.setIdx( 3 );
+				l.setIndex( 3 );
 				strictEqual( l.isLast(), false, 'isLast() returns false when current item is in the middle of the collection' );
 				l.first();
 				strictEqual( l.isLast(), false, 'isLast() returns false when current item is first' );
@@ -225,7 +225,7 @@
 				var l;
 
 				l = Iterator( [ 1, 2, 3, 4, 5 ] );
-				l.setIdx( 2 );
+				l.setIndex( 2 );
 
 				strictEqual( l.getNext(), 4, 'got next item' );
 				strictEqual( l.idx, 2, 'calling .getNext() does not increment idx' );
@@ -238,7 +238,7 @@
 				var l;
 
 				l = Iterator( [ 1, 2, 3, 4, 5 ] );
-				l.setIdx( 3 );
+				l.setIndex( 3 );
 
 				strictEqual( l.getPrev(), 3, 'got previous item' );
 				strictEqual( l.idx, 3, 'calling .getNext() does not increment idx' );
@@ -259,8 +259,8 @@
 				strictEqual( l.current(), 13, 'after requesting .last(), .current() value is correct' );
 				l.first();
 				strictEqual( l.current(), 1, 'after requesting .first(), .current() value is correct' );
-				l.setIdx( 6 );
-				strictEqual( l.current(), 7, 'after setting a arbitrary index via .setIdx(), .current() value is correct' );
+				l.setIndex( 6 );
+				strictEqual( l.current(), 7, 'after setting a arbitrary index via .setIndex(), .current() value is correct' );
 				l.last();
 				l.loop().next();
 				strictEqual( l.current(), 1, 'after looping to 1st via .loop().next(), .current() value is correct' );
@@ -336,14 +336,14 @@
 				strictEqual( l.indexOf( second, 1 ), 1, 'using a collection of objects, item\'s index is correct when providing "fromIdx" argument' );
 			});
 
-			test( 'method - .setIdx()', function(){
+			test( 'method - .setIndex()', function(){
 				var l;
 
 				l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
 				strictEqual( l.first(), 1, 'newly initialized iterator instance has the correct first item' );
-				strictEqual( l.setIdx( 3 ).current(), 4, 'current item is correct after setting new index' );
-				raises( function(){ l.setIdx( 666 ) }, 'setting index to an unknown / unavailable item throws an error' );
+				strictEqual( l.setIndex( 3 ).current(), 4, 'current item is correct after setting new index' );
+				raises( function(){ l.setIndex( 666 ) }, 'setting index to an unknown / unavailable item throws an error' );
 			});
 
 			test( 'method - .loop()', function(){
@@ -358,7 +358,7 @@
 				strictEqual( l.current(), '00', 'current item is correct' );
 				strictEqual( l.loop().next(), '01', '.next() returns correct item' );
 
-				strictEqual( l.setIdx( 3 ).prev(), '02', 'setting an idx and requesting .prev() returns correct item' );
+				strictEqual( l.setIndex( 3 ).prev(), '02', 'setting an idx and requesting .prev() returns correct item' );
 				strictEqual( l.first(), '00', 'first item is correct' );
 				strictEqual( l.loop().getPrev(), '09', 'requesting .getPrev() at start of collection returns last item' );
 				strictEqual( l.loop().prev(), '09', 'requesting .prev() at start of collection returns last item and increments the collection\'s idx' );
@@ -451,7 +451,7 @@
 				raises( function(){ l.each( 'nope' ) }, 'calling .each() without an argument type of "function" throws an error' );
 
 				l.each(function( item, idx ){
-					strictEqual( l.setIdx( idx ).current(), item, '.each() received the correct item ' + item );
+					strictEqual( l.setIndex( idx ).current(), item, '.each() received the correct item ' + item );
 					strictEqual( l.idx, idx, '.each() is using the correct index value ' + idx );
 				});
 
