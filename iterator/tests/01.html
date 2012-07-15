@@ -7,6 +7,16 @@
 
 	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
 	<script>
+		Object.keys = Object.keys || function (o) {
+			var result = [];
+			for (var name in o) {
+				if (o.hasOwnProperty(name)) {
+					result.push(name);
+				}
+			}
+			return result;
+		};
+
 		require([ '../iterator' ], function( Iterator ) {
 
 			module("Iterator", {
@@ -19,21 +29,43 @@
 				notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
 			});
 
-			test( 'basics - setup & initialize', function(){
+			test( 'module has the correct methods & properties', function(){
 				var l,
-					methods = [ 'has', 'hasNext', 'hasPrev', 'isFirst', 'isLast', 'get', 'current', 'next', 'prev', 'first', 'last', 'setIdx', 'loop', 'add', 'remove', 'update', 'filter', 'each' ],
-					properties = [ 'idx', 'length' ];
-
-				expect( 1 + methods.length + properties.length );
+					expected = {
+						'has': 'function',
+						'hasNext': 'function',
+						'hasPrev': 'function',
+						'isFirst': 'function',
+						'isLast': 'function',
+						'get': 'function',
+						'getNext': 'function',
+						'getPrev': 'function',
+						'current': 'function',
+						'next': 'function',
+						'prev': 'function',
+						'first': 'function',
+						'last': 'function',
+						'indexOf': 'function',
+						'setIdx': 'function',
+						'loop': 'function',
+						'add': 'function',
+						'remove': 'function',
+						'update': 'function',
+						'filter': 'function',
+						'each': 'function',
+						'collection': 'object',
+						'idx': 'number',
+						'length': 'number'
+					};
 
 				l = Iterator( [ 'fe', 'fi', 'fo', 'fum' ] );
 
-				for ( var method in methods ){
-					strictEqual( typeof l[ methods[ method ] ], 'function', 'iterator instance includes the "' + methods[ method ] + '" method' )
-				}
+				expect( 2 + Object.keys( expected ).length );
 
-				for ( var prop in properties ){
-					strictEqual( typeof l[ properties[ prop ] ], 'number', 'iterator instance includes the "' + properties[ prop ] + '" property' )
+				strictEqual( Object.keys( Iterator.prototype ).length + Object.keys( l ).length, Object.keys( expected ).length, 'all ' + Object.keys( expected ).length + ' methods have been identified' );
+
+				for ( var prop in expected ) {
+					strictEqual( typeof l[ prop ], expected[ prop ], 'module includes the "' + prop + '" method / property' );
 				}
 			});
 
