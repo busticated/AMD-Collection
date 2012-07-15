@@ -54,7 +54,7 @@
 						'filter': 'function',
 						'each': 'function',
 						'collection': 'object',
-						'idx': 'number',
+						'index': 'number',
 						'length': 'number'
 					};
 
@@ -110,19 +110,19 @@
 			test( 'property - .idx', function(){
 				var l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
-				strictEqual( l.idx, 0, 'initial .idx value is correct' );
+				strictEqual( l.index, 0, 'initial .idx value is correct' );
 				l.last();
-				strictEqual( l.idx, 4, '.idx value is correct after calling .last()' );
+				strictEqual( l.index, 4, '.idx value is correct after calling .last()' );
 				l.first();
-				strictEqual( l.idx, 0, '.idx value is correct after calling .first()' );
+				strictEqual( l.index, 0, '.idx value is correct after calling .first()' );
 				l.next();
-				strictEqual( l.idx, 1, '.idx value is correct after calling .next()' );
+				strictEqual( l.index, 1, '.idx value is correct after calling .next()' );
 				l.prev();
-				strictEqual( l.idx, 0, '.idx value is correct after calling .prev()' );
+				strictEqual( l.index, 0, '.idx value is correct after calling .prev()' );
 				l.setIndex( 3 );
-				strictEqual( l.idx, 3, '.idx value is correct after calling .setIndex()' );
+				strictEqual( l.index, 3, '.idx value is correct after calling .setIndex()' );
 				l.get( 3 );
-				strictEqual( l.idx, 3, '.idx value should not change after calling .get()' );
+				strictEqual( l.index, 3, '.idx value should not change after calling .get()' );
 			});
 
 			test( 'property - .length', function(){
@@ -228,7 +228,7 @@
 				l.setIndex( 2 );
 
 				strictEqual( l.getNext(), 4, 'got next item' );
-				strictEqual( l.idx, 2, 'calling .getNext() does not increment idx' );
+				strictEqual( l.index, 2, 'calling .getNext() does not increment idx' );
 
 				l.last();
 				strictEqual( typeof l.getNext(), 'undefined', 'undefined returned when next item is unavailable' );
@@ -241,7 +241,7 @@
 				l.setIndex( 3 );
 
 				strictEqual( l.getPrev(), 3, 'got previous item' );
-				strictEqual( l.idx, 3, 'calling .getNext() does not increment idx' );
+				strictEqual( l.index, 3, 'calling .getNext() does not increment idx' );
 
 				l.first();
 				strictEqual( typeof l.getPrev(), 'undefined', 'undefined returned when previous item is unavailable' );
@@ -452,7 +452,7 @@
 
 				l.each(function( item, idx ){
 					strictEqual( l.setIndex( idx ).current(), item, '.each() received the correct item ' + item );
-					strictEqual( l.idx, idx, '.each() is using the correct index value ' + idx );
+					strictEqual( l.index, idx, '.each() is using the correct index value ' + idx );
 				});
 
 				l.each( function(){
