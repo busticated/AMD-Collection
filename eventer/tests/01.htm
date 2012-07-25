@@ -7,6 +7,16 @@
 
 	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
 	<script>
+		Object.keys = Object.keys || function (o) {
+			var result = [];
+			for (var name in o) {
+				if (o.hasOwnProperty(name)) {
+					result.push(name);
+				}
+			}
+			return result;
+		};
+
 		require([ "../eventer" ], function( Eventer ) {
 			var evt1HasFired = false,
 				evt2HasFired = false,
@@ -17,18 +27,26 @@
 				evt3 = evtHub1.on( 'test-01', function( state ){ evt3HasFired = state; }),
 				evtHub2 = new Eventer();
 
-			test( "basics", function(){
-				var methods = [ 'on', 'off', 'emit' ];
+			test( 'environment', function(){
+				notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+			});
 
-				expect( 3 + ( methods.length * 2) );
+			test( 'module has the correct methods & properties', function(){
+				var l,
+					expected = {
+						'on': 'function',
+						'off': 'function',
+						'emit': 'function',
+						'getEventCache': 'function',
+						'__eventCache': 'object'
+					};
 
-				ok( window.location.protocol !== 'file:', 'Not running tests under the "file:" protocol' );
-				strictEqual( evtHub1.length, methods.lenth, 'evtHub1 has the correct number of methods' );
-				strictEqual( evtHub2.length, methods.lenth, 'evtHub1 has the correct number of methods' );
+				expect( 1 + Object.keys( expected ).length );
 
-				for ( var method in methods ){
-					strictEqual( typeof evtHub1[ methods[ method ] ], 'function', 'evtHub1 includes the "' + methods[ method ] + '" method' );
-					strictEqual( typeof evtHub2[ methods[ method ] ], 'function', 'evtHub2 includes the "' + methods[ method ] + '" method' )
+				strictEqual( Object.keys( Eventer.prototype ).length + Object.keys( evtHub1 ).length, Object.keys( expected ).length, 'all ' + Object.keys( expected ).length + ' methods have been identified' );
+
+				for ( var prop in expected ) {
+					strictEqual( typeof evtHub1[ prop ], expected[ prop ], 'module includes the "' + prop + '" method / property' );
 				}
 			});
 
@@ -140,10 +158,10 @@
 				hub.on( 'chongo', function( data ){
 					strictEqual( data, true, '2nd event callback ran' );
 					strictEqual( wasFired, false, '1st event callback was removed' );
-					strictEqual( hub.__getEventCache().chongo.length, 1, 'after removing callback, event queue has the correct number of callbacks' );
+					strictEqual( hub.getEventCache().chongo.length, 1, 'after removing callback, event queue has the correct number of callbacks' );
 				});
 
-				strictEqual( hub.__getEventCache().chongo.length, 2, 'before removing callback, event queue has the correct number of callbacks' );
+				strictEqual( hub.getEventCache().chongo.length, 2, 'before removing callback, event queue has the correct number of callbacks' );
 				myEvent.off();
 
 				hub.emit( 'chongo', true );

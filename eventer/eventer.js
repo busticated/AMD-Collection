@@ -3,22 +3,22 @@
 define(function(){
     'use strict';
 
-    var eventCache = {};
-
     var Eventer = function(){
         if ( ! ( this instanceof Eventer ) ){
             return new Eventer();
         }
+
+        this.__eventCache = {};
     };
 
     //add an event and callback
     Eventer.prototype.on = function( eventName, callback ){
         var self = this;
-        if ( ! eventCache[ eventName ] ) {
-            eventCache[ eventName ] = [];
+        if ( ! this.__eventCache[ eventName ] ) {
+            this.__eventCache[ eventName ] = [];
         }
 
-        eventCache[ eventName ].push( callback );
+        this.__eventCache[ eventName ].push( callback );
 
         //simple version - just return an event object
         //return [ eventName, callback ];
@@ -42,29 +42,29 @@ define(function(){
     Eventer.prototype.off = function( eventHandle ){
         var eventName = eventHandle[ 0 ];
 
-        if ( ! eventCache[ eventName ] ){
+        if ( ! this.__eventCache[ eventName ] ){
             return;
         }
 
-        for ( var i = 0; i < eventCache[ eventName ].length; i = i + 1 ) {
-            if ( eventCache[ eventName ][ i ] === eventHandle[ 1 ] ){
-                eventCache[ eventName ].splice( i, 1 );
+        for ( var i = 0; i < this.__eventCache[ eventName ].length; i = i + 1 ) {
+            if ( this.__eventCache[ eventName ][ i ] === eventHandle[ 1 ] ){
+                this.__eventCache[ eventName ].splice( i, 1 );
             }
         }
     };
 
     Eventer.prototype.emit = function( eventName, data ){
-        if ( ! eventCache[ eventName ] ){
+        if ( ! this.__eventCache[ eventName ] ){
             return;
         }
 
-        for ( var i = 0; i < eventCache[ eventName ].length; i = i + 1 ) {
-            eventCache[ eventName ][ i ].call( this, data );
+        for ( var i = 0; i < this.__eventCache[ eventName ].length; i = i + 1 ) {
+            this.__eventCache[ eventName ][ i ].call( this, data );
         }
     };
 
-    Eventer.prototype.__getEventCache = function() {
-        return eventCache;
+    Eventer.prototype.getEventCache = function() {
+        return this.__eventCache;
     };
 
     // public api /////////////////////////////////////////////////////////////
