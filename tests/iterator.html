@@ -2,22 +2,15 @@
 <head>
 	<title>Iterator AMD Module: Test Suite</title>
 
-	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
 
-	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
 	<script>
-		Object.keys = Object.keys || function (o) {
-			var result = [];
-			for (var name in o) {
-				if (o.hasOwnProperty(name)) {
-					result.push(name);
-				}
-			}
-			return result;
-		};
-
-		require([ '../iterator' ], function( Iterator ) {
+		require([ '../src/iterator' ], function( Iterator ) {
+			QUnit.config.testTimeout = 2000;
 
 			module("Iterator", {
 				setup: function() {
@@ -31,32 +24,32 @@
 
 			test( 'module has the correct methods & properties', function(){
 				var l,
-					expected = {
-						'has': 'function',
-						'hasNext': 'function',
-						'hasPrev': 'function',
-						'isFirst': 'function',
-						'isLast': 'function',
-						'get': 'function',
-						'getNext': 'function',
-						'getPrev': 'function',
-						'current': 'function',
-						'next': 'function',
-						'prev': 'function',
-						'first': 'function',
-						'last': 'function',
-						'indexOf': 'function',
-						'setIndex': 'function',
-						'loop': 'function',
-						'add': 'function',
-						'remove': 'function',
-						'update': 'function',
-						'filter': 'function',
-						'each': 'function',
-						'collection': 'object',
-						'index': 'number',
-						'length': 'number'
-					};
+				expected = {
+					'has': 'function',
+					'hasNext': 'function',
+					'hasPrev': 'function',
+					'isFirst': 'function',
+					'isLast': 'function',
+					'get': 'function',
+					'getNext': 'function',
+					'getPrev': 'function',
+					'current': 'function',
+					'next': 'function',
+					'prev': 'function',
+					'first': 'function',
+					'last': 'function',
+					'indexOf': 'function',
+					'setIndex': 'function',
+					'loop': 'function',
+					'add': 'function',
+					'remove': 'function',
+					'update': 'function',
+					'filter': 'function',
+					'each': 'function',
+					'collection': 'object',
+					'index': 'number',
+					'length': 'number'
+				};
 
 				l = Iterator( [ 'fe', 'fi', 'fo', 'fum' ] );
 
@@ -107,22 +100,22 @@
 				);
 			});
 
-			test( 'property - .idx', function(){
+			test( 'property - .index', function(){
 				var l = Iterator( [ 1, 2, 3, 4, 5 ] );
 
-				strictEqual( l.index, 0, 'initial .idx value is correct' );
+				strictEqual( l.index, 0, 'initial .index value is correct' );
 				l.last();
-				strictEqual( l.index, 4, '.idx value is correct after calling .last()' );
+				strictEqual( l.index, 4, '.index value is correct after calling .last()' );
 				l.first();
-				strictEqual( l.index, 0, '.idx value is correct after calling .first()' );
+				strictEqual( l.index, 0, '.index value is correct after calling .first()' );
 				l.next();
-				strictEqual( l.index, 1, '.idx value is correct after calling .next()' );
+				strictEqual( l.index, 1, '.index value is correct after calling .next()' );
 				l.prev();
-				strictEqual( l.index, 0, '.idx value is correct after calling .prev()' );
+				strictEqual( l.index, 0, '.index value is correct after calling .prev()' );
 				l.setIndex( 3 );
-				strictEqual( l.index, 3, '.idx value is correct after calling .setIndex()' );
+				strictEqual( l.index, 3, '.index value is correct after calling .setIndex()' );
 				l.get( 3 );
-				strictEqual( l.index, 3, '.idx value should not change after calling .get()' );
+				strictEqual( l.index, 3, '.index value should not change after calling .get()' );
 			});
 
 			test( 'property - .length', function(){
@@ -300,7 +293,7 @@
 				var l;
 
 				l = Iterator( [ 1, 2, 3, 4, 5 ] );
-				
+
 				l.last();
 				strictEqual( l.isLast(), true, 'current item is last item' );
 				l.first();
@@ -311,7 +304,7 @@
 				var l;
 
 				l = Iterator( [ 1, 2, 3, 4, 5 ] );
-				
+
 				strictEqual( l.isFirst(), true, 'current item is first item' );
 				l.last();
 				strictEqual( l.isLast(), true, 'current item is last item' );
@@ -319,9 +312,9 @@
 
 			test( 'method - .indexOf()', function(){
 				var l,
-					first = { first: 'first' },
-					second = { second: 'second' },
-					third = { third: 'third' };
+				first = { first: 'first' },
+				second = { second: 'second' },
+				third = { third: 'third' };
 
 				l = Iterator( [ 0, 'a', 'b', 'c', 'd', 'e', 'f' ] );
 
@@ -423,7 +416,7 @@
 
 			test( 'method - .filter()', function(){
 				var l,
-					newL;
+				newL;
 
 				l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 ] );
 
@@ -438,11 +431,11 @@
 
 			test( 'method - .each()', function(){
 				var l,
-					localObj = { iAm: "localObj" },
-					passes = true,
-					callback = function(){
-						strictEqual( )
-					};
+				localObj = { iAm: "localObj" },
+				passes = true,
+				callback = function(){
+					strictEqual( )
+				};
 
 				window.iAm = "globalObj";
 

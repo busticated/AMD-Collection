@@ -2,35 +2,36 @@
 <head>
 	<title>KCode AMD Module: Test Suite</title>
 
-	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
 
-	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
 	<script>
-		require([ "../kcode" ], function( kcode ) {
+		require([ "../src/kcode" ], function( kcode ) {
+			//setup & initialize
+			test( "setup & initialize", function(){
 
-				//setup & initialize
-				test( "setup & initialize", function(){
+				//confirm expected methods
+				ok( typeof kcode === 'function', 'kcode is loaded' );
 
-					//confirm expected methods
-					ok( typeof kcode === 'function', 'kcode is loaded' );
+				//test random codes
+				var names = [ '0', 'd', 'enter', '2', '9', 'l', 'semi-colon', 'w', 'left', 'right' ],
+				codes = [ 87, 51, 186, 190, 37, 34, 17, 13, 9, 46, 49, 188 ];
 
-					//test random codes
-					var names = [ '0', 'd', 'enter', '2', '9', 'l', 'semi-colon', 'w', 'left', 'right' ],
-					codes = [ 87, 51, 186, 190, 37, 34, 17, 13, 9, 46, 49, 188 ];
-
-					//confirm codes
-					for ( var code in codes ){
+				//confirm codes
+				for ( var code in codes ){
 					strictEqual( kcode( kcode( codes[ code ] ) ), codes[ code ], 'key name "' + kcode( codes[ code ] ) + '" was matched to correct code');
 					// ok( kcode( kcode( codes[ code ] ) ) === codes[ code ], 'key code "' + codes[ code ] + '" matches the kcode value of ' + kcode( kcode( codes[ code ] ) ) );
-					}
+				}
 
-					//confirm ids
-					for ( var name in names ){
+				//confirm ids
+				for ( var name in names ){
 					strictEqual( kcode( kcode( names [ name ] ) ), names[ name ], 'key code ' + kcode( names [ name ] ) + ' was matched to correct name');
 					// ok( kcode( kcode( ids [ id ] ) ) === ids[ id ], 'key id "' + ids[ id ] + '" matches the kcode id of ' + kcode( kcode( ids[ id ] ) ) );
-					}
-					});
+				}
+			});
 		});
 </script>
 </head>

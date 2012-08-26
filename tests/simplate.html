@@ -2,20 +2,18 @@
 <head>
 	<title>Simplate AMD Module: Test Suite</title>
 
-	<meta http-equiv="Expires" CONTENT="Mon, 06 Jan 1990 00:00:01 GMT" />
-	<meta http-equiv="PRAGMA" CONTENT="NO-CACHE" />
-	<meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE" />
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
 
-	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
-
-	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
 	<script>
 		//setup QUnit
 		//QUnit.config.testTimeout = 2000;
 		//QUnit.config.reorder = false;
 
-		require([ "../simplate" ], function( simplate ) {
+		require([ "../src/simplate" ], function( simplate ) {
 			var model = {
 					name: 'johnny',
 					age: 59,

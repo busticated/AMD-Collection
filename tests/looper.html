@@ -1,12 +1,15 @@
 <!doctype html>
 <head>
 	<title>Looper AMD Module: Test Suite</title>
-	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
 
-	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
 	<script>
-		require([ '../looper' ], function( looper ) {
+		require([ '../src/looper' ], function( looper ) {
 
 			test( "basics", function(){
 				var methods = [ 'isRunning', 'start', 'stop', 'rate', 'add', 'remove', 'clear' ];

@@ -2,169 +2,108 @@
 <head>
 	<title>Eventer AMD Module: Test Suite</title>
 
-	<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen">
-	<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
 
-	<script type="text/javascript" src="../../node_modules/requirejs/require.js"></script>
 	<script>
-		Object.keys = Object.keys || function (o) {
-			var result = [];
-			for (var name in o) {
-				if (o.hasOwnProperty(name)) {
-					result.push(name);
-				}
-			}
-			return result;
-		};
+		QUnit.config.testTimeout = 2000;
 
-		require([ "../eventer" ], function( Eventer ) {
-			var evt1HasFired = false,
-				evt2HasFired = false,
-				evt3HasFired = false,
-				evtHub1 = new Eventer(),
-				evt1 = evtHub1.on( 'test-01', function( state ){ evt1HasFired = state; }),
-				evt2 = evtHub1.on( 'test-02', function( state ){ evt2HasFired = state; }),
-				evt3 = evtHub1.on( 'test-01', function( state ){ evt3HasFired = state; }),
-				evtHub2 = new Eventer();
+		test( 'test are running in a compatible environment', function(){
+			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+		});
 
-			test( 'environment', function(){
-				notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
-			});
+		module('Using standard setup & teardown', testing.setupAndTeardown);
+		test('confirm module methods & properties', function(){
+			testing.req.given(['src/eventer'], function (Eventer) {
+				var evtr = new Eventer();
+				var expected = {
+					'on': 'function',
+					'off': 'function',
+					'emit': 'function',
+					'getEventHandlers': 'function',
+					'__handlers': 'object'
+				};
 
-			test( 'module has the correct methods & properties', function(){
-				var l,
-					expected = {
-						'on': 'function',
-						'off': 'function',
-						'emit': 'function',
-						'getEventCache': 'function',
-						'__eventCache': 'object'
-					};
+				expect(1 + Object.keys(expected).length);
 
-				expect( 1 + Object.keys( expected ).length );
-
-				strictEqual( Object.keys( Eventer.prototype ).length + Object.keys( evtHub1 ).length, Object.keys( expected ).length, 'all ' + Object.keys( expected ).length + ' methods have been identified' );
+				strictEqual( Object.keys( Eventer.prototype ).length + Object.keys( evtr ).length, Object.keys( expected ).length, 'all ' + Object.keys( expected ).length + ' methods have been identified' );
 
 				for ( var prop in expected ) {
-					strictEqual( typeof evtHub1[ prop ], expected[ prop ], 'module includes the "' + prop + '" method / property' );
+					strictEqual( typeof evtr[ prop ], expected[ prop ], 'module includes the "' + prop + '" method / property' );
 				}
 			});
+		});
 
-			//setup & initialize
-			test( "setup and initialize", function() {
-				//evt1 setup
-				strictEqual( typeof evt1, "object", "Event 1 is an object");
-				strictEqual( typeof evt1._handle[ 0 ], "string", "Event 1 has an event name" );
-				strictEqual( typeof evt1._handle[ 1 ], "function", "Event 1 has a callback" );
-				strictEqual( typeof evt1.off, "function", "Event 1 has an 'off' method" );
-				strictEqual( typeof evt1.run, "function", "Event 1 has a 'run' method" );
-				strictEqual( evt1HasFired, false, "Event 1 has not been triggered" );
+		test('when registering an event handler with an event emitter instance', function() {
+			testing.req.given(['src/eventer'], function (Eventer) {
+				var eventHub1 = new Eventer();
+				var eventHub2 = new Eventer();
 
-				//evt2 setup
-				strictEqual( typeof evt2, "object", "Event 2 is an object" );
-				strictEqual( typeof evt2._handle[ 0 ], "string", "Event 2 has an event name" );
-				strictEqual( typeof evt2._handle[ 1 ], "function", "Event 2 has a callback" );
-				strictEqual( typeof evt2.off, "function", "Event 2 has an 'off' method" );
-				strictEqual( typeof evt2.run, "function", "Event 2 has a 'run' method" );
-				strictEqual( evt2HasFired, false, "Event 2 has not been triggered" );
+				var evt1 = eventHub1.on('test', function (){});
+				ok(testing.utils.isArray(evt1), '"evt1" is an array');
+				strictEqual(typeof evt1[0], 'string', '"evt1" has an event name');
+				strictEqual(typeof evt1[1], 'function', '"evt1" has a callback');
 
-				//evt3 setup
-				strictEqual( typeof evt3, "object", "Event 3 is an object" );
-				strictEqual( typeof evt3._handle[ 0 ], "string", "Event 3 has an event name" );
-				strictEqual( typeof evt3._handle[ 1 ], "function", "Event 3 has a callback" );
-				strictEqual( typeof evt3.off, "function", "Event 3 has an 'off' method" );
-				strictEqual( typeof evt3.run, "function", "Event 3 has a 'run' method" );
-				strictEqual( evt3HasFired, false, "Event 3 has not been triggered" );
+				var evt2 = eventHub2.on('test', function (){});
+				ok(testing.utils.isArray(evt2), '"evt2" is an array');
+				strictEqual(typeof evt1[0], 'string', '"evt2" has an event name');
+				strictEqual(evt1[0], 'test', '"evt2" uses the correct event name');
+				strictEqual(typeof evt1[1], 'function', '"evt2" has a callback');
+
+				eventHub1.on('test', function (){});
+				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, '"eventHub1" has correct number of event handlers registered');
+
+				eventHub2.on('test', function (){});
+				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, '"eventHub2" has correct number of event handlers registered');
 			});
+		});
 
-			test( "emit events", function() {
-				var testVal = "Event Has Been emitted";
+		test('when emitting events on an event emitter instance', function() {
+			testing.req.given(['src/eventer'], function (Eventer) {
+				var eventHub1 = new Eventer();
+				var eventHub2 = new Eventer();
+				var eventHandlers = {
+					one: function () {},
+					two: function () {}
+				};
+				var expectedEventData = { foo: 'foo', bar: 'bar' };
 
-				evt1.run( true );
-				evt2.run( true );
-				evt3.run( true );
+				testing.sandbox.spy(eventHandlers, 'one');
+				testing.sandbox.spy(eventHandlers, 'two');
 
-				ok( evt1HasFired === true, "Callback for Event 1 was successfully fired via .run() method" );
-				ok( evt2HasFired === true, "Callback for Event 2 was successfully fired via .run() method" );
-				ok( evt3HasFired === true, "Callback for Event 3 was successfully fired via .run() method" );
+				eventHub1.on('test', eventHandlers.one);
+				eventHub2.on('itsatest', eventHandlers.two);
+				eventHub1.emit('test', expectedEventData);
+				eventHub2.emit('itsatest', true);
 
-				evtHub1.emit( "test-01", testVal );
-
-				ok( evt1HasFired === testVal && evt3HasFired === testVal, "Callbacks for Event 1 & Event 3 were fired via main event emit method" );
-				ok( evt2HasFired === true, "Callback for Event 2 was not fired" );
-
-				evtHub1.emit( "test-02", testVal );
-
-				ok( evt2HasFired === testVal, "Callback for Event 2 was fired via main event emit method" );
+				ok(eventHandlers.one.calledOnce, 'first event handler is called once');
+				deepEqual(eventHandlers.one.args[0][0], expectedEventData, 'event handler for "test" event is called with the correct data');
+				ok(eventHandlers.two.calledOnce, 'second event handler is called once');
+				strictEqual(eventHandlers.two.args[0][0], true, 'callback ran successfully');
 			});
+		});
 
-			test( "remove event listeners", function() {
-				evt1HasFired = false;
-				evt2HasFired = false;
-				evt3HasFired = false;
+		test('when removing event handlers from an event emitter instance', function() {
+			testing.req.given(['src/eventer'], function (Eventer) {
+				var eventHub1 = new Eventer();
+				var fn = function() {
+					throw new Error('event handler should not have been run');
+				};
 
-				evt1.off();
-				evtHub1.off( evt3._handle );
+				var evt1 = eventHub1.on('test', fn);
+				eventHub1.on('test', fn);
+				eventHub1.on('test', function() {});
 
-				evtHub1.emit( "test-01", true );
+				eventHub1.off(evt1);
+				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, 'correct event handler for "test" event is unregistered');
 
-				ok( evt1HasFired === false, "Event 1 was successfully removed via .off() method" );
-				ok( evt3HasFired === false, "Event 3 was successfully removed via main event off method" );
+				eventHub1.off(['test', fn]);
+				strictEqual(eventHub1.getEventHandlers()['test'].length, 1, 'correct event handler for "test" event is unregistered');
 
-				evtHub1.emit( "test-02", true );
-
-				ok( evt2HasFired === true, "Callback for Event 2 was fired via main event emit method" );
-
-				evtHub1.off( evt2._handle );
-
-				evtHub1.emit( "test-02", false );
-
-				ok( evt2HasFired === true, "Event 2 was successfully removed via main event off method" );
-
-			});
-
-			test( 'event callbacks receive event data', function(){
-				var hub = Eventer(),
-					evtData = {
-						foo: 'bar',
-						baz: [ 1, 2, 3, 4 ]
-					};
-
-				hub.on( 'testevent', function( data ){
-					ok( true, '1st event callback ran' );
-					strictEqual( typeof data, 'object', '1st event receive correct data object' );
-				});
-				hub.on( 'testevent', function( data ){
-					ok( true, '2nd event callback ran' );
-					strictEqual( data.foo, 'bar', '2nd event received correct data object property' );
-				});
-				hub.on( 'testevent', function( data ){
-					ok( true, '3rd event callback ran' );
-					strictEqual( data.baz[ 1 ], 2, '3rd event received correct data object property' );
-				});
-
-				hub.emit( 'testevent', evtData );
-			});
-
-			test( 'individual event callbacks can be removed', function(){
-				var hub = new Eventer(),
-					wasFired = false,
-					myEvent;
-
-				myEvent = hub.on( 'chongo', function( data ){
-					wasFired = data;
-				});
-
-				hub.on( 'chongo', function( data ){
-					strictEqual( data, true, '2nd event callback ran' );
-					strictEqual( wasFired, false, '1st event callback was removed' );
-					strictEqual( hub.getEventCache().chongo.length, 1, 'after removing callback, event queue has the correct number of callbacks' );
-				});
-
-				strictEqual( hub.getEventCache().chongo.length, 2, 'before removing callback, event queue has the correct number of callbacks' );
-				myEvent.off();
-
-				hub.emit( 'chongo', true );
+				eventHub1.emit('test');
 			});
 		});
 	</script>
