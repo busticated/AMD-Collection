@@ -1,0 +1,334 @@
+<!doctype html>
+<head>
+	<title>Asserter Module Test Suite</title>
+
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
+	<script>
+		QUnit.config.testTimeout = 2000;
+
+		var assertIsExpected = function( fn, notFn, name, exp ){
+			for ( var i = 0, l = exp.length; i < l; i += 1 ){
+				var msg = exp[ i ].test + ' is ' + ( exp[ i ].val ? '' : 'not' ) + ' a ' + name;
+				strictEqual( fn( exp[ i ].test ), exp[ i ].val, msg );
+				strictEqual( notFn( exp[ i ].test ), ! exp[ i ].val, '...and assert.is.not.<type> returns ' + ( notFn( exp[ i ].test ) ? 'true' : 'false' ) );
+			}
+			expect( exp.length * 2 );
+		};
+
+		test('test are running in a compatible environment', function(){
+			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+		});
+
+		module( 'With a new RequireJS context and sinon sandbox :', {
+			setup: function(){
+				testing.setupAndTeardown.setup();
+			},
+			teardown: function(){
+				testing.setupAndTeardown.teardown();
+			}
+		});
+
+		test('confirm module methods & properties', function(){
+			testing.req.given( [ 'src/asserter' ], function ( module ) {
+				var expected = {
+					is: 'object'
+				};
+
+				for ( var prop in expected ) {
+					strictEqual( typeof module[ prop ], expected[ prop ], 'module includes the "' + prop + '" method / property' );
+				}
+				strictEqual( Object.keys( module ).length, Object.keys(expected).length, 'all methods have been identified' );
+				expect( 1 + Object.keys( expected ).length );
+			});
+		});
+
+		test('when calling .is.bool() and .is.not.bool()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: true, val: true },
+					{ test: false, val: true },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: 0, val: false },
+					{ test: 1, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.bool, assert.is.not.bool, 'boolean', expected );
+			});
+		});
+
+		test('when calling .is.string() and .is.not.string()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: 'foo', val: true },
+					{ test: '', val: true },
+					{ test: true, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.string, assert.is.not.string, 'string', expected );
+			});
+		});
+
+		test('when calling .is.number() and .is.not.number()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: 666, val: true },
+					{ test: 13.666, val: true },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.number, assert.is.not.number, 'number', expected );
+			});
+		});
+
+		test('when calling .is.object() and .is.not.object()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: {}, val: true },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.object, assert.is.not.object, 'object', expected );
+			});
+		});
+
+		test('when calling .is.array() and .is.not.array()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: [], val: true },
+					{ test: {}, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.array, assert.is.not.array, 'array', expected );
+			});
+		});
+
+		test('when calling .is.fn() and .is.not.fn()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: function(){}, val: true },
+					{ test: [], val: false },
+					{ test: {}, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.fn, assert.is.not.fn, 'function', expected );
+			});
+		});
+
+		test('when calling .is.method() and .is.not.method()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: function(){}, val: true },
+					{ test: [], val: false },
+					{ test: {}, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.method, assert.is.not.method, 'method', expected );
+			});
+		});
+
+		test('when calling .is.property() and .is.not.propery()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: 666, val: true },
+					{ test: 13.666, val: true },
+					{ test: 'foo', val: true },
+					{ test: '', val: true },
+					{ test: true, val: true },
+					{ test: [], val: true },
+					{ test: {}, val: true },
+					{ test: undef, val: true },
+					{ test: null, val: true },
+					{ test: NaN, val: true },
+					{ test: function(){}, val: false }
+				];
+
+				assertIsExpected( assert.is.property, assert.is.not.property, 'property', expected );
+			});
+		});
+
+		test('when calling .is.undefined() and .is.not.undefined()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: undef, val: true },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: [], val: false },
+					{ test: {}, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false },
+					{ test: function(){}, val: false }
+				];
+
+				assertIsExpected( assert.is.undefined, assert.is.not.undefined, 'undefined', expected );
+			});
+		});
+
+		test('when calling .is.null() and .is.not.null()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: null, val: true },
+					{ test: undef, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: [], val: false },
+					{ test: {}, val: false },
+					{ test: NaN, val: false },
+					{ test: function(){}, val: false }
+				];
+
+				assertIsExpected( assert.is.null, assert.is.not.null, 'null', expected );
+			});
+		});
+
+		test('when calling .is.nullOrUndefined() and .is.not.nullOrUndefined()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: null, val: true },
+					{ test: undef, val: true },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: [], val: false },
+					{ test: {}, val: false },
+					{ test: NaN, val: false },
+					{ test: function(){}, val: false }
+				];
+
+				assertIsExpected( assert.is.nullOrUndefined, assert.is.not.nullOrUndefined, 'nullOrUndefined', expected );
+			});
+		});
+
+		test('when calling .is.NaN() and .is.not.NaN()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: NaN, val: true },
+					{ test: null, val: true },
+					{ test: undef, val: true },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: true },
+					{ test: '', val: true },
+					{ test: true, val: true },
+					{ test: [], val: true },
+					{ test: {}, val: true },
+					{ test: function(){}, val: true }
+				];
+
+				assertIsExpected( assert.is.NaN, assert.is.not.NaN, 'NaN', expected );
+			});
+		});
+
+		test('when calling .is.not.<type>()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+
+				ok( ! assert.is.not.bool( true ), 'boolean type is properly identified' );
+				ok( ! assert.is.not.string( 'foo' ), 'string type is properly identified' );
+				ok( ! assert.is.not.number( 666 ), 'number type is properly identified' );
+				ok( ! assert.is.not.object( {} ), 'object type is properly identified' );
+				ok( ! assert.is.not.array( [] ), 'object type is properly identified' );
+				ok( ! assert.is.not.fn( function(){} ), 'function type is properly identified' );
+				ok( ! assert.is.not.method( function(){} ), 'method is properly identified' );
+				ok( ! assert.is.not.property( 'bar' ), 'property is properly identified' );
+				ok( ! assert.is.not.undefined( undef ), 'undefined type is properly identified' );
+				ok( ! assert.is.not.null( null ), 'null type is properly identified' );
+				ok( ! assert.is.not.nullOrUndefined( null ), 'null or undefined value is properly identified' );
+				ok( ! assert.is.not.NaN( parseInt( 'fssh' ) ), 'NaN type is properly identified' );
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">Asserter Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">
+	</div>
+</body>
+</html>
