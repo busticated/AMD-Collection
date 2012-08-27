@@ -33,17 +33,59 @@
 			}
 		});
 
+		var findChildren = function( obj, fn ){
+			for ( var prop in obj ){
+				fn( prop, obj[ prop ] );
+				if ( typeof obj[ prop ] === 'object' ){
+					findChildren( obj[ prop ], fn );
+				}
+			}
+		};
+
 		test('confirm module methods & properties', function(){
 			testing.req.given( [ 'src/asserter' ], function ( module ) {
 				var expected = {
-					is: 'object'
+					is: 'object',
+					not: 'object',
+					bool: 'function',
+					string: 'function',
+					emptyString: 'function',
+					number: 'function',
+					object: 'function',
+					array: 'function',
+					fn: 'function',
+					method: 'function',
+					property: 'function',
+					undefined: 'function',
+					null: 'function',
+					nullOrUndefined: 'function',
+					NaN: 'function'
 				};
 
-				for ( var prop in expected ) {
-					strictEqual( typeof module[ prop ], expected[ prop ], 'module includes the "' + prop + '" method / property' );
-				}
-				strictEqual( Object.keys( module ).length, Object.keys(expected).length, 'all methods have been identified' );
-				expect( 1 + Object.keys( expected ).length );
+				findChildren( module, function( key, val ){
+					strictEqual( typeof val, expected[ key ], 'module includes the "' + key + '" method / property' );
+				});
+
+				expect( Object.keys( expected ).length * 2 - 2 ); // all methods are available under .is and .is.not namespaces, whereas .is and .not themselves are unique
+			});
+		});
+
+		test('when calling .is.<type>()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+
+				ok( assert.is.bool( true ), '.bool( true ) returns true' );
+				ok( assert.is.string( 'foo' ), '.string( \'foo\' ) returns true' );
+				ok( assert.is.number( 666 ), '.number( 13 ) returns true' );
+				ok( assert.is.object( {} ), '.object( {} ) returns true' );
+				ok( assert.is.array( [] ), '.array( [] ) returns true' );
+				ok( assert.is.fn( function(){} ), '.fn( function(){} ) returns true' );
+				ok( assert.is.method( function(){} ), '.method( function(){} ) returns true' );
+				ok( assert.is.property( 'bar' ), '.property( < anything except a function > ) returns true' );
+				ok( assert.is.undefined( undef ), '.undefined() returns true' );
+				ok( assert.is.null( null ), '.null( null ) returns true' );
+				ok( assert.is.nullOrUndefined( null ), '.nullOrUndefined( < null / undefined > ) returns true' );
+				ok( assert.is.NaN( parseInt( 'fssh' ) ), '.NaN( parseInt( \'fssh\' ) ) returns true' );
 			});
 		});
 
@@ -89,6 +131,27 @@
 				];
 
 				assertIsExpected( assert.is.string, assert.is.not.string, 'string', expected );
+			});
+		});
+
+		test('when calling .is.emptyString() and .is.not.emptyString()', function() {
+			testing.req.given( [ 'src/asserter' ], function ( assert ) {
+				var undef;
+				var expected = [
+					{ test: 'foo', val: false },
+					{ test: '', val: true },
+					{ test: true, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( assert.is.emptyString, assert.is.not.emptyString, 'emptyString', expected );
 			});
 		});
 
@@ -299,25 +362,6 @@
 				];
 
 				assertIsExpected( assert.is.NaN, assert.is.not.NaN, 'NaN', expected );
-			});
-		});
-
-		test('when calling .is.not.<type>()', function() {
-			testing.req.given( [ 'src/asserter' ], function ( assert ) {
-				var undef;
-
-				ok( ! assert.is.not.bool( true ), 'boolean type is properly identified' );
-				ok( ! assert.is.not.string( 'foo' ), 'string type is properly identified' );
-				ok( ! assert.is.not.number( 666 ), 'number type is properly identified' );
-				ok( ! assert.is.not.object( {} ), 'object type is properly identified' );
-				ok( ! assert.is.not.array( [] ), 'object type is properly identified' );
-				ok( ! assert.is.not.fn( function(){} ), 'function type is properly identified' );
-				ok( ! assert.is.not.method( function(){} ), 'method is properly identified' );
-				ok( ! assert.is.not.property( 'bar' ), 'property is properly identified' );
-				ok( ! assert.is.not.undefined( undef ), 'undefined type is properly identified' );
-				ok( ! assert.is.not.null( null ), 'null type is properly identified' );
-				ok( ! assert.is.not.nullOrUndefined( null ), 'null or undefined value is properly identified' );
-				ok( ! assert.is.not.NaN( parseInt( 'fssh' ) ), 'NaN type is properly identified' );
 			});
 		});
 	</script>

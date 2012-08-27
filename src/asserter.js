@@ -3,7 +3,8 @@
 define(function () {
     'use strict';
 
-    var asrt = {};
+    var asrt = {},
+        not = {};
 
     asrt.is = {
         bool: function( b ){
@@ -11,6 +12,9 @@ define(function () {
         },
         string: function( s ){
             return typeof s === 'string';
+        },
+        emptyString: function( s ){
+            return typeof s === 'string' && s.length === 0;
         },
         number: function( n ){
             return typeof n === 'number' && asrt.is.not.NaN( n );
@@ -40,21 +44,21 @@ define(function () {
             return n == null;
         },
         NaN: function( _ ){
-            return isNaN( _ );
+            return asrt.is.null( _ ) || asrt.is.array( _ ) || asrt.is.bool( _ ) || asrt.is.emptyString( _ ) || isNaN( _ );
         }
     };
 
-    asrt.is.not = {};
-
     for ( var prop in asrt.is ){
         if ( asrt.is.hasOwnProperty( prop )){
-            asrt.is.not[ prop ] = (function( p ) {
+            not[ prop ] = (function( p ) {
                 return function( x ){
                     return ! asrt.is[ p ].call( asrt.is, x );
                 };
             }( prop ));
         }
     }
+
+    asrt.is.not = not;
 
     return asrt;
 });
