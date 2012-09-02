@@ -12,6 +12,26 @@
 		require([ '../src/iterator' ], function( Iterator ) {
 			QUnit.config.testTimeout = 2000;
 
+			var itemFactory = function( count ){
+				var items = [],
+				id;
+
+				while ( count ){
+					id = Math.floor( Math.random() * (1000 - 0 + 1) + 0 );
+					items.push({
+						id: id,
+						title: 'Item ' + id,
+						greet: function(){
+							return this.title;
+						}
+					});
+
+					count -= 1;
+				}
+
+				return items;
+			};
+
 			module("Iterator", {
 				setup: function() {
 					strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
@@ -44,6 +64,8 @@
 					'add': 'function',
 					'remove': 'function',
 					'update': 'function',
+					'replace': 'function',
+					'empty': 'function',
 					'filter': 'function',
 					'each': 'function',
 					'collection': 'object',
@@ -406,12 +428,35 @@
 
 				l = Iterator( [ 'a', 'b', 'c' ] );
 
-				l.update( 0, 'b' );
-				l.update( 2, 'd' );
-				l.update( 1, 'a' );
+				l.update(  0, 'b' );
+				l.update(  2, 'd' );
+				l.update(  1, 'a' );
 
 				strictEqual( l.collection.join( '' ), 'bad', 'target items updated properly' );
-				raises( function(){ l.update( 'nope', 666 ) }, 'updating an unknown index throws an error' );
+				raises( function(){ l.update( 666, 'nope' ) }, 'updating an unknown index throws an error' );
+			});
+
+			test( 'method - .replace()', function(){
+				var l;
+
+				l = Iterator( [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ] );
+
+				l.replace( 2, [ 'x', 'x', 'x' ] );
+
+				strictEqual( l.collection.join( '' ), 'abxxxfg', 'target items replaced' );
+				raises( function(){ l.replace( 666, [ 'nope' ] ) }, 'replacing an unknown index throws an error' );
+			});
+
+			test( 'method - .empty()', function(){
+				var l;
+
+				l = Iterator( [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ] );
+
+				l.empty();
+
+				strictEqual( l.length, 0, 'collection length is 0' );
+				ok( testing.utils.isArray( l.collection ), 'collection is an array' );
+				deepEqual( l.empty(), l, 'method is chainable' );
 			});
 
 			test( 'method - .filter()', function(){
@@ -463,6 +508,18 @@
 				});
 
 				ok( passes, 'calling .each() without a context argument sets context to window / global' );
+
+				l = new Iterator( itemFactory( 100000 ) );
+				var start = +( new Date() ),
+					end;
+
+				l.each(function( item, idx ){
+				    if ( idx === l.length - 1 ){
+					    end = +( new Date() );
+					}
+				});
+
+				ok( end - start < 5, 'calling .each() against a collection of 100k objects runs within the acceptable amount of time [ ran in: ' + (end - start) + ' ms ]' );
 			});
 		});
 	</script>

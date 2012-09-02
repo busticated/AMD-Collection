@@ -177,10 +177,22 @@ define( function(){
             this.collection[ index ] = item;
             return this;
         },
+        replace : function( fromIndex, items ){
+            fromIndex = fromIndex || 0;
+            for ( var i = 0, l = items.length; i < l; i += 1 ){
+                this.update( fromIndex++, items[ i ] );
+            }
+            return this;
+        },
+        empty: function(){
+            this.collection = [];
+            this.length = this.collection.length;
+            return this;
+        },
         filter : function( filter ){
             var newCollection = [];
             for ( var i = 0, l = this.length; i < l; i = i + 1 ){
-                if ( filter( this.collection[ i ] ) ){
+                if ( filter( this.collection[ i ], i ) ){
                     newCollection.push( this.collection[ i ] );
                 }
             }
