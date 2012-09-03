@@ -1,0 +1,90 @@
+<!doctype html>
+<head>
+	<title>Debouncer Module Test Suite</title>
+
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
+	<script>
+		QUnit.config.testTimeout = 2000;
+
+		test('test are running in a compatible environment', function(){
+			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+		});
+
+		module( 'With a new RequireJS context and sinon sandbox :', {
+			setup: function(){
+				testing.setupAndTeardown.setup();
+			},
+			teardown: function(){
+				testing.setupAndTeardown.teardown();
+			}
+		});
+
+		test('confirm module methods & properties', function(){
+			testing.req.given(['src/debouncer'], function ( module ) {
+				strictEqual( typeof module, 'function', 'module is a function' );
+				expect( 1 );
+			});
+		});
+
+		test('when debouncing', function() {
+			testing.req.given( [ 'src/debouncer' ], function ( debounce ) {
+				var i = 0;
+
+				var callCount = 0;
+				var testFn = debounce(function(){
+					callCount += 1;
+				}, 50 );
+
+				var testObj = {
+					name: 'xxx',
+					callCount: 0,
+					fn: debounce(function( name ){
+						this.callCount += 1;
+						this.name = name;
+					})
+				};
+
+				var assertFnCalledOnce = debounce(function(){
+					strictEqual( callCount, 1, 'debounced function runs once despite being called multiple times' );
+				}, 51 );
+
+				var assertFnCalledTwice = debounce(function(){
+					strictEqual( callCount, 2, 'debounced function uses correct delay time' );
+				}, 110 );
+
+				var assertObjCalledOnce = debounce(function(){
+					strictEqual( testObj.callCount, 1, 'debounced method runs once despite being called multiple times' );
+					strictEqual( testObj.name, 'jimmy', 'debounced method uses the correct context / "this" value' );
+					start();
+				}, 115 );
+
+				while (i++ < 8){
+					testFn();
+					testObj.fn( 'jimmy' );
+				}
+				setTimeout( testFn, 51 );
+
+				assertFnCalledOnce();
+				assertFnCalledTwice();
+				assertObjCalledOnce();
+				stop();
+				expect( 4 )
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">Debouncer Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">
+	</div>
+</body>
+</html>
