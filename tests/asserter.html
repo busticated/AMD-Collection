@@ -80,8 +80,8 @@
 				ok( assert.is.object( {} ), '.object( {} ) returns true' );
 				ok( assert.is.array( [] ), '.array( [] ) returns true' );
 				ok( assert.is.fn( function(){} ), '.fn( function(){} ) returns true' );
-				ok( assert.is.method( function(){} ), '.method( function(){} ) returns true' );
-				ok( assert.is.property( 'bar' ), '.property( < anything except a function > ) returns true' );
+				ok( assert.is.method( { key: function(){} }, 'key' ), '.method( { key: function(){} }, "key" ) returns true' );
+				ok( assert.is.property( { key: 'bar' }, 'key' ), '.property( { key: < anything except a function > }, "key" ) returns true' );
 				ok( assert.is.undefined( undef ), '.undefined() returns true' );
 				ok( assert.is.null( null ), '.null( null ) returns true' );
 				ok( assert.is.nullOrUndefined( null ), '.nullOrUndefined( < null / undefined > ) returns true' );
@@ -242,42 +242,102 @@
 		test('when calling .is.method() and .is.not.method()', function() {
 			testing.req.given( [ 'src/asserter' ], function ( assert ) {
 				var undef;
-				var expected = [
-					{ test: function(){}, val: true },
-					{ test: [], val: false },
-					{ test: {}, val: false },
-					{ test: 666, val: false },
-					{ test: 13.666, val: false },
-					{ test: 'foo', val: false },
-					{ test: '', val: false },
-					{ test: true, val: false },
-					{ test: undef, val: false },
-					{ test: null, val: false },
-					{ test: NaN, val: false }
-				];
+				var test = {
+					prop1: 'string',
+					prop2: 666,
+					prop3: null,
+					prop4: [],
+					prop5: {},
+					prop6: undef,
+					method: function(){}
+				};
 
-				assertIsExpected( assert.is.method, assert.is.not.method, 'method', expected );
+				strictEqual(
+					assert.is.method( test, 'prop1' ),
+					false && !assert.is.not.method( test, 'prop1' ),
+					'string type property is not a method'
+				);
+				strictEqual(
+					assert.is.method( test, 'prop2' ),
+					false && !assert.is.not.method( test, 'prop2' ),
+					'number type property is not a method'
+				);
+				strictEqual(
+					assert.is.method( test, 'prop3' ),
+					false && !assert.is.not.method( test, 'prop3' ),
+					'null property is not a method'
+				);
+				strictEqual(
+					assert.is.method( test, 'prop4' ),
+					false && !assert.is.not.method( test, 'prop4' ),
+					'array type property is not a method'
+				);
+				strictEqual(
+					assert.is.method( test, 'prop5' ),
+					false && !assert.is.not.method( test, 'prop5' ),
+					'object type property is not a method'
+				);
+				strictEqual(
+					assert.is.method( test, 'prop6' ),
+					false && !assert.is.not.method( test, 'prop6' ),
+					'undefined property is not a method'
+				);
+				strictEqual(
+					assert.is.method( test, 'method' ),
+					true && !assert.is.not.method( test, 'method' ),
+					'function type property is a method'
+				);
 			});
 		});
 
 		test('when calling .is.property() and .is.not.propery()', function() {
 			testing.req.given( [ 'src/asserter' ], function ( assert ) {
 				var undef;
-				var expected = [
-					{ test: 666, val: true },
-					{ test: 13.666, val: true },
-					{ test: 'foo', val: true },
-					{ test: '', val: true },
-					{ test: true, val: true },
-					{ test: [], val: true },
-					{ test: {}, val: true },
-					{ test: undef, val: true },
-					{ test: null, val: true },
-					{ test: NaN, val: true },
-					{ test: function(){}, val: false }
-				];
+				var test = {
+					prop1: 'string',
+					prop2: 666,
+					prop3: null,
+					prop4: [],
+					prop5: {},
+					prop6: undef,
+					method: function(){}
+				};
 
-				assertIsExpected( assert.is.property, assert.is.not.property, 'property', expected );
+				strictEqual(
+					assert.is.property( test, 'prop1' ),
+					true && !assert.is.not.property( test, 'prop1' ),
+					'string type property is a property'
+				);
+				strictEqual(
+					assert.is.property( test, 'prop2' ),
+					true && !assert.is.not.property( test, 'prop2' ),
+					'number type property is a property'
+				);
+				strictEqual(
+					assert.is.property( test, 'prop3' ),
+					true && !assert.is.not.property( test, 'prop3' ),
+					'null property is a property'
+				);
+				strictEqual(
+					assert.is.property( test, 'prop4' ),
+					true && !assert.is.not.property( test, 'prop4' ),
+					'array type property is a property'
+				);
+				strictEqual(
+					assert.is.property( test, 'prop5' ),
+					true && !assert.is.not.property( test, 'prop5' ),
+					'object type property is a property'
+				);
+				strictEqual(
+					assert.is.property( test, 'prop6' ),
+					false && !assert.is.not.property( test, 'prop6' ),
+					'undefined property is not a property'
+				);
+				strictEqual(
+					assert.is.property( test, 'method' ),
+					false && !assert.is.not.property( test, 'method' ),
+					'function type property is not a property'
+				);
 			});
 		});
 

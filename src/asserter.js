@@ -28,11 +28,11 @@ define(function () {
         fn: function( f ){
             return typeof f === 'function';
         },
-        method: function( m ){
-            return asrt.is.fn( m );
+        method: function( obj, key ){
+            return asrt.is.fn( obj[ key ] );
         },
-        property: function( p ){
-            return !asrt.is.method( p );
+        property: function( obj, key ){
+            return !asrt.is.method( obj, key ) && !asrt.is.undefined( obj[ key ] );
         },
         undefined: function( u ){
             return typeof u === 'undefined';
@@ -51,8 +51,8 @@ define(function () {
     for ( var prop in asrt.is ){
         if ( asrt.is.hasOwnProperty( prop )){
             not[ prop ] = (function( p ) {
-                return function( x ){
-                    return ! asrt.is[ p ].call( asrt.is, x );
+                return function(){
+                    return ! asrt.is[ p ].apply( asrt.is, arguments );
                 };
             }( prop ));
         }
