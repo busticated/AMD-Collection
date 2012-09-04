@@ -53,8 +53,11 @@
 					strictEqual( callCount, 1, 'debounced function runs once despite being called multiple times' );
 				}, 51 );
 
-				var assertFnCalledTwice = debounce(function(){
+				var assertFnCalledTwice = debounce(function( one, two, three ){
 					strictEqual( callCount, 2, 'debounced function uses correct delay time' );
+					ok( QUnit.is( 'array', one ), 'first param passed to debounced function is correct' );
+					ok( QUnit.is( 'number', two ), 'second param passed to debounced function is correct' );
+					ok( QUnit.is( 'object', three ), 'third param passed to debounced function is correct' );
 				}, 110 );
 
 				var assertObjCalledOnce = debounce(function(){
@@ -70,10 +73,10 @@
 				setTimeout( testFn, 51 );
 
 				assertFnCalledOnce();
-				assertFnCalledTwice();
+				assertFnCalledTwice( [ 1, 2, 3 ], 666, { foo: 'bar' } );
 				assertObjCalledOnce();
 				stop();
-				expect( 4 )
+				expect( 7 )
 			});
 		});
 	</script>
