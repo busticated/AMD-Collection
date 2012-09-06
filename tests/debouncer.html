@@ -49,8 +49,13 @@
 					})
 				};
 
+				var canceledFn = debounce(function(){
+					throw 'this callback should have been cancelled';
+				});
+
 				var assertFnCalledOnce = debounce(function(){
 					strictEqual( callCount, 1, 'debounced function runs once despite being called multiple times' );
+					canceledFn.cancel();
 				}, 51 );
 
 				var assertFnCalledTwice = debounce(function( one, two, three ){
@@ -63,12 +68,14 @@
 				var assertObjCalledOnce = debounce(function(){
 					strictEqual( testObj.callCount, 1, 'debounced method runs once despite being called multiple times' );
 					strictEqual( testObj.name, 'jimmy', 'debounced method uses the correct context / "this" value' );
+					deepEqual( testObj.fn( 'jimmy' ), testObj, 'debounced method returns correct "this" object' );
 					start();
 				}, 115 );
 
-				while (i++ < 8){
+				while ( i++ < 8 ){
 					testFn();
 					testObj.fn( 'jimmy' );
+					canceledFn();
 				}
 				setTimeout( testFn, 51 );
 
@@ -76,7 +83,7 @@
 				assertFnCalledTwice( [ 1, 2, 3 ], 666, { foo: 'bar' } );
 				assertObjCalledOnce();
 				stop();
-				expect( 7 )
+				expect( 8 )
 			});
 		});
 	</script>
