@@ -23,6 +23,5 @@ define(function(){
         return decouncer;
     };
 
-    window.debounce = d;
     return d;
 });
