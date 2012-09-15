@@ -1,0 +1,68 @@
+<!doctype html>
+<head>
+	<title>Inherits Module Test Suite</title>
+
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
+	<script>
+		QUnit.config.testTimeout = 2000;
+
+		test('test are running in a compatible environment', function(){
+			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+		});
+
+		module( 'With a new RequireJS context and sinon sandbox :', {
+			setup: function(){
+				testing.setupAndTeardown.setup();
+			},
+			teardown: function(){
+				testing.setupAndTeardown.teardown();
+			}
+		});
+
+		test('when calling inherits()', function() {
+			testing.req.given( [ 'src/inherits' ], function ( inherits ) {
+				var Person = function( name ){
+					this.name = name;
+				};
+				Person.prototype.getName = function(){ return this.name; };
+				Person.prototype.greet = function(){
+					return 'hello, i am' + this.name;
+				};
+
+				var Child = function( name, age ){
+					Person.call( this, name );
+					this.age = age;
+				};
+
+				inherits( Child, Person );
+
+				Child.prototype.greet = function(){
+					return 'hiya! i\'m ' + this.name + ' i\'m only ' + this.age;
+				};
+
+				var billy = new Child( 'billy', 5 );
+
+				ok( billy instanceof Person, 'new instance is an instance of "Person"' );
+				ok( billy instanceof Child, 'new instance is an instance of "Child"' );
+				strictEqual( billy.constructor, Child, 'new instance has correct constructor' );
+				strictEqual( billy.greet(), 'hiya! i\'m billy i\'m only 5', 'new instance uses the correct .greet() method');
+				strictEqual( billy.getName(), 'billy', 'new instance uses the correct .getName() method');
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">Inherits Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">
+	</div>
+</body>
+</html>
