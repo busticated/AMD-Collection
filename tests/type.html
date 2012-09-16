@@ -51,6 +51,7 @@
 					string: 'function',
 					emptyString: 'function',
 					number: 'function',
+					regex: 'function',
 					object: 'function',
 					array: 'function',
 					fn: 'function',
@@ -77,6 +78,7 @@
 				ok( type.is.bool( true ), '.bool( true ) returns true' );
 				ok( type.is.string( 'foo' ), '.string( \'foo\' ) returns true' );
 				ok( type.is.number( 666 ), '.number( 13 ) returns true' );
+				ok( type.is.regex( /.+/gi ), '.regex( /.+/gi ) returns true' );
 				ok( type.is.object( {} ), '.object( {} ) returns true' );
 				ok( type.is.array( [] ), '.array( [] ) returns true' );
 				ok( type.is.fn( function(){} ), '.fn( function(){} ) returns true' );
@@ -101,6 +103,7 @@
 					{ test: 1, val: false },
 					{ test: 666, val: false },
 					{ test: 13.666, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: {}, val: false },
 					{ test: [], val: false },
 					{ test: function(){}, val: false },
@@ -122,6 +125,7 @@
 					{ test: true, val: false },
 					{ test: 666, val: false },
 					{ test: 13.666, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: {}, val: false },
 					{ test: [], val: false },
 					{ test: function(){}, val: false },
@@ -143,6 +147,7 @@
 					{ test: true, val: false },
 					{ test: 666, val: false },
 					{ test: 13.666, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: {}, val: false },
 					{ test: [], val: false },
 					{ test: function(){}, val: false },
@@ -164,6 +169,7 @@
 					{ test: 'foo', val: false },
 					{ test: '', val: false },
 					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: {}, val: false },
 					{ test: [], val: false },
 					{ test: function(){}, val: false },
@@ -173,6 +179,29 @@
 				];
 
 				assertIsExpected( type.is.number, type.is.not.number, 'number', expected );
+			});
+		});
+
+		test('when calling .is.regex() and .is.not.regex()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: /.+/gi, val: true },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: /.+/gi, val: true },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.regex, type.is.not.regex, 'regex', expected );
 			});
 		});
 
@@ -186,6 +215,7 @@
 					{ test: 'foo', val: false },
 					{ test: '', val: false },
 					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: [], val: false },
 					{ test: function(){}, val: false },
 					{ test: undef, val: false },
@@ -208,6 +238,7 @@
 					{ test: 'foo', val: false },
 					{ test: '', val: false },
 					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: function(){}, val: false },
 					{ test: undef, val: false },
 					{ test: null, val: false },
@@ -225,6 +256,7 @@
 					{ test: function(){}, val: true },
 					{ test: [], val: false },
 					{ test: {}, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: 666, val: false },
 					{ test: 13.666, val: false },
 					{ test: 'foo', val: false },
@@ -249,6 +281,7 @@
 					prop4: [],
 					prop5: {},
 					prop6: undef,
+					prop7: /.+/gi,
 					method: function(){}
 				};
 
@@ -283,6 +316,11 @@
 					'undefined property is not a method'
 				);
 				strictEqual(
+					type.is.method( test, 'prop7' ),
+					false && !type.is.not.method( test, 'prop7' ),
+					'regex property is not a method'
+				);
+				strictEqual(
 					type.is.method( test, 'method' ),
 					true && !type.is.not.method( test, 'method' ),
 					'function type property is a method'
@@ -300,43 +338,49 @@
 					prop4: [],
 					prop5: {},
 					prop6: undef,
+					prop7: /.+/gi,
 					method: function(){}
 				};
 
 				strictEqual(
 					type.is.property( test, 'prop1' ),
 					true && !type.is.not.property( test, 'prop1' ),
-					'string type property is a property'
+					'string type is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop2' ),
 					true && !type.is.not.property( test, 'prop2' ),
-					'number type property is a property'
+					'number type is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop3' ),
 					true && !type.is.not.property( test, 'prop3' ),
-					'null property is a property'
+					'null type is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop4' ),
 					true && !type.is.not.property( test, 'prop4' ),
-					'array type property is a property'
+					'array type is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop5' ),
 					true && !type.is.not.property( test, 'prop5' ),
-					'object type property is a property'
+					'object type is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop6' ),
 					false && !type.is.not.property( test, 'prop6' ),
-					'undefined property is not a property'
+					'undefined type is not a property'
+				);
+				strictEqual(
+					type.is.property( test, 'prop7' ),
+					true && !type.is.not.property( test, 'prop7' ),
+					'regex type is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'method' ),
 					false && !type.is.not.property( test, 'method' ),
-					'function type property is not a property'
+					'function type is not a property'
 				);
 			});
 		});
@@ -351,6 +395,7 @@
 					{ test: 'foo', val: false },
 					{ test: '', val: false },
 					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: [], val: false },
 					{ test: {}, val: false },
 					{ test: null, val: false },
@@ -373,6 +418,7 @@
 					{ test: 'foo', val: false },
 					{ test: '', val: false },
 					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: [], val: false },
 					{ test: {}, val: false },
 					{ test: NaN, val: false },
@@ -394,6 +440,7 @@
 					{ test: 'foo', val: false },
 					{ test: '', val: false },
 					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
 					{ test: [], val: false },
 					{ test: {}, val: false },
 					{ test: NaN, val: false },
@@ -416,6 +463,7 @@
 					{ test: 'foo', val: true },
 					{ test: '', val: true },
 					{ test: true, val: true },
+					{ test: /.+/gi, val: true },
 					{ test: [], val: true },
 					{ test: {}, val: true },
 					{ test: function(){}, val: true }

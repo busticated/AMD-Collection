@@ -19,8 +19,15 @@ define(function () {
         number: function( n ){
             return typeof n === 'number' && type.is.not.NaN( n );
         },
+        // "instanceof of RegExp" doesn't work when testing obj from another window (e.g. iframe)
+        regex: function( r ){
+            if ( type.is.null( r ) || type.is.undefined( r ) ){
+                return false;
+            }
+            return type.is.fn( r.test ) && type.is.fn( r.exec );
+        },
         object: function( o ){
-            return typeof o === 'object' && !type.is.array( o ) && o != null;
+            return typeof o === 'object' && !type.is.array( o ) && !type.is.null( o ) && !type.is.regex( o );
         },
         array: function( a ){
             return Object.prototype.toString.call( a ) === '[object Array]';
