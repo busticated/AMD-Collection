@@ -3,10 +3,10 @@
 define(function () {
     'use strict';
 
-    var asrt = {},
+    var type = {},
         not = {};
 
-    asrt.is = {
+    type.is = {
         bool: function( b ){
             return typeof b === 'boolean';
         },
@@ -17,10 +17,10 @@ define(function () {
             return typeof s === 'string' && s.length === 0;
         },
         number: function( n ){
-            return typeof n === 'number' && asrt.is.not.NaN( n );
+            return typeof n === 'number' && type.is.not.NaN( n );
         },
         object: function( o ){
-            return typeof o === 'object' && !asrt.is.array( o ) && o != null;
+            return typeof o === 'object' && !type.is.array( o ) && o != null;
         },
         array: function( a ){
             return Object.prototype.toString.call( a ) === '[object Array]';
@@ -29,10 +29,10 @@ define(function () {
             return typeof f === 'function';
         },
         method: function( obj, key ){
-            return asrt.is.fn( obj[ key ] );
+            return type.is.fn( obj[ key ] );
         },
         property: function( obj, key ){
-            return !asrt.is.method( obj, key ) && !asrt.is.undefined( obj[ key ] );
+            return !type.is.method( obj, key ) && !type.is.undefined( obj[ key ] );
         },
         undefined: function( u ){
             return typeof u === 'undefined';
@@ -44,21 +44,21 @@ define(function () {
             return n == null;
         },
         NaN: function( _ ){
-            return asrt.is.null( _ ) || asrt.is.array( _ ) || asrt.is.bool( _ ) || asrt.is.emptyString( _ ) || isNaN( _ );
+            return type.is.null( _ ) || type.is.array( _ ) || type.is.bool( _ ) || type.is.emptyString( _ ) || isNaN( _ );
         }
     };
 
-    for ( var prop in asrt.is ){
-        if ( asrt.is.hasOwnProperty( prop )){
+    for ( var prop in type.is ){
+        if ( type.is.hasOwnProperty( prop )){
             not[ prop ] = (function( p ) {
                 return function(){
-                    return ! asrt.is[ p ].apply( asrt.is, arguments );
+                    return ! type.is[ p ].apply( type.is, arguments );
                 };
             }( prop ));
         }
     }
 
-    asrt.is.not = not;
+    type.is.not = not;
 
-    return asrt;
+    return type;
 });
