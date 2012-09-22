@@ -1,6 +1,6 @@
 /*global define: false, require: false */
 
-define( function(){
+define(function(){
     'use strict';
 
     var _isArray = function( a ){
@@ -146,6 +146,9 @@ define( function(){
                 callback.call( ctx, this.collection[ i ], i );
             }
             return this;
+        },
+        toJSON: function(){
+            return this.collection;
         },
 
         // collection modification methods

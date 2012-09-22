@@ -66,6 +66,7 @@
 					'update': 'function',
 					'replace': 'function',
 					'empty': 'function',
+					'toJSON': 'function',
 					'filter': 'function',
 					'each': 'function',
 					'collection': 'object',
@@ -387,6 +388,22 @@
 				strictEqual( l.current(), '09', 'current item is correct' );
 			});
 
+			test( 'method - .toJSON()', function(){
+				var l, expected;
+
+				expected = '[{"id":1,"name":"foo"},{"id":2,"name":"bar"},{"id":3,"name":"baz"},{"id":4,"name":"qux"},{"id":5,"name":"bla"}]';
+
+				l = new Iterator([
+					{ id: 1, name: 'foo', fn: function(){} },
+					{ id: 2, name: 'bar', fn: function(){} },
+					{ id: 3, name: 'baz', fn: function(){} },
+					{ id: 4, name: 'qux', fn: function(){} },
+					{ id: 5, name: 'bla', fn: function(){} }
+				]);
+
+				deepEqual( JSON.stringify( l ), expected, 'JSON.stringify() returns correct representation of collection' );
+			});
+
 			test( 'method - .add()', function(){
 				var l;
 
@@ -519,7 +536,7 @@
 					}
 				});
 
-				ok( end - start < 5, 'calling .each() against a collection of 100k objects runs within the acceptable amount of time [ ran in: ' + (end - start) + ' ms ]' );
+				ok( end - start < 5, 'calling .each() against a collection of 100k objects runs in less than 5ms [ ran in: ' + (end - start) + ' ms ]' );
 			});
 		});
 	</script>
