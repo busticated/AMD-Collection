@@ -16,7 +16,7 @@
 				var items = [],
 				id;
 
-				while ( count ){
+				while ( count-- ){
 					id = Math.floor( Math.random() * (1000 - 0 + 1) + 0 );
 					items.push({
 						id: id,
@@ -25,8 +25,6 @@
 							return this.title;
 						}
 					});
-
-					count -= 1;
 				}
 
 				return items;
@@ -50,6 +48,7 @@
 					'hasPrev': 'function',
 					'isFirst': 'function',
 					'isLast': 'function',
+					'isEmpty': 'function',
 					'get': 'function',
 					'getNext': 'function',
 					'getPrev': 'function',
@@ -226,6 +225,23 @@
 				strictEqual( l.isLast( 3 ), false, 'isFirst( 3 ) returns false' );
 				strictEqual( l.isLast( l.length - 1 ), true, 'isFirst( l.length -1 ) returns true' );
 			});
+
+			test( 'method - .isEmpty()', function(){
+				var l, x;
+
+				l = Iterator();
+
+				strictEqual( l.isEmpty(), true, 'collection is empty' );
+				strictEqual( l.length, 0, 'collection length is zero' );
+				strictEqual( l.index, 0, 'collection index is zero' );
+
+				x = new Iterator( [ 1, 2, 3, 4, 5 ] );
+
+				strictEqual( x.isEmpty(), false, 'collection is not empty' );
+				strictEqual( x.length, 5, 'collection length is five' );
+				strictEqual( x.index, 0, 'collection index is zero' );
+			});
+
 
 			test( 'method - .get()', function(){
 				var l;
@@ -471,6 +487,7 @@
 
 				l.empty();
 
+				ok( l.isEmpty(), 'collection is empty' );
 				strictEqual( l.length, 0, 'collection length is 0' );
 				ok( testing.utils.isArray( l.collection ), 'collection is an array' );
 				deepEqual( l.empty(), l, 'method is chainable' );
@@ -537,6 +554,18 @@
 				});
 
 				ok( end - start < 5, 'calling .each() against a collection of 100k objects runs in less than 5ms [ ran in: ' + (end - start) + ' ms ]' );
+			});
+
+			test( 'bugfix - can iteratively remove all collection items', function(){
+				var l = new Iterator( itemFactory( 10 ) );
+
+				while ( l.length ){
+					l.loop().next();
+					l.remove( l.index );
+				}
+
+				strictEqual( l.length, 0, 'collection length is zero' );
+				strictEqual( l.index, 0, 'collection index is zero' );
 			});
 		});
 	</script>

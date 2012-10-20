@@ -26,13 +26,13 @@ define(function(){
     It.prototype = {
         // test methods - return bool
         has : function( index ){
-            return index < this.length;
+            return index < this.length && index >= 0;
         },
         hasNext : function(){
-            return ! this.isLast();
+            return this.has(this.index + 1);
         },
         hasPrev : function(){
-            return ! this.isFirst();
+            return this.has(this.index - 1);
         },
         isFirst : function( index ){
             if ( typeof index === 'undefined' ){
@@ -45,6 +45,9 @@ define(function(){
                 return this.isLast( this.index );
             }
             return index === this.length - 1;
+        },
+        isEmpty : function(){
+            return this.length === 0;
         },
 
         // iteration methods - return collection item(s)
@@ -78,7 +81,7 @@ define(function(){
             if ( this.hasNext() ){
                 return this.setIndex( this.index + 1 ).current();
             }
-            if  ( this.isLooping ) {
+            if ( this.isLooping ) {
                 this.isLooping = false;
                 return this.first();
             }
