@@ -14,10 +14,28 @@ define(function () {
             return typeof s === 'string';
         },
         emptyString: function( s ){
-            return typeof s === 'string' && s.length === 0;
+            return type.is.string( s ) && s.length === 0;
+        },
+        alpha: function( s ){
+            return type.is.string( s ) && type.is.not.emptyString( s ) && /[a-z]/gi.test( s );
+        },
+        alphaNumeric: function( s ){
+            return type.is.string( s ) && type.is.not.emptyString( s ) && /\w/gi.test( s );
         },
         number: function( n ){
             return typeof n === 'number' && type.is.not.NaN( n );
+        },
+        even: function( n ){
+            return type.is.number( n ) && n % 2 === 0;
+        },
+        odd: function( n ){
+            return type.is.number( n ) && n % 2 !== 0;
+        },
+        positive: function( n ){
+            return type.is.number( n ) && n > 0;
+        },
+        negative: function( n ){
+            return type.is.number( n ) && n < 0;
         },
         // "instanceof of RegExp" doesn't work when testing obj from another window (e.g. iframe)
         regex: function( r ){
@@ -31,6 +49,9 @@ define(function () {
         },
         array: function( a ){
             return Object.prototype.toString.call( a ) === '[object Array]';
+        },
+        emptyArray: function( a ){
+            return type.is.array( a ) && a.length === 0;
         },
         fn: function( f ){
             return typeof f === 'function';

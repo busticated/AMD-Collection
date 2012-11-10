@@ -50,10 +50,17 @@
 					bool: 'function',
 					string: 'function',
 					emptyString: 'function',
+					alpha: 'function',
+					alphaNumeric: 'function',
 					number: 'function',
+					even: 'function',
+					odd: 'function',
+					positive: 'function',
+					negative: 'function',
 					regex: 'function',
 					object: 'function',
 					array: 'function',
+					emptyArray: 'function',
 					fn: 'function',
 					method: 'function',
 					property: 'function',
@@ -138,6 +145,55 @@
 			});
 		});
 
+		test('when calling .is.alpha() and .is.not.alpha()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: 'foo', val: true },
+					{ test: '', val: false },
+					{ test: '123', val: false },
+					{ test: '!@#%$', val: false },
+					{ test: true, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.alpha, type.is.not.alpha, 'alpha', expected );
+			});
+		});
+
+		test('when calling .is.alphaNumeric() and .is.not.alphaNumeric()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: 'foo', val: true },
+					{ test: '123', val: true },
+					{ test: 'bar!?', val: true },
+					{ test: '!@#%$', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.alphaNumeric, type.is.not.alphaNumeric, 'alphaNumeric', expected );
+			});
+		});
+
 		test('when calling .is.emptyString() and .is.not.emptyString()', function() {
 			testing.req.given( [ 'src/type' ], function ( type ) {
 				var undef;
@@ -179,6 +235,100 @@
 				];
 
 				assertIsExpected( type.is.number, type.is.not.number, 'number', expected );
+			});
+		});
+
+		test('when calling .is.even() and .is.not.even()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: 6, val: true },
+					{ test: 7, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.even, type.is.not.even, 'even', expected );
+			});
+		});
+
+		test('when calling .is.odd() and .is.not.odd()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: 6, val: false },
+					{ test: 7, val: true },
+					{ test: 13.666, val: true },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.odd, type.is.not.odd, 'odd', expected );
+			});
+		});
+
+		test('when calling .is.positive() and .is.not.positive()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: 6, val: true },
+					{ test: -7, val: false },
+					{ test: 13.666, val: true },
+					{ test: -3.25, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.positive, type.is.not.positive, 'positive', expected );
+			});
+		});
+
+		test('when calling .is.negative() and .is.not.negative()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: -6, val: true },
+					{ test: 7, val: false },
+					{ test: 13.666, val: false },
+					{ test: -3.25, val: true },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: {}, val: false },
+					{ test: [], val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.negative, type.is.not.negative, 'negative', expected );
 			});
 		});
 
@@ -246,6 +396,29 @@
 				];
 
 				assertIsExpected( type.is.array, type.is.not.array, 'array', expected );
+			});
+		});
+
+		test('when calling .is.emptyArray() and .is.not.emptyArray()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: [], val: true },
+					{ test: [ 'nope' ], val: false },
+					{ test: {}, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: function(){}, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.emptyArray, type.is.not.emptyArray, 'empty array', expected );
 			});
 		});
 
