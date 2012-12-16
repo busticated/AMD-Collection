@@ -1,0 +1,104 @@
+<!doctype html>
+<head>
+	<title>CallThrottler Module Test Suite</title>
+
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
+	<script>
+		QUnit.config.testTimeout = 2000;
+
+		test( 'test are running in a compatible environment', function(){
+			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+		});
+
+		module( 'With a new RequireJS context and sinon sandbox :', {
+			setup: function(){
+				testing.setupAndTeardown.setup();
+			},
+			teardown: function(){
+				testing.setupAndTeardown.teardown();
+			}
+		});
+
+		test( 'confirm module methods & properties', function(){
+			testing.req.given( [ 'src/callthrottler' ], function ( CallThrottler ) {
+				var callQ = new CallThrottler();
+				var expected = {
+					'interval': 'number',
+					'commands': 'object',
+					'isRunning': 'boolean',
+					'_timerId': 'object',
+					'add': 'function',
+					'start': 'function',
+					'run': 'function',
+					'bind': 'function'
+				};
+
+				expect(1 + Object.keys(expected).length);
+
+				strictEqual( Object.keys( CallThrottler.prototype ).length + Object.keys( callQ ).length, Object.keys( expected ).length, 'all ' + Object.keys( expected ).length + ' methods have been identified' );
+
+				for ( var prop in expected ) {
+					strictEqual( typeof callQ[ prop ], expected[ prop ], 'module includes the "' + prop + '" method / property' );
+				}
+			});
+		});
+
+		test( 'when creating a new instance', function() {
+			testing.req.given( [ 'src/callthrottler' ], function ( CallThrottler ) {
+				var callQ = new CallThrottler( 100 );
+				strictEqual( callQ.interval, 100, '.interval property is set when provided' );
+
+				callQ = new CallThrottler();
+				strictEqual( callQ.interval, 1000, '.interval property defaults to 1s when not provided' );
+			});
+		});
+
+		test( 'when calling .add() to throttle a call', function() {
+			testing.req.given( [ 'src/callthrottler' ], function ( CallThrottler ) {
+				var interval = 25,
+					lastRun = +( new Date() ),
+					calls = [],
+					fn = function( msg ){
+						calls.push( { id: calls.length, msg: msg, isOk: verifyInterval() } );
+					},
+					verifyInterval = function(){
+						var ranIn = +( new Date() ) - lastRun;
+						lastRun = +( new Date() );
+						return !!( ranIn - interval < 5 );
+					},
+					callQ = new CallThrottler( interval );
+
+				while ( callQ.commands.length < 5 ){
+					callQ.add( fn, 'i am # ' + callQ.commands.length );
+				}
+
+				stop();
+				setTimeout(function(){
+					deepEqual( calls, [
+						{ id: 0, isOk: true, msg: "i am # 0" },
+						{ id: 1, isOk: true, msg: "i am # 1" },
+						{ id: 2, isOk: true, msg: "i am # 2" },
+						{ id: 3, isOk: true, msg: "i am # 3" },
+						{ id: 4, isOk: true, msg: "i am # 4" }
+					], 'calls are delayed appropriately' );
+					start();
+				}, 200 );
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">Call Throttler Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">
+	</div>
+</body>
+</html>
