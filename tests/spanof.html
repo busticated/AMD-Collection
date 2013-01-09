@@ -1,0 +1,68 @@
+<!doctype html>
+<head>
+	<title>Span Of Module Test Suite</title>
+
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
+	<script>
+		QUnit.config.testTimeout = 2000;
+
+		test('test are running in a compatible environment', function(){
+			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+		});
+
+		module( 'With a new RequireJS context and sinon sandbox :', {
+			setup: function(){
+				testing.setupAndTeardown.setup();
+			},
+			teardown: function(){
+				testing.setupAndTeardown.teardown();
+			}
+		});
+
+		test( 'confirm module methods & properties', function(){
+			testing.req.given( [ 'src/spanof' ], function ( spanOf ) {
+				var methods = spanOf(0);
+
+				strictEqual( typeof spanOf, 'function', 'module is a function' );
+
+				for ( var method in methods ) {
+					strictEqual( typeof methods[ method ], 'function', 'module exposes the "' + method + '" method' );
+				}
+
+				expect( Object.keys( methods ).length + 1 );
+			});
+		});
+
+		test( 'calling spanOf() should convert input to milliseconds', function(){
+			testing.req.given( [ 'src/spanof' ], function ( spanOf ) {
+				strictEqual( spanOf( 10 ).milliseconds(), 10, '.milliseconds() converts input properly' );
+				strictEqual( spanOf( 10 ).ms(), 10, '.ms() converts input properly' );
+				strictEqual( spanOf( 10 ).seconds(), 10000, '.seconds() converts input properly' );
+				strictEqual( spanOf( 10 ).sec(), 10000, '.sec() converts input properly' );
+				strictEqual( spanOf( 10 ).minutes(), 600000, '.minutes() converts input properly' );
+				strictEqual( spanOf( 10 ).min(), 600000, '.min() converts input properly' );
+				strictEqual( spanOf( 10 ).hours(), 36000000, '.hours() converts input properly' );
+				strictEqual( spanOf( 10 ).hr(), 36000000, '.hr() converts input properly' );
+				strictEqual( spanOf( 10 ).days(), 864000000, '.days() converts input properly' );
+				strictEqual( spanOf( 10 ).weeks(), 6048000000, '.weeks() converts input properly' );
+				strictEqual( spanOf( 10 ).wk(), 6048000000, '.wk() converts input properly' );
+				strictEqual( spanOf( 10 ).years(), 315569259747, '.years() converts input properly' );
+				strictEqual( spanOf( 10 ).yr(), 315569259747, '.yr() converts input properly' );
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">SpanOf Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
