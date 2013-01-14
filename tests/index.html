@@ -1,0 +1,37 @@
+<!doctype html>
+<head>
+	<title>AMD-Collection Test Suite</title>
+
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="lib/qunit-composite.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/qunit-composite.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
+	<script>
+		QUnit.testSuites([
+			'callthrottler.html',
+			'debouncer.html',
+			'eventer.html',
+			'inherits.html',
+			'iterator.html',
+			'kcode.html',
+			'looper.html',
+			'simplate.html',
+			'spanof.html',
+			'type.html'
+		]);
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">AMD-Collection Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">
+	</div>
+</body>
+</html>
