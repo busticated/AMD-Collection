@@ -16,6 +16,7 @@
 		});
 
 		module('Using standard setup & teardown', testing.setupAndTeardown);
+
 		test('confirm module methods & properties', function(){
 			testing.req.given(['src/eventer'], function (Eventer) {
 				var evtr = new Eventer();
@@ -104,6 +105,29 @@
 				strictEqual(eventHub1.getEventHandlers()['test'].length, 1, 'correct event handler for "test" event is unregistered');
 
 				eventHub1.emit('test');
+			});
+		});
+
+		test('when registering and removing multiple event handlers at once', function() {
+			testing.req.given(['src/eventer'], function (Eventer) {
+				var eventHub1 = new Eventer();
+				var eventHub2 = new Eventer();
+				var myCallback = function() {};
+				var evt1 = eventHub1.on('eventone eventtwo', myCallback);
+				var evt2 = eventHub2.on('eventone', myCallback);
+
+				var handlers1 = eventHub1.getEventHandlers(); 
+				var handlers2 = eventHub2.getEventHandlers();
+
+				strictEqual(Object.keys(handlers1).length, 2, '"eventHub1" has correct number of event handlers registered');
+				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
+
+				eventHub1.off(['eventone eventtwo', myCallback]);
+				handlers1 = eventHub1.getEventHandlers(); 
+				handlers2 = eventHub2.getEventHandlers();
+
+				strictEqual(Object.keys(handlers1).length, 0, '"eventHub1" has correct number of event handlers registered');
+				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
 			});
 		});
 	</script>
