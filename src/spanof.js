@@ -1,3 +1,5 @@
+/*global define: false, require: false */
+
 define(function(){
     'use strict';
 
