@@ -24,6 +24,7 @@
 					'on': 'function',
 					'off': 'function',
 					'emit': 'function',
+					'once': 'function',
 					'getEventHandlers': 'function',
 					'__handlers': 'object'
 				};
@@ -128,6 +129,32 @@
 
 				strictEqual(Object.keys(handlers1).length, 0, '"eventHub1" has correct number of event handlers registered');
 				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
+			});
+		});
+
+		test('when registering event handlers to run once', function() {
+			testing.req.given(['src/eventer'], function (Eventer) {
+				var eventHub1 = new Eventer();
+				var eventHub2 = new Eventer();
+				var expectedData = { foo: 'bar', baz: 1234 };
+				var myCallback = function(d) { deepEqual(d, expectedData, 'event data is correct'); };
+				var evt1 = eventHub1.once('eventone eventtwo', myCallback);
+				var evt2 = eventHub2.once('eventone', myCallback);
+				var handlers1 = eventHub1.getEventHandlers();
+				var handlers2 = eventHub2.getEventHandlers();
+
+				strictEqual(Object.keys(handlers1).length, 2, '"eventHub1" has correct number of event handlers registered');
+				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
+
+				eventHub1.emit('eventone', expectedData);
+				eventHub1.emit('eventtwo', expectedData);
+				eventHub2.emit('eventone', expectedData);
+
+				handlers1 = eventHub1.getEventHandlers();
+				handlers2 = eventHub2.getEventHandlers();
+
+				strictEqual(Object.keys(handlers1).length, 0, '"eventHub1" has correct number of event handlers registered');
+				strictEqual(Object.keys(handlers2).length, 0, '"eventHub2" has correct number of event handlers registered');
 			});
 		});
 	</script>

@@ -55,6 +55,26 @@ define(function () {
         for ( var i = 0, l = this.__handlers[ eventName ].length; i < l; i = i + 1 ) {
             this.__handlers[ eventName ][ i ].call( this, data );
         }
+        return this;
+    };
+
+    Eventer.prototype.once = function ( eventName, callback ) {
+        var self = this,
+            makeHandler = function( name ){
+                return function handler(){
+                    self.off([ name, handler ]);
+                    callback.apply( this, arguments );
+                };
+            },
+            names = eventName.split( ' ' ),
+            name;
+
+        for ( var i = 0, l = names.length; i < l; i += 1 ){
+            name = names[ i ];
+            this.on( name, makeHandler( name ) );
+        }
+
+        return this;
     };
 
     Eventer.prototype.getEventHandlers = function () {
