@@ -61,15 +61,17 @@
 		test( 'when calling .add() to throttle a call', function() {
 			testing.req.given( [ 'src/callthrottler' ], function ( CallThrottler ) {
 				var interval = 25,
-					lastRun = +( new Date() ),
+					now = function(){ return +( new Date() ); },
+					lastRun = now(),
 					calls = [],
 					fn = function( msg ){
 						calls.push( { id: calls.length, msg: msg, isOk: verifyInterval() } );
 					},
 					verifyInterval = function(){
-						var ranIn = +( new Date() ) - lastRun;
-						lastRun = +( new Date() );
-						return !!( ranIn - interval < 5 );
+						var ranIn = now() - lastRun,
+							runtime = ranIn - interval;
+						lastRun = now();
+						return !!( runtime < 5 && runtime >= 0 );
 					},
 					callQ = new CallThrottler( interval );
 
