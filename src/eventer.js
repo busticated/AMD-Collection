@@ -21,26 +21,27 @@ define(function () {
             this.__handlers[ name ].push( callback );
         }
 
-        return [ eventName, callback ];
+        return this;
     };
 
-    Eventer.prototype.off = function ( eventHandle ) {
-        var names = eventHandle[ 0 ].split( ' ' ),
-            callback = eventHandle[ 1 ],
+    Eventer.prototype.off = function ( eventName, callback ) {
+        var names = eventName.split( ' ' ),
+            handlers,
             name;
 
         for ( var i = 0, l = names.length; i < l; i += 1){
             name = names[ i ];
+            handlers = this.__handlers[ name ];
 
-            if ( !this.__handlers[ name ] ) { return; }
+            if ( !handlers ) { return this; }
 
-            for ( var j = 0, k = this.__handlers[ name ].length; j < k; j += 1 ) {
-                if ( this.__handlers[ name ][ j ] === callback ) {
-                    this.__handlers[ name ].splice( j, 1 );
+            for ( var j = 0, k = handlers.length; j < k; j += 1 ) {
+                if ( handlers[ j ] === callback || typeof callback !== 'function' ) {
+                    handlers.splice( j, 1 );
                 }
             }
 
-            if ( this.__handlers[ name ].length === 0 ) {
+            if ( handlers.length === 0 ) {
                 delete this.__handlers[ name ];
             }
         }
@@ -48,25 +49,25 @@ define(function () {
     };
 
     Eventer.prototype.emit = function ( eventName, data ) {
-        if ( !this.__handlers[ eventName ] ) {
-            return;
-        }
+        var handlers = this.__handlers[ eventName ];
 
-        for ( var i = 0, l = this.__handlers[ eventName ].length; i < l; i = i + 1 ) {
-            this.__handlers[ eventName ][ i ].call( this, data );
+        if ( !handlers ) { return this; }
+
+        for ( var i = 0, l = handlers.length; i < l; i = i + 1 ) {
+            handlers[ i ].call( this, data );
         }
         return this;
     };
 
     Eventer.prototype.once = function ( eventName, callback ) {
         var self = this,
+            names = eventName.split( ' ' ),
             makeHandler = function( name ){
                 return function handler(){
-                    self.off([ name, handler ]);
+                    self.off( name, handler );
                     callback.apply( this, arguments );
                 };
             },
-            names = eventName.split( ' ' ),
             name;
 
         for ( var i = 0, l = names.length; i < l; i += 1 ){

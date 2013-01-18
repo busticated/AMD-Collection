@@ -44,22 +44,28 @@
 				var eventHub1 = new Eventer();
 				var eventHub2 = new Eventer();
 
-				var evt1 = eventHub1.on('test', function (){});
-				ok(testing.utils.isArray(evt1), '"evt1" is an array');
-				strictEqual(typeof evt1[0], 'string', '"evt1" has an event name');
-				strictEqual(typeof evt1[1], 'function', '"evt1" has a callback');
+				eventHub1.on('test', function (){});
+				var eventHub1Handlers = eventHub1.getEventHandlers();
 
-				var evt2 = eventHub2.on('test', function (){});
-				ok(testing.utils.isArray(evt2), '"evt2" is an array');
-				strictEqual(typeof evt1[0], 'string', '"evt2" has an event name');
-				strictEqual(evt1[0], 'test', '"evt2" uses the correct event name');
-				strictEqual(typeof evt1[1], 'function', '"evt2" has a callback');
+				eventHub2.on('test', function (){});
+				eventHub2.on('test', function (){});
+				eventHub2.on('test', function (){});
+				var eventHub2Handlers = eventHub2.getEventHandlers();
+
+				ok(testing.utils.isObject(eventHub1Handlers), 'eventHandlers hash is available');
+				ok(testing.utils.isArray(eventHub1Handlers.test), '"test" event name is registered');
+				strictEqual(typeof eventHub1Handlers.test[ 0 ], 'function', '"test" event handler is a function');
+				strictEqual(eventHub1Handlers.test.length, 1, 'number of "test" event handlers is correct');
+				ok(testing.utils.isObject(eventHub2Handlers), 'eventHandlers hash is available on 2nd instance');
+				ok(testing.utils.isArray(eventHub2Handlers.test), '"test" event name is registered on 2nd instance');
+				strictEqual(typeof eventHub2Handlers.test[ 0 ], 'function', '"test" event handler on 2nd instance is a function');
+				strictEqual(eventHub2Handlers.test.length, 3, 'number of "test" event handlers is correct on 2nd instance');
 
 				eventHub1.on('test', function (){});
 				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, '"eventHub1" has correct number of event handlers registered');
 
 				eventHub2.on('test', function (){});
-				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, '"eventHub2" has correct number of event handlers registered');
+				strictEqual(eventHub2.getEventHandlers()['test'].length, 4, '"eventHub2" has correct number of event handlers registered');
 			});
 		});
 
@@ -95,14 +101,14 @@
 					throw new Error('event handler should not have been run');
 				};
 
-				var evt1 = eventHub1.on('test', fn);
+				eventHub1.on('test', fn);
 				eventHub1.on('test', fn);
 				eventHub1.on('test', function() {});
 
-				eventHub1.off(evt1);
+				eventHub1.off('test', fn);
 				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, 'correct event handler for "test" event is unregistered');
 
-				eventHub1.off(['test', fn]);
+				eventHub1.off('test', fn);
 				strictEqual(eventHub1.getEventHandlers()['test'].length, 1, 'correct event handler for "test" event is unregistered');
 
 				eventHub1.emit('test');
@@ -123,8 +129,8 @@
 				strictEqual(Object.keys(handlers1).length, 2, '"eventHub1" has correct number of event handlers registered');
 				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
 
-				eventHub1.off(['eventone eventtwo', myCallback]);
-				handlers1 = eventHub1.getEventHandlers(); 
+				eventHub1.off('eventone eventtwo', myCallback);
+				handlers1 = eventHub1.getEventHandlers();
 				handlers2 = eventHub2.getEventHandlers();
 
 				strictEqual(Object.keys(handlers1).length, 0, '"eventHub1" has correct number of event handlers registered');
@@ -165,5 +171,6 @@
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
 </body>
 </html>
