@@ -50,7 +50,8 @@
 
 		test( 'when creating a new instance', function() {
 			testing.req.given( [ 'src/callthrottler' ], function ( CallThrottler ) {
-				var callQ = new CallThrottler( 100 );
+				var callQ = CallThrottler( 100 );
+				strictEqual( callQ instanceof CallThrottler, true, 'new instance is created when "new" keyword is omitted' );
 				strictEqual( callQ.interval, 100, '.interval property is set when provided' );
 
 				callQ = new CallThrottler();
@@ -58,7 +59,7 @@
 			});
 		});
 
-		test( 'when calling .add() to throttle a call', function() {
+		test( 'when calling .add() to queue a series of calls and execute each sequentially after a set delay', function() {
 			testing.req.given( [ 'src/callthrottler' ], function ( CallThrottler ) {
 				var interval = 25,
 					now = function(){ return +( new Date() ); },

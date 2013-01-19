@@ -3,7 +3,7 @@ define(function(){
 
     var CallThrottler = function( interval ){
         if ( !( this instanceof CallThrottler ) ) {
-            return new CallThrottler();
+            return new CallThrottler( interval );
         }
         this.interval = interval || 1000;
         this.commands = [];
