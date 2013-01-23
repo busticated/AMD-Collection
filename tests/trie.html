@@ -1,0 +1,102 @@
+<!doctype html>
+<head>
+	<title>Trie Module Test Suite</title>
+
+	<link rel="stylesheet" href="lib/qunit.css" type="text/css" media="screen">
+	<script src="lib/qunit.js"></script>
+	<script src="lib/sinon.js"></script>
+	<script src="lib/require.js"></script>
+	<script src="lib/testing.js"></script>
+
+	<script>
+		QUnit.config.testTimeout = 2000;
+
+		test('test are running in a compatible environment', function(){
+			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
+		});
+
+		module( ':::', {
+			setup: function(){ testing.setupAndTeardown.setup(); },
+			teardown: function(){ testing.setupAndTeardown.teardown(); }
+		});
+
+		test( 'confirm module methods & properties', function(){
+			testing.req.given( [ 'src/trie' ], function ( module ) {
+				strictEqual( typeof module, 'function', 'module is a function' );
+			});
+		});
+
+		test( 'should accept a string and add to trie hash', function(){
+			testing.req.given( [ 'src/trie' ], function ( Trie ) {
+				var t = new Trie( 'an' ).add( 'a' ).add( 'and' ).add( 'of' ).add( 'off' ).add( 'office' ).add( 'officer' );
+				var expected = {
+					a: { _: 1, n: { d: { _: 1 }, _: 1 } },
+					o: { f: { _: 1, f: { _: 1, i: { c: { e: { _: 1, r: { _: 1 } } } } } } }
+				};
+
+				deepEqual( t.toJSON(), expected );
+			});
+		});
+
+		test( 'should add entries within a reasonable amount of time', function(){
+			testing.req.given( [ 'src/trie' ], function ( Trie ) {
+				var start = +( new Date() );
+				var t = new Trie( 'aequeosalinocalcalinosetaceoaluminosocupreovitriolic' )
+							.add( 'asseocarnisanguineoviscericartilaginonervomedullary' )
+							.add( 'pneumonoultramicroscopicsilicovolcanoconiosis' )
+							.add( 'hepaticocholangiocholecystenterostomies' )
+							.add( 'hippopotomonstrosesquipedalian' )
+							.add( 'floccinaucinihilipilification' )
+							.add( 'antidisestablishmentarianism' )
+							.add( 'honorificabilitudinitatibus' )
+							.add( 'electroencephalographically' )
+							.add( 'antitransubstantiationalist' )
+							.add( 'antitransubstantiationalist' )
+							.add( 'disproportionableness' )
+							.add( 'incomprehensibilities' );
+				var end = +( new Date() );
+
+				ok( end - start >= 0 && end - start < 5);
+			});
+		});
+
+		test( 'should find a word in the trie', function(){
+			testing.req.given( [ 'src/trie' ], function ( Trie ) {
+				var t = new Trie( 'hello' ).add( 'he' ).add( 'hey' ).add( 'him' );
+
+				strictEqual( t.has( 'he' ), true );
+				strictEqual( t.has( 'hello' ), true );
+				strictEqual( t.has( 'hey' ), true );
+				strictEqual( t.has( 'him' ), true );
+				strictEqual( t.has( 'funky' ), false );
+			});
+		});
+
+		test( 'should accept find similar words', function(){
+			testing.req.given( [ 'src/trie' ], function ( Trie ) {
+				var t = new Trie( 'an' )
+							.add( 'a' )
+							.add( 'and' )
+							.add( 'ad' )
+							.add( 'add' )
+							.add( 'ant' )
+							.add( 'antidote' )
+							.add( 'bad' )
+							.add( 'boo' );
+
+				var expected = [ 'ant', 'antidote' ];
+
+				deepEqual( t.like( 'ant' ), expected );
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">Trie Module: Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
