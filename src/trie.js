@@ -8,7 +8,7 @@ define(function(){
             return new Trie( word );
         }
         this.__store = {};
-        this.add( word );
+        this.add( word || '' );
     };
 
     Trie.prototype.__getSiblingNodes = (function(){
@@ -36,9 +36,11 @@ define(function(){
     };
 
     Trie.prototype.add = function( word ){
-        var letters = word.toLowerCase().split(''),
+        var letters = word && word.toLowerCase().split(''),
             store = this.__store,
             letter;
+
+        if ( ! letters.length ){ return this; }
 
         for ( var i = 0, len = letters.length; i < len; i += 1 ){
             letter = letters[ i ];
@@ -60,6 +62,8 @@ define(function(){
             nodes = [],
             nodeAndLetter, letter, node;
 
+        if ( ! word || ! word.length ){ return this; }
+
         word = word.toLowerCase();
 
         for ( var i = 0, len = word.length; i < len; i += 1 ){
@@ -77,7 +81,7 @@ define(function(){
             node = nodeAndLetter[ 0 ];
             letter = nodeAndLetter[ 1 ];
 
-            if ( !!(node[ letter ] && node[ letter ]._) ){
+            if ( !!( node[ letter ] && node[ letter ]._ ) ){
                 delete node[ letter ]._;
             }
 
