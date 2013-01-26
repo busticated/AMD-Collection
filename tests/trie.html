@@ -38,6 +38,20 @@
 			});
 		});
 
+		test( 'should accept a string and remove from trie hash', function(){
+			testing.req.given( [ 'src/trie' ], function ( Trie ) {
+				var t = new Trie( 'bear' ).add( 'be' ).add( 'beef' ).add( 'beer' ).add( 'been' ).add( 'beam' ).add( 'cat' ).add( 'cats' ).add( 'zip' );
+				var expected = {
+					b: { e: { _: 1, a: { m: { _: 1 }, r: { _: 1 } }, e: { f: { _: 1 } } } },
+					c: { a: { t: { s: { _: 1 } } } }
+				};
+
+				t.remove( 'been' ).remove( 'beer' ).remove( 'zip' ).remove( 'cat' );
+
+				deepEqual( t.toJSON(), expected );
+			});
+		});
+
 		test( 'should add entries within a reasonable amount of time', function(){
 			testing.req.given( [ 'src/trie' ], function ( Trie ) {
 				var start = +( new Date() );

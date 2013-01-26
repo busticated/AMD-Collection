@@ -11,6 +11,30 @@ define(function(){
         this.add( word );
     };
 
+    Trie.prototype.__getSiblingNodes = (function(){
+        var _nodes = [];
+
+        return function( node ){
+            var out;
+
+            if ( typeof node !== 'object' ){ return []; }
+
+            for ( var prop in node ){
+                if ( node.hasOwnProperty( prop ) ){
+                    _nodes.push( prop );
+                }
+            }
+
+            out = _nodes;
+            _nodes = [];
+            return out;
+        };
+    }());
+
+    Trie.prototype.__hasSiblingNode = function( node ){
+        return !! this.__getSiblingNodes( node ).length;
+    };
+
     Trie.prototype.add = function( word ){
         var letters = word.toLowerCase().split(''),
             store = this.__store,
@@ -27,6 +51,43 @@ define(function(){
         }
 
         store._ = 1;
+
+        return this;
+    };
+
+    Trie.prototype.remove = function( word ){
+        var store = this.__store,
+            nodes = [],
+            nodeAndLetter, letter, node;
+
+        word = word.toLowerCase();
+
+        for ( var i = 0, len = word.length; i < len; i += 1 ){
+            letter = word.charAt( i );
+
+            if ( ! store ){
+                return this;
+            }
+
+            nodes.push( [ store, letter ] );
+            store = store[ letter ];
+        }
+
+        while ( nodes.length ){
+            nodeAndLetter = nodes.pop();
+            node = nodeAndLetter[ 0 ];
+            letter = nodeAndLetter[ 1 ];
+
+            if ( !!(node[ letter ] && node[ letter ]._) ){
+                delete node[ letter ]._;
+            }
+
+            if ( ! this.__hasSiblingNode( node[ letter ] ) ){
+                delete node[ letter ];
+            } else {
+                break;
+            }
+        }
 
         return this;
     };
