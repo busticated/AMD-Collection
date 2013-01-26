@@ -32,12 +32,13 @@ define(function(){
     };
 
     Trie.prototype.has = function( word ){
-        var letters = word.toLowerCase().split(''),
-            store = this.__store,
+        var store = this.__store,
             letter;
 
-        for ( var i = 0, len = letters.length; i < len; i += 1 ){
-            letter = letters[ i ];
+        word = word.toLowerCase();
+
+        for ( var i = 0, len = word.length; i < len; i += 1 ){
+            letter = word.charAt( i );
             store = store[ letter ];
 
             if ( ! store ){
