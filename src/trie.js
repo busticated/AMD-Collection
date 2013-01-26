@@ -63,12 +63,11 @@ define(function(){
         word = word.toLowerCase();
 
         for ( var i = 0, len = word.length; i < len; i += 1 ){
-            letter = word.charAt( i );
-
             if ( ! store ){
                 return this;
             }
 
+            letter = word.charAt( i );
             nodes.push( [ store, letter ] );
             store = store[ letter ];
         }
