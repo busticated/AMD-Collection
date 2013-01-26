@@ -8,7 +8,7 @@ define(function(){
             return new Trie( word );
         }
         this.__store = {};
-        this.add( word || '' );
+        word && this.add( word );
     };
 
     Trie.prototype.__getSiblingNodes = (function(){
