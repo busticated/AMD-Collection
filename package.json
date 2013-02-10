@@ -11,8 +11,16 @@
   "engines": {
     "node": "0.x.x"
   },
-  "dependencies": {
-    "requirejs" : "1.x.x"
+  "dependencies": {},
+  "devDependencies": {
+    "requirejs": "2.x.x",
+    "grunt-volo": "0.0.x"
   },
-  "devDependencies": {}
+  "volo": {
+    "baseDir": "tests/lib",
+    "dependencies": {
+      "require": "github:jrburke/requirejs/2.1.4",
+      "sinon": "http://sinonjs.org/releases/sinon-1.5.2.js"
+    }
+  }
 }
