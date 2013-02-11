@@ -20,7 +20,7 @@
         "baseDir": "tests/lib",
         "dependencies": {
             "require": "github:jrburke/requirejs/2.1.4",
-            "sinon": "http://sinonjs.org/releases/sinon-1.5.2.js"
+            "sinon": "github:cjohansen/Sinon.JS/v1.5.2"
         }
     }
 }
