@@ -3,8 +3,18 @@
 define(function(){
     'use strict';
 
-    var _isArray = function( a ){
-        return Object.prototype.toString.call( a ) === '[object Array]';
+    var __ = {
+        objToString: Object.prototype.toString,
+        arrSlice: Array.prototype.slice,
+        isArray: function( a ){
+            return __.objToString.call( a ) === '[object Array]';
+        },
+        isObject: function( o ){
+            return __.objToString.call( o ) === '[object Object]';
+        },
+        slice: function( args ){
+            return __.arrSlice.call( args );
+        }
     };
 
     var It = function( collection ){
@@ -12,10 +22,10 @@ define(function(){
             return It.apply( new It(), arguments );
         }
 
-        if ( _isArray( arguments[ 0 ] ) ){
-            this.collection = Array.prototype.slice.call( arguments[ 0 ] );
+        if ( __.isArray( arguments[ 0 ] ) ){
+            this.collection = __.slice( arguments[ 0 ] );
         } else {
-            this.collection = Array.prototype.slice.call( arguments );
+            this.collection = __.slice( arguments );
         }
 
         this.index = 0;
@@ -162,7 +172,7 @@ define(function(){
 
         // collection modification methods
         add : function( items, index ){
-            if ( ! _isArray( items ) ){
+            if ( ! __.isArray( items ) ){
                 items = [ items ];
             }
 
