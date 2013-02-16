@@ -57,7 +57,7 @@ define(function () {
             return type.is.fn( obj[ key ] );
         },
         property: function( obj, key ){
-            return !type.is.method( obj, key ) && !type.is.undefined( obj[ key ] );
+            return !type.is.method( obj, key ) && key in obj;
         },
         error: function( err ){
             return objToString.call( err ) === '[object Error]';
