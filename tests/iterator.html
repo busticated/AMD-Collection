@@ -30,6 +30,19 @@
 				return items;
 			};
 
+			var createAddOverride = function( keyPrefix, ctx ){
+				
+				return function( items ){
+					var item;
+					for ( var i = 0, len = items.length; i < len; i += 1 ){
+						item = items[ i ];
+						ctx.collection[ 'key-' + i ] = item;
+						Iterator.prototype.add.call( ctx, item );
+					}
+					return this;
+				};
+			};
+
 			module("Iterator", {
 				setup: function() {
 					strictEqual( typeof l, 'undefined', 'iterator instance is undefined, test is using a clean instance' );
@@ -44,6 +57,8 @@
 				var l,
 				expected = {
 					'has': 'function',
+					'hasIndex': 'function',
+					'hasKey': 'function',
 					'hasNext': 'function',
 					'hasPrev': 'function',
 					'isFirst': 'function',
@@ -155,13 +170,47 @@
 			});
 
 			test( 'method - .has()', function(){
+				var l, items;
+
+				items = [ 0, 1, null, false, {}, [], function(){}, new Date(), /.+/gi, 'last' ];
+				l = Iterator();
+				l.add = createAddOverride( 'key-', l );
+				l.add( items );
+
+				for ( var j = 0, length = items.length; j < length; j += 1 ){
+					strictEqual( l.has( 'key-' + j ), true, 'can check for item by key - .has( "key-' + j + '" )' );
+				}
+				strictEqual( l.hasKey( 'key-' + 666 ), false, 'does not have nonexistant key - .has( "key-666" )' );
+
+				strictEqual( l.has( 0 ), true, 'can check for zero index - .has( 0 )' );
+				strictEqual( l.has( 2 ), true, 'can check for 2nd index - .has( 2 )' );
+				strictEqual( l.has( 4 ), true, 'does not have 4th idx - .has( 4 )' );
+				strictEqual( l.has( 7 ), true, 'can check for 7th index - .has( 7 )' );
+				strictEqual( l.has( 666 ), false, 'does not have nonexistant index - .has( 666 )' );
+			});
+
+			test( 'method - .hasIndex()', function(){
 				var l;
 
 				l = Iterator( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 ] );
 
-				strictEqual( l.has( 0 ), true, 'has zero idx - .has( 0 )' );
-				strictEqual( l.has( 7 ), true, 'has 7th idx - .has( 7 )' );
-				strictEqual( l.has( 15 ), false, 'does not have 15th idx - .has( 15 )' );
+				strictEqual( l.hasIndex( 0 ), true, 'has zero idx - .has( 0 )' );
+				strictEqual( l.hasIndex( 7 ), true, 'has 7th idx - .has( 7 )' );
+				strictEqual( l.hasIndex( 15 ), false, 'does not have 15th idx - .has( 15 )' );
+			});
+
+			test( 'method - .hasKey()', function(){
+				var l, items;
+
+				items = [ 0, 1, null, false, {}, [], function(){}, new Date(), /.+/gi, 'last' ];
+				l = Iterator();
+				l.add = createAddOverride( 'key-', l );
+				l.add( items );
+
+				for ( var j = 0, length = items.length; j < length; j += 1 ){
+					strictEqual( l.hasKey( 'key-' + 1 ), true, 'has key' );
+				}
+				strictEqual( l.hasKey( 'key-' + 666 ), false, 'does not have key' );
 			});
 
 			test( 'method - .hasNext()', function(){

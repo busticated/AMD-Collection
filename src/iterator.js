@@ -26,7 +26,13 @@ define(function(){
     It.prototype = {
         // test methods - return bool
         has : function( index ){
+            return this.hasIndex( index ) || this.hasKey( index );
+        },
+        hasIndex: function( index ){
             return index < this.length && index >= 0;
+        },
+        hasKey : function( key ){
+            return typeof this.get( key ) !== 'undefined';
         },
         hasNext : function(){
             return this.has(this.index + 1);
