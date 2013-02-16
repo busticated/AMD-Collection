@@ -54,6 +54,10 @@ define(function () {
         if ( !handlers ) { return this; }
 
         for ( var i = 0, l = handlers.length; i < l; i += 1 ) {
+            if ( handlers.length < l ) {
+                i += handlers.length - l;
+                l = handlers.length;
+            }
             handlers[ i ].call( this, data );
         }
         return this;
