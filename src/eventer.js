@@ -67,10 +67,11 @@ define(function () {
         var self = this,
             names = eventName.split( ' ' ),
             makeHandler = function( name ){
-                return function handler(){
+                var handler = function(){
                     self.off( name, handler );
                     callback.apply( this, arguments );
                 };
+                return handler;
             },
             name;
 
