@@ -64,6 +64,7 @@
 					fn: 'function',
 					method: 'function',
 					property: 'function',
+					error: 'function',
 					undefined: 'function',
 					null: 'function',
 					nullOrUndefined: 'function',
@@ -84,13 +85,22 @@
 
 				ok( type.is.bool( true ), '.bool( true ) returns true' );
 				ok( type.is.string( 'foo' ), '.string( \'foo\' ) returns true' );
-				ok( type.is.number( 666 ), '.number( 13 ) returns true' );
+				ok( type.is.emptyString( '' ), '.emptyString( \'\' ) returns true' );
+				ok( type.is.alpha( 'bar' ), '.alpha( \'bar\' ) returns true' );
+				ok( type.is.alphaNumeric( '123baz' ), '.alphaNumeric( \'123baz\' ) returns true' );
+				ok( type.is.number( 666 ), '.number( 666 ) returns true' );
+				ok( type.is.even( 88 ), '.even( 88 ) returns true' );
+				ok( type.is.odd( 17 ), '.odd( 17 ) returns true' );
+				ok( type.is.positive( 100 ), '.positive( 100 ) returns true' );
+				ok( type.is.negative( -10 ), '.positive( -10 ) returns true' );
 				ok( type.is.regex( /.+/gi ), '.regex( /.+/gi ) returns true' );
 				ok( type.is.object( {} ), '.object( {} ) returns true' );
 				ok( type.is.array( [] ), '.array( [] ) returns true' );
+				ok( type.is.emptyArray( [] ), '.emptyArray( [] ) returns true' );
 				ok( type.is.fn( function(){} ), '.fn( function(){} ) returns true' );
 				ok( type.is.method( { key: function(){} }, 'key' ), '.method( { key: function(){} }, "key" ) returns true' );
 				ok( type.is.property( { key: 'bar' }, 'key' ), '.property( { key: < anything except a function > }, "key" ) returns true' );
+				ok( type.is.error( new Error() ), '.error( new Error() ) returns true' );
 				ok( type.is.undefined( undef ), '.undefined() returns true' );
 				ok( type.is.null( null ), '.null( null ) returns true' );
 				ok( type.is.nullOrUndefined( null ), '.nullOrUndefined( < null / undefined > ) returns true' );

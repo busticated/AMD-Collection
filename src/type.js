@@ -59,6 +59,9 @@ define(function () {
         property: function( obj, key ){
             return !type.is.method( obj, key ) && !type.is.undefined( obj[ key ] );
         },
+        error: function( err ){
+            return objToString.call( err ) === '[object Error]';
+        },
         undefined: function( u ){
             return typeof u === 'undefined';
         },
