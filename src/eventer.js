@@ -13,7 +13,7 @@ define(function () {
         var names = eventName.split( ' ' ),
             name;
 
-        for ( var i = 0, l = names.length; i < l; i += 1){
+        for ( var i = 0, l = names.length; i < l; i += 1 ){
             name = names[ i ];
             if ( !this.__handlers[ name ] ) {
                 this.__handlers[ name ] = [];
@@ -29,7 +29,7 @@ define(function () {
             handlers,
             name;
 
-        for ( var i = 0, l = names.length; i < l; i += 1){
+        for ( var i = 0, l = names.length; i < l; i += 1 ){
             name = names[ i ];
             handlers = this.__handlers[ name ];
 
@@ -53,7 +53,7 @@ define(function () {
 
         if ( !handlers ) { return this; }
 
-        for ( var i = 0, l = handlers.length; i < l; i = i + 1 ) {
+        for ( var i = 0, l = handlers.length; i < l; i += 1 ) {
             handlers[ i ].call( this, data );
         }
         return this;
