@@ -42,7 +42,7 @@ define(function(){
             return index < this.length && index >= 0;
         },
         hasKey : function( key ){
-            return typeof this.get( key ) !== 'undefined';
+            return key in this.collection;
         },
         hasNext : function(){
             return this.has(this.index + 1);
