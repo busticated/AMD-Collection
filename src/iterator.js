@@ -6,7 +6,7 @@ define(function(){
     var __ = {
         objToString: Object.prototype.toString,
         arrSlice: Array.prototype.slice,
-        slice: function( args ){
+        toArray: function( args ){
             return __.arrSlice.call( args );
         },
         isArray: function( a ){
@@ -19,7 +19,7 @@ define(function(){
             return __.isObject( o ) && 'keyPrefix' in o && 'keyProp' in o;
         },
         setupCollection: function( args ){
-            var a = __.slice( args );
+            var a = __.toArray( args );
 
             if ( __.hasConfig( a[ 1 ] ) ){
                 a.splice( 1, 1 );
@@ -59,10 +59,10 @@ define(function(){
             return key in this.collection;
         },
         hasNext : function(){
-            return this.has(this.index + 1);
+            return this.has( this.index + 1);
         },
         hasPrev : function(){
-            return this.has(this.index - 1);
+            return this.has( this.index - 1);
         },
         isFirst : function( index ){
             if ( typeof index === 'undefined' ){
@@ -128,12 +128,10 @@ define(function(){
             return null;
         },
         first : function(){
-            this.setIndex( 0 );
-            return this.current();
+            return this.setIndex( 0 ).current();
         },
         last : function(){
-            this.setIndex( this.length - 1 );
-            return this.current();
+            return this.setIndex( this.length - 1 ).current();
         },
 
         // utility methods
@@ -178,7 +176,7 @@ define(function(){
                 ctx = context;
             }
 
-            for ( var i = 0, l = this.length; i < l; i = i + 1 ){
+            for ( var i = 0, l = this.length; i < l; i += 1 ){
                 callback.call( ctx, this.collection[ i ], i );
             }
             return this;
@@ -196,7 +194,7 @@ define(function(){
             if ( typeof index === 'undefined' || ! this.has( index ) ){
                 index = this.length;
             }
-            for ( var i = 0, l = items.length; i < l; i = i + 1 ){
+            for ( var i = 0, l = items.length; i < l; i += 1 ){
                 this.collection.splice( index + i, 0, items[ i ] );
             }
             this.length = this.collection.length;
@@ -242,7 +240,7 @@ define(function(){
         },
         filter : function( filter ){
             var newCollection = [];
-            for ( var i = 0, l = this.length; i < l; i = i + 1 ){
+            for ( var i = 0, l = this.length; i < l; i += 1 ){
                 if ( filter( this.collection[ i ], i ) ){
                     newCollection.push( this.collection[ i ] );
                 }
