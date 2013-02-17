@@ -27,18 +27,21 @@ define(function () {
     Eventer.prototype.off = function ( eventName, callback ) {
         var names = eventName.split( ' ' ),
             handlers,
+            handlerIndex,
             name;
 
         for ( var i = 0, l = names.length; i < l; i += 1 ){
             name = names[ i ];
             handlers = this.__handlers[ name ];
+            handlerIndex = handlers.length;
 
             if ( !handlers ) { return this; }
 
-            for ( var j = 0, k = handlers.length; j < k; j += 1 ) {
-                if ( handlers[ j ] === callback || typeof callback !== 'function' ) {
-                    handlers.splice( j, 1 );
+            while ( handlerIndex >= 0 ){
+                if ( ( handlers[ handlerIndex ] || {} ).fn === callback || typeof callback !== 'function' ) {
+                    handlers.splice( handlerIndex, 1 );
                 }
+                handlerIndex -= 1;
             }
 
             if ( handlers.length === 0 ) {

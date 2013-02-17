@@ -97,21 +97,31 @@
 		test( 'when removing event handlers from an event emitter instance', function() {
 			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
 				var eventHub1 = new Eventer();
+				var wasCalled = false;
 				var fn = function() {
 					throw new Error( 'event handler should not have been run' );
 				};
 
 				eventHub1.on( 'test', fn );
 				eventHub1.on( 'test', fn );
-				eventHub1.on( 'test', function() {} );
-
-				eventHub1.off( 'test', fn );
-				strictEqual( eventHub1.getEventHandlers()[ 'test' ].length, 2, 'correct event handler for "test" event is unregistered' );
+				eventHub1.on( 'test', function() { wasCalled = true; } );
 
 				eventHub1.off( 'test', fn );
 				strictEqual( eventHub1.getEventHandlers()[ 'test' ].length, 1, 'correct event handler for "test" event is unregistered' );
 
 				eventHub1.emit( 'test' );
+				ok( wasCalled, 'correct event handler is retained' );
+
+				wasCalled = false;
+				eventHub1.on( 'test', fn );
+				eventHub1.on( 'test', fn );
+				eventHub1.on( 'test', fn );
+
+				eventHub1.off( 'test' );
+				deepEqual( eventHub1.getEventHandlers(), {}, 'all handlers for "test" event are unregistered' );
+
+				eventHub1.emit( 'test' );
+				ok( ! wasCalled, 'all event handlers are removed' );
 			});
 		});
 
