@@ -64,6 +64,8 @@
 					fn: 'function',
 					method: 'function',
 					property: 'function',
+					date: 'function',
+					utc: 'function',
 					undefined: 'function',
 					null: 'function',
 					nullOrUndefined: 'function',
@@ -555,6 +557,61 @@
 					false && !type.is.not.property( test, 'method' ),
 					'function type is not a property'
 				);
+			});
+		});
+
+		test('when calling .is.date() and .is.not.date()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: new Date(), val: true },
+					{ test: '11/1/2012', val: true },
+					{ test: 'Fri Nov 09 2012', val: true },
+					{ test: 'Fri, 09 Nov 2012 19:23:00 GMT', val: true },
+					{ test: '2012-11-09T19:23:00.944Z', val: true },
+					{ test: '11/9/2012', val: true },
+					{ test: '11/9/2012 11:23:00 AM', val: true },
+					{ test: 'Fri Nov 09 2012 11:23:00 GMT-0800 (PST)', val: true },
+					{ test: '11:23:00 GMT-0800 (PST)', val: false },
+					{ test: function(){}, val: false },
+					{ test: [], val: false },
+					{ test: {}, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.date, type.is.not.date, 'date', expected );
+			});
+		});
+
+		test('when calling .is.utc() and .is.not.utc()', function() {
+			testing.req.given( [ 'src/type' ], function ( type ) {
+				var undef;
+				var expected = [
+					{ test: new Date().toUTCString(), val: true },
+					{ test: '1/1/1900', val: false },
+					{ test: function(){}, val: false },
+					{ test: [], val: false },
+					{ test: {}, val: false },
+					{ test: /.+/gi, val: false },
+					{ test: 666, val: false },
+					{ test: 13.666, val: false },
+					{ test: 'foo', val: false },
+					{ test: '', val: false },
+					{ test: true, val: false },
+					{ test: undef, val: false },
+					{ test: null, val: false },
+					{ test: NaN, val: false }
+				];
+
+				assertIsExpected( type.is.utc, type.is.not.utc, 'utc', expected );
 			});
 		});
 

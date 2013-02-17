@@ -62,6 +62,37 @@ define(function () {
         property: function( obj, key ){
             return !type.is.method( obj, key ) && !type.is.undefined( obj[ key ] );
         },
+        date: function( d ){
+            var date = new Date( d );
+            var props = [
+                'toDateString',
+                'toGMTString',
+                'toISOString',
+                'toLocaleDateString',
+                'toLocaleString',
+                'toLocaleTimeString',
+                'toTimeString',
+                'toUTCString',
+                'toString'
+            ];
+
+            if ( d instanceof Date ){ return true; }
+            if ( date.toString() === 'Invalid Date' ){ return false; }
+
+            for ( var i = 0, l = props.length; i < l; i += 1 ) {
+                if ( date[ props[ i ] ]() === d ){
+                    return true;
+                }
+            }
+
+            return false;
+        },
+        utc: function( d ){
+            if ( type.is.not.string( d ) ){
+                return false;
+            }
+            return d === new Date( d ).toUTCString();
+        },
         undefined: function( u ){
             return typeof u === 'undefined';
         },
