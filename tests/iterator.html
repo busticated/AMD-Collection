@@ -136,6 +136,10 @@
 					l.get( 4 ) === 'a',
 					'collection contents are correct'
 				);
+
+				l = new Iterator([ 1, 2, 3 ], [ 'a', 'b', 'c' ] );
+				strictEqual( l.length, 2, 'passing two arrays to constructor creates a collection with two items' );
+				strictEqual( l.get( 1 )[ 1 ], 'b', 'collection contents are correct' );
 			});
 
 			test( 'property - .index', function(){
