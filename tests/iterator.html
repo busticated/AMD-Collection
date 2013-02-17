@@ -73,6 +73,7 @@
 					'first': 'function',
 					'last': 'function',
 					'indexOf': 'function',
+					'indexOfKey': 'function',
 					'setIndex': 'function',
 					'loop': 'function',
 					'add': 'function',
@@ -415,6 +416,21 @@
 				strictEqual( l.indexOf( first ), 0, 'using a collection of objects, first item has correct index' );
 				strictEqual( l.indexOf( third ), 2, 'using a collection of objects, last item has correct index' );
 				strictEqual( l.indexOf( second, 1 ), 1, 'using a collection of objects, item\'s index is correct when providing "fromIdx" argument' );
+			});
+
+			test( 'method - .indexOfKey()', function(){
+				var l, items, undef;
+
+				items = [ 'a', 'b', 'c', 'd', 'e' ];
+				l = Iterator();
+				l.add = createAddOverride( 'key-', l );
+
+				l.add( items );
+
+				strictEqual( l.indexOfKey( 'key-0' ), 0, 'returned correct index for first item - .indexOfKey( "key-0" )' );
+				strictEqual( l.indexOfKey( 'key-0', 1 ), -1, 'returned -1 (not found) for first item when starting from later index - .indexOfKey( "key-0", 1 )' );
+				strictEqual( l.indexOfKey( 'key-3' ), 3, 'returned correct index for third item - .indexOfKey( "key-3" )' );
+				strictEqual( l.indexOfKey( 'key-3', 2 ), 3, 'returned correct index for third item when starting from later index - .indexOfKey( "key-3", 2 )' );
 			});
 
 			test( 'method - .setIndex()', function(){

@@ -139,6 +139,9 @@ define(function(){
 
             return -1;
         },
+        indexOfKey : function( key, fromIdx ){
+            return this.indexOf( this.get( key ), fromIdx );
+        },
         setIndex : function( index ){
             if ( ! this.has( index ) ){
                 throw new Error( 'index out of bounds - collection does not include that index' );
