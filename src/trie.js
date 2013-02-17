@@ -57,6 +57,16 @@ define(function(){
         return this;
     };
 
+    Trie.prototype.addAll = function( words ){
+        if ( ! words.length ){ return this; }
+
+        for ( var i = 0, len = words.length; i < len; i += 1 ){
+            this.add( words[ i ] );
+        }
+
+        return this;
+    };
+
     Trie.prototype.remove = function( word ){
         var store = this.__store,
             nodes = [],
