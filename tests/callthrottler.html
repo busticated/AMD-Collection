@@ -61,28 +61,27 @@
 
 		test( 'when calling .add() to queue a series of calls and execute each sequentially after a set delay', function() {
 			testing.req.given( [ 'src/callthrottler' ], function ( CallThrottler ) {
-				var interval = 25,
+				var interval = 50,
 					now = function(){ return +( new Date() ); },
-					lastRun = now(),
-					calls = [],
 					fn = function( msg ){
-						calls.push( { id: calls.length, msg: msg, isOk: verifyInterval() } );
-					},
-					verifyInterval = function(){
-						var ranIn = now() - lastRun,
-							runtime = ranIn - interval;
-						lastRun = now();
-						return !!( runtime < 5 && runtime >= 0 );
-					},
-					callQ = new CallThrottler( interval );
+						var runtime = now() - fn.lastRun,
+							isOk = !!( runtime < ( interval + 15 ) && runtime >= ( interval - 15 ) ); // lol js timers
 
+						fn.calls = fn.calls || [];
+						fn.calls.push( { id: fn.calls.length, msg: msg, isOk: isOk } );
+						fn.lastRun = now();
+					};
+
+				var callQ = new CallThrottler( interval );
+
+				fn.lastRun = now();
 				while ( callQ.commands.length < 5 ){
 					callQ.add( fn, 'i am # ' + callQ.commands.length );
 				}
 
 				stop();
 				setTimeout(function(){
-					deepEqual( calls, [
+					deepEqual( fn.calls, [
 						{ id: 0, isOk: true, msg: "i am # 0" },
 						{ id: 1, isOk: true, msg: "i am # 1" },
 						{ id: 2, isOk: true, msg: "i am # 2" },
@@ -90,7 +89,8 @@
 						{ id: 4, isOk: true, msg: "i am # 4" }
 					], 'calls are delayed appropriately' );
 					start();
-				}, 200 );
+				}, 400 );
+				window.CallThrottler = CallThrottler;
 			});
 		});
 	</script>
