@@ -591,12 +591,13 @@
 				var undef;
 				var expected = [
 					{ test: new Date(), val: true },
-					{ test: '11/1/2012', val: true },
+					{ test: '11/9/2012', val: true },
+					{ test: '11/35/2012', val: false },
+					{ test: '11/9/2012 11:23:00 AM', val: true },
+					{ test: '11/9/2012 29:23:00 AM', val: false },
 					{ test: 'Fri Nov 09 2012', val: true },
 					{ test: 'Fri, 09 Nov 2012 19:23:00 GMT', val: true },
 					{ test: '2012-11-09T19:23:00.944Z', val: true },
-					{ test: '11/9/2012', val: true },
-					{ test: '11/9/2012 11:23:00 AM', val: true },
 					{ test: 'Fri Nov 09 2012 11:23:00 GMT-0800 (PST)', val: true },
 					{ test: '11:23:00 GMT-0800 (PST)', val: false },
 					{ test: function(){}, val: false },

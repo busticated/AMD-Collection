@@ -76,7 +76,7 @@ define(function () {
                 'toString'
             ];
 
-            if ( d instanceof Date ){ return true; }
+            if ( objToString.call( d ) === '[object Date]' ){ return true; }
             if ( date.toString() === 'Invalid Date' ){ return false; }
 
             for ( var i = 0, l = props.length; i < l; i += 1 ) {
@@ -85,7 +85,7 @@ define(function () {
                 }
             }
 
-            return false;
+            return ( /^\d{1,2}\/\d{1,2}\/\d{2,4}/ ).test( d ) && ( parseInt( d.split( '/' )[ 1 ], 10 ) === date.getDate() );
         },
         utc: function( d ){
             if ( type.is.not.string( d ) ){
