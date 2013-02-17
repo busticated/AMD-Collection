@@ -3,7 +3,8 @@
 define(function () {
     'use strict';
 
-    var type = {},
+    var objToString = Object.prototype.toString,
+        type = {},
         not = {};
 
     type.is = {
@@ -37,18 +38,14 @@ define(function () {
         negative: function( n ){
             return type.is.number( n ) && n < 0;
         },
-        // "instanceof of RegExp" doesn't work when testing obj from another window (e.g. iframe)
         regex: function( r ){
-            if ( type.is.null( r ) || type.is.undefined( r ) ){
-                return false;
-            }
-            return type.is.fn( r.test ) && type.is.fn( r.exec );
+            return objToString.call( r ) === '[object RegExp]';
         },
         object: function( o ){
-            return typeof o === 'object' && !type.is.array( o ) && !type.is.null( o ) && !type.is.regex( o );
+            return objToString.call( o ) === '[object Object]';
         },
         array: function( a ){
-            return Object.prototype.toString.call( a ) === '[object Array]';
+            return objToString.call( a ) === '[object Array]';
         },
         emptyArray: function( a ){
             return type.is.array( a ) && a.length === 0;
@@ -60,7 +57,10 @@ define(function () {
             return type.is.fn( obj[ key ] );
         },
         property: function( obj, key ){
-            return !type.is.method( obj, key ) && !type.is.undefined( obj[ key ] );
+            return !type.is.method( obj, key ) && key in obj;
+        },
+        error: function( err ){
+            return objToString.call( err ) === '[object Error]';
         },
         date: function( d ){
             var date = new Date( d );

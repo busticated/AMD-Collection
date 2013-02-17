@@ -15,10 +15,10 @@
 			notStrictEqual( window.location.protocol, 'file:', 'Not running tests under the "file:" protocol' );
 		});
 
-		module('Using standard setup & teardown', testing.setupAndTeardown);
+		module( 'Using standard setup & teardown', testing.setupAndTeardown );
 
 		test('confirm module methods & properties', function(){
-			testing.req.given(['src/eventer'], function (Eventer) {
+			testing.req.given( ['src/eventer'], function ( Eventer ) {
 				var evtr = new Eventer();
 				var expected = {
 					'on': 'function',
@@ -29,7 +29,7 @@
 					'__handlers': 'object'
 				};
 
-				expect(1 + Object.keys(expected).length);
+				expect( 1 + Object.keys(expected).length );
 
 				strictEqual( Object.keys( Eventer.prototype ).length + Object.keys( evtr ).length, Object.keys( expected ).length, 'all ' + Object.keys( expected ).length + ' methods have been identified' );
 
@@ -39,12 +39,12 @@
 			});
 		});
 
-		test('when registering an event handler with an event emitter instance', function() {
-			testing.req.given(['src/eventer'], function (Eventer) {
+		test( 'when registering an event handler with an event emitter instance', function() {
+			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
 				var eventHub1 = new Eventer();
 				var eventHub2 = new Eventer();
 
-				eventHub1.on('test', function (){});
+				eventHub1.on( 'test', function (){} );
 				var eventHub1Handlers = eventHub1.getEventHandlers();
 
 				eventHub2.on('test', function (){});
@@ -52,25 +52,25 @@
 				eventHub2.on('test', function (){});
 				var eventHub2Handlers = eventHub2.getEventHandlers();
 
-				ok(testing.utils.isObject(eventHub1Handlers), 'eventHandlers hash is available');
-				ok(testing.utils.isArray(eventHub1Handlers.test), '"test" event name is registered');
-				strictEqual(typeof eventHub1Handlers.test[ 0 ], 'function', '"test" event handler is a function');
-				strictEqual(eventHub1Handlers.test.length, 1, 'number of "test" event handlers is correct');
-				ok(testing.utils.isObject(eventHub2Handlers), 'eventHandlers hash is available on 2nd instance');
-				ok(testing.utils.isArray(eventHub2Handlers.test), '"test" event name is registered on 2nd instance');
-				strictEqual(typeof eventHub2Handlers.test[ 0 ], 'function', '"test" event handler on 2nd instance is a function');
-				strictEqual(eventHub2Handlers.test.length, 3, 'number of "test" event handlers is correct on 2nd instance');
+				ok( testing.utils.isObject( eventHub1Handlers ), 'eventHandlers hash is available' );
+				ok( testing.utils.isArray( eventHub1Handlers.test ), '"test" event name is registered' );
+				strictEqual( typeof eventHub1Handlers.test[ 0 ], 'function', '"test" event handler is a function' );
+				strictEqual( eventHub1Handlers.test.length, 1, 'number of "test" event handlers is correct' );
+				ok( testing.utils.isObject( eventHub2Handlers ), 'eventHandlers hash is available on 2nd instance' );
+				ok( testing.utils.isArray( eventHub2Handlers.test ), '"test" event name is registered on 2nd instance' );
+				strictEqual( typeof eventHub2Handlers.test[ 0 ], 'function', '"test" event handler on 2nd instance is a function' );
+				strictEqual( eventHub2Handlers.test.length, 3, 'number of "test" event handlers is correct on 2nd instance' );
 
-				eventHub1.on('test', function (){});
-				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, '"eventHub1" has correct number of event handlers registered');
+				eventHub1.on( 'test', function (){} );
+				strictEqual( eventHub1.getEventHandlers()[ 'test' ].length, 2, '"eventHub1" has correct number of event handlers registered' );
 
 				eventHub2.on('test', function (){});
-				strictEqual(eventHub2.getEventHandlers()['test'].length, 4, '"eventHub2" has correct number of event handlers registered');
+				strictEqual( eventHub2.getEventHandlers()[ 'test' ].length, 4, '"eventHub2" has correct number of event handlers registered' );
 			});
 		});
 
-		test('when emitting events on an event emitter instance', function() {
-			testing.req.given(['src/eventer'], function (Eventer) {
+		test( 'when emitting events on an event emitter instance', function() {
+			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
 				var eventHub1 = new Eventer();
 				var eventHub2 = new Eventer();
 				var eventHandlers = {
@@ -79,88 +79,94 @@
 				};
 				var expectedEventData = { foo: 'foo', bar: 'bar' };
 
-				testing.sandbox.spy(eventHandlers, 'one');
-				testing.sandbox.spy(eventHandlers, 'two');
+				testing.sandbox.spy( eventHandlers, 'one' );
+				testing.sandbox.spy( eventHandlers, 'two' );
 
-				eventHub1.on('test', eventHandlers.one);
-				eventHub2.on('itsatest', eventHandlers.two);
-				eventHub1.emit('test', expectedEventData);
-				eventHub2.emit('itsatest', true);
+				eventHub1.on( 'test', eventHandlers.one );
+				eventHub2.on( 'itsatest', eventHandlers.two );
+				eventHub1.emit( 'test', expectedEventData );
+				eventHub2.emit( 'itsatest', true );
 
-				ok(eventHandlers.one.calledOnce, 'first event handler is called once');
-				deepEqual(eventHandlers.one.args[0][0], expectedEventData, 'event handler for "test" event is called with the correct data');
-				ok(eventHandlers.two.calledOnce, 'second event handler is called once');
-				strictEqual(eventHandlers.two.args[0][0], true, 'callback ran successfully');
+				ok( eventHandlers.one.calledOnce, 'first event handler is called once' );
+				deepEqual( eventHandlers.one.args[ 0 ][ 0 ], expectedEventData, 'event handler for "test" event is called with the correct data' );
+				ok( eventHandlers.two.calledOnce, 'second event handler is called once' );
+				strictEqual( eventHandlers.two.args[ 0 ][ 0 ], true, 'callback ran successfully' );
 			});
 		});
 
-		test('when removing event handlers from an event emitter instance', function() {
-			testing.req.given(['src/eventer'], function (Eventer) {
+		test( 'when removing event handlers from an event emitter instance', function() {
+			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
 				var eventHub1 = new Eventer();
 				var fn = function() {
-					throw new Error('event handler should not have been run');
+					throw new Error( 'event handler should not have been run' );
 				};
 
-				eventHub1.on('test', fn);
-				eventHub1.on('test', fn);
-				eventHub1.on('test', function() {});
+				eventHub1.on( 'test', fn );
+				eventHub1.on( 'test', fn );
+				eventHub1.on( 'test', function() {} );
 
-				eventHub1.off('test', fn);
-				strictEqual(eventHub1.getEventHandlers()['test'].length, 2, 'correct event handler for "test" event is unregistered');
+				eventHub1.off( 'test', fn );
+				strictEqual( eventHub1.getEventHandlers()[ 'test' ].length, 2, 'correct event handler for "test" event is unregistered' );
 
-				eventHub1.off('test', fn);
-				strictEqual(eventHub1.getEventHandlers()['test'].length, 1, 'correct event handler for "test" event is unregistered');
+				eventHub1.off( 'test', fn );
+				strictEqual( eventHub1.getEventHandlers()[ 'test' ].length, 1, 'correct event handler for "test" event is unregistered' );
 
-				eventHub1.emit('test');
+				eventHub1.emit( 'test' );
 			});
 		});
 
-		test('when registering and removing multiple event handlers at once', function() {
-			testing.req.given(['src/eventer'], function (Eventer) {
-				var eventHub1 = new Eventer();
-				var eventHub2 = new Eventer();
-				var myCallback = function() {};
-				var evt1 = eventHub1.on('eventone eventtwo', myCallback);
-				var evt2 = eventHub2.on('eventone', myCallback);
-
-				var handlers1 = eventHub1.getEventHandlers(); 
-				var handlers2 = eventHub2.getEventHandlers();
-
-				strictEqual(Object.keys(handlers1).length, 2, '"eventHub1" has correct number of event handlers registered');
-				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
-
-				eventHub1.off('eventone eventtwo', myCallback);
-				handlers1 = eventHub1.getEventHandlers();
-				handlers2 = eventHub2.getEventHandlers();
-
-				strictEqual(Object.keys(handlers1).length, 0, '"eventHub1" has correct number of event handlers registered');
-				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
-			});
-		});
-
-		test('when registering event handlers to run once', function() {
-			testing.req.given(['src/eventer'], function (Eventer) {
+		test( 'when registering and removing multiple event handlers at once', function() {
+			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
 				var eventHub1 = new Eventer();
 				var eventHub2 = new Eventer();
 				var expectedData = { foo: 'bar', baz: 1234 };
-				var myCallback = function(d) { deepEqual(d, expectedData, 'event data is correct'); };
-				var evt1 = eventHub1.once('eventone eventtwo', myCallback);
-				var evt2 = eventHub2.once('eventone', myCallback);
-				var handlers1 = eventHub1.getEventHandlers();
-				var handlers2 = eventHub2.getEventHandlers();
+				var myCallback = function( d ) { deepEqual( d, expectedData, 'event data is correct' ); };
 
-				strictEqual(Object.keys(handlers1).length, 2, '"eventHub1" has correct number of event handlers registered');
-				strictEqual(Object.keys(handlers2).length, 1, '"eventHub2" has correct number of event handlers registered');
+				eventHub1.once( 'eventone eventtwo', myCallback );
 
-				eventHub1.emit('eventone', expectedData);
-				eventHub1.emit('eventtwo', expectedData);
-				eventHub2.emit('eventone', expectedData);
+				eventHub2.on( 'eventone', myCallback );
+				eventHub2.once( 'eventone', myCallback );
+				eventHub2.once( 'eventone', myCallback );
+				eventHub2.on( 'eventone', myCallback );
+				eventHub2.once( 'eventone', myCallback );
+				eventHub2.on( 'eventone', myCallback );
 
-				handlers1 = eventHub1.getEventHandlers();
-				handlers2 = eventHub2.getEventHandlers();
+				strictEqual( Object.keys( eventHub1.getEventHandlers() ).length, 2, 'eventHub1 has correct number of event names registered' );
+				strictEqual( eventHub1.getEventHandlers()[ 'eventone' ].length, 1, 'eventHub1 has correct number of event handlers registered for the "eventone" event name' );
+				strictEqual( eventHub1.getEventHandlers()[ 'eventtwo' ].length, 1, 'eventHub1 has correct number of event handlers registered for the "eventtwo" event name' );
+				strictEqual( Object.keys( eventHub2.getEventHandlers() ).length, 1, 'eventHub2 has correct number of event names registered' );
+				strictEqual( eventHub2.getEventHandlers()[ 'eventone' ].length, 6, 'eventHub2 has correct number of event handlers registered for the "eventone" event name' );
 
-				strictEqual(Object.keys(handlers1).length, 0, '"eventHub1" has correct number of event handlers registered');
-				strictEqual(Object.keys(handlers2).length, 0, '"eventHub2" has correct number of event handlers registered');
+				eventHub1.emit( 'eventone', expectedData );
+				eventHub1.emit( 'eventtwo', expectedData );
+				eventHub2.emit( 'eventone', expectedData );
+
+				strictEqual( Object.keys(eventHub1.getEventHandlers() ).length, 0, 'eventHub1 has correct number of event names registered' );
+				strictEqual( Object.keys(eventHub2.getEventHandlers() ).length, 1, 'eventHub2 has correct number of event names registered' );
+				strictEqual( eventHub2.getEventHandlers()[ 'eventone' ].length, 3, 'eventHub2 has correct number of event handlers registered for the "eventone" event name' );
+				expect( 16 );
+			});
+		});
+
+		test( 'when registering event handlers to run once', function() {
+			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
+				var eventHub1 = new Eventer();
+				var eventHub2 = new Eventer();
+				var expectedData = { foo: 'bar', baz: 1234 };
+				var myCallback = function( d ) { deepEqual( d, expectedData, 'event data is correct' ); };
+
+				eventHub1.once( 'eventone eventtwo', myCallback );
+				eventHub2.once( 'eventone', myCallback );
+
+				strictEqual( Object.keys( eventHub1.getEventHandlers() ).length, 2, 'eventHub1 has correct number of event names registered' );
+				strictEqual( Object.keys( eventHub2.getEventHandlers() ).length, 1, 'eventHub2 has correct number of event names registered' );
+
+				eventHub1.emit( 'eventone', expectedData );
+				eventHub1.emit( 'eventtwo', expectedData );
+				eventHub2.emit( 'eventone', expectedData );
+
+				strictEqual( Object.keys( eventHub1.getEventHandlers() ).length, 0, 'eventHub1 has correct number of event names registered' );
+				strictEqual( Object.keys( eventHub2.getEventHandlers() ).length, 0, 'eventHub2 has correct number of event names registered' );
 			});
 		});
 	</script>

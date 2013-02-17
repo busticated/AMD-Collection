@@ -3,21 +3,45 @@
 define(function(){
     'use strict';
 
-    var _isArray = function( a ){
-        return Object.prototype.toString.call( a ) === '[object Array]';
+    var __ = {
+        objToString: Object.prototype.toString,
+        arrSlice: Array.prototype.slice,
+        slice: function( args ){
+            return __.arrSlice.call( args );
+        },
+        isArray: function( a ){
+            return __.objToString.call( a ) === '[object Array]';
+        },
+        isObject: function( o ){
+            return __.objToString.call( o ) === '[object Object]';
+        },
+        hasConfig: function( o ){
+            return __.isObject( o ) && 'keyPrefix' in o && 'keyProp' in o;
+        },
+        setupCollection: function( args ){
+            var a = __.slice( args );
+
+            if ( __.hasConfig( a[ 1 ] ) ){
+                a.splice( 1, 1 );
+            }
+
+            if ( __.isArray( a[ 0 ] ) && a.length === 1 ){
+                return a[ 0 ];
+            }
+
+            if ( a.length >= 1 ){
+                return a;
+            }
+
+            return [];
+        }
     };
 
     var It = function( collection ){
         if ( ! ( this instanceof It ) ){
             return It.apply( new It(), arguments );
         }
-
-        if ( _isArray( arguments[ 0 ] ) ){
-            this.collection = Array.prototype.slice.call( arguments[ 0 ] );
-        } else {
-            this.collection = Array.prototype.slice.call( arguments );
-        }
-
+        this.collection = __.setupCollection( arguments );
         this.index = 0;
         this.length = this.collection.length;
         return this;
@@ -26,7 +50,13 @@ define(function(){
     It.prototype = {
         // test methods - return bool
         has : function( index ){
+            return this.hasIndex( index ) || this.hasKey( index );
+        },
+        hasIndex: function( index ){
             return index < this.length && index >= 0;
+        },
+        hasKey : function( key ){
+            return key in this.collection;
         },
         hasNext : function(){
             return this.has(this.index + 1);
@@ -123,6 +153,9 @@ define(function(){
 
             return -1;
         },
+        indexOfKey : function( key, fromIdx ){
+            return this.indexOf( this.get( key ), fromIdx );
+        },
         setIndex : function( index ){
             if ( ! this.has( index ) ){
                 throw new Error( 'index out of bounds - collection does not include that index' );
@@ -156,7 +189,7 @@ define(function(){
 
         // collection modification methods
         add : function( items, index ){
-            if ( ! _isArray( items ) ){
+            if ( ! __.isArray( items ) ){
                 items = [ items ];
             }
 
@@ -170,9 +203,21 @@ define(function(){
             return this;
         },
         remove : function( index ){
+            var key;
+
             if ( typeof index === 'number' ) {
                 this.collection.splice( index, 1 );
             }
+
+            if ( typeof index === 'string' ) {
+                key = index;
+                index = this.indexOfKey( key );
+                if ( index >= 0 ){
+                    delete this.collection[ key ];
+                    return this.remove( index );
+                }
+            }
+
             this.length = this.collection.length;
             return this;
         },

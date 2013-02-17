@@ -66,6 +66,7 @@
 					property: 'function',
 					date: 'function',
 					utc: 'function',
+					error: 'function',
 					undefined: 'function',
 					null: 'function',
 					nullOrUndefined: 'function',
@@ -86,13 +87,22 @@
 
 				ok( type.is.bool( true ), '.bool( true ) returns true' );
 				ok( type.is.string( 'foo' ), '.string( \'foo\' ) returns true' );
-				ok( type.is.number( 666 ), '.number( 13 ) returns true' );
+				ok( type.is.emptyString( '' ), '.emptyString( \'\' ) returns true' );
+				ok( type.is.alpha( 'bar' ), '.alpha( \'bar\' ) returns true' );
+				ok( type.is.alphaNumeric( '123baz' ), '.alphaNumeric( \'123baz\' ) returns true' );
+				ok( type.is.number( 666 ), '.number( 666 ) returns true' );
+				ok( type.is.even( 88 ), '.even( 88 ) returns true' );
+				ok( type.is.odd( 17 ), '.odd( 17 ) returns true' );
+				ok( type.is.positive( 100 ), '.positive( 100 ) returns true' );
+				ok( type.is.negative( -10 ), '.positive( -10 ) returns true' );
 				ok( type.is.regex( /.+/gi ), '.regex( /.+/gi ) returns true' );
 				ok( type.is.object( {} ), '.object( {} ) returns true' );
 				ok( type.is.array( [] ), '.array( [] ) returns true' );
+				ok( type.is.emptyArray( [] ), '.emptyArray( [] ) returns true' );
 				ok( type.is.fn( function(){} ), '.fn( function(){} ) returns true' );
 				ok( type.is.method( { key: function(){} }, 'key' ), '.method( { key: function(){} }, "key" ) returns true' );
 				ok( type.is.property( { key: 'bar' }, 'key' ), '.property( { key: < anything except a function > }, "key" ) returns true' );
+				ok( type.is.error( new Error() ), '.error( new Error() ) returns true' );
 				ok( type.is.undefined( undef ), '.undefined() returns true' );
 				ok( type.is.null( null ), '.null( null ) returns true' );
 				ok( type.is.nullOrUndefined( null ), '.nullOrUndefined( < null / undefined > ) returns true' );
@@ -457,48 +467,56 @@
 					prop5: {},
 					prop6: undef,
 					prop7: /.+/gi,
+					prop8: 'to be deleted',
 					method: function(){}
 				};
+
+				delete test.prop8;
 
 				strictEqual(
 					type.is.method( test, 'prop1' ),
 					false && !type.is.not.method( test, 'prop1' ),
-					'string type property is not a method'
+					'string member is not a method'
 				);
 				strictEqual(
 					type.is.method( test, 'prop2' ),
 					false && !type.is.not.method( test, 'prop2' ),
-					'number type property is not a method'
+					'number member is not a method'
 				);
 				strictEqual(
 					type.is.method( test, 'prop3' ),
 					false && !type.is.not.method( test, 'prop3' ),
-					'null property is not a method'
+					'null member is not a method'
 				);
 				strictEqual(
 					type.is.method( test, 'prop4' ),
 					false && !type.is.not.method( test, 'prop4' ),
-					'array type property is not a method'
+					'array member is not a method'
 				);
 				strictEqual(
 					type.is.method( test, 'prop5' ),
 					false && !type.is.not.method( test, 'prop5' ),
-					'object type property is not a method'
+					'object member is not a method'
 				);
 				strictEqual(
 					type.is.method( test, 'prop6' ),
 					false && !type.is.not.method( test, 'prop6' ),
-					'undefined property is not a method'
+					'undefined member is not a method'
 				);
 				strictEqual(
 					type.is.method( test, 'prop7' ),
 					false && !type.is.not.method( test, 'prop7' ),
-					'regex property is not a method'
+					'regex member is not a method'
+				);
+				strictEqual(
+					type.is.method( test, 'prop8' ),
+					false && !type.is.not.method( test, 'prop8' ),
+					'deleted member is not a method'
 				);
 				strictEqual(
 					type.is.method( test, 'method' ),
 					true && !type.is.not.method( test, 'method' ),
-					'function type property is a method'
+					'function member property is a method'
 				);
 			});
 		});
@@ -514,48 +532,56 @@
 					prop5: {},
 					prop6: undef,
 					prop7: /.+/gi,
+					prop8: 'to be deleted',
 					method: function(){}
 				};
+
+				delete test.prop8;
 
 				strictEqual(
 					type.is.property( test, 'prop1' ),
 					true && !type.is.not.property( test, 'prop1' ),
-					'string type is a property'
+					'string member is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop2' ),
 					true && !type.is.not.property( test, 'prop2' ),
-					'number type is a property'
+					'number member is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop3' ),
 					true && !type.is.not.property( test, 'prop3' ),
-					'null type is a property'
+					'null member is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop4' ),
 					true && !type.is.not.property( test, 'prop4' ),
-					'array type is a property'
+					'array member is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop5' ),
 					true && !type.is.not.property( test, 'prop5' ),
-					'object type is a property'
+					'object member is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop6' ),
-					false && !type.is.not.property( test, 'prop6' ),
-					'undefined type is not a property'
+					true && !type.is.not.property( test, 'prop6' ),
+					'undefined member is a property'
 				);
 				strictEqual(
 					type.is.property( test, 'prop7' ),
 					true && !type.is.not.property( test, 'prop7' ),
-					'regex type is a property'
+					'regex member is a property'
+				);
+				strictEqual(
+					type.is.property( test, 'prop8' ),
+					false && !type.is.not.property( test, 'prop8' ),
+					'deleted member is not a property'
 				);
 				strictEqual(
 					type.is.property( test, 'method' ),
 					false && !type.is.not.property( test, 'method' ),
-					'function type is not a property'
+					'function member is not a property'
 				);
 			});
 		});
