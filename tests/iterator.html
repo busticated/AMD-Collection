@@ -521,6 +521,31 @@
 				strictEqual( l.collection.join( '' ), 'acde', 'target item removed properly' );
 			});
 
+			test( 'method - .remove() - when working with a hash', function(){
+				var l, items, undef;
+
+				items = [ 'a', 'b', 'c', 'd', 'e' ];
+				l = Iterator();
+				l.add = createAddOverride( 'key-', l );
+
+				l.add( items );
+				strictEqual( l.length, 5, 'newly initialized iterator instance has correct length' );
+				strictEqual( l.get( 'key-1' ), 'b', 'iterator instance has the correct value for "key-1"' );
+				strictEqual( l.get( 'key-3' ), 'd', 'iterator instance has the correct value for "key-3"' );
+
+				l.remove( 'key-1' );
+				strictEqual( l.collection.join( '' ), 'acde', '"key-1" removed from collection' );
+				strictEqual( l.get( 'key-1' ), undef, 'iterator instance no longer includes "key-1"' );
+
+				l.remove( 'key-666' );
+				strictEqual( l.collection.join( '' ), 'acde', 'collection is unchanged when removing a non-existant key' );
+
+				// bug: cannot remove key-referenced items when removing using an index (vs. key)
+				l.remove( 2 );
+				strictEqual( l.collection.join( '' ), 'ace', 'index 2 removed from collection' );
+				strictEqual( l.get( 'key-3' ), undef, 'iterator instance no longer includes "key-3"' );
+			});
+
 			test( 'method - .update()', function(){
 				var l;
 

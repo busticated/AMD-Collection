@@ -189,9 +189,21 @@ define(function(){
             return this;
         },
         remove : function( index ){
+            var key;
+
             if ( typeof index === 'number' ) {
                 this.collection.splice( index, 1 );
             }
+
+            if ( typeof index === 'string' ) {
+                key = index;
+                index = this.indexOfKey( key );
+                if ( index >= 0 ){
+                    delete this.collection[ key ];
+                    return this.remove( index );
+                }
+            }
+
             this.length = this.collection.length;
             return this;
         },
