@@ -6,14 +6,34 @@ define(function(){
     var __ = {
         objToString: Object.prototype.toString,
         arrSlice: Array.prototype.slice,
+        slice: function( args ){
+            return __.arrSlice.call( args );
+        },
         isArray: function( a ){
             return __.objToString.call( a ) === '[object Array]';
         },
         isObject: function( o ){
             return __.objToString.call( o ) === '[object Object]';
         },
-        slice: function( args ){
-            return __.arrSlice.call( args );
+        hasConfig: function( o ){
+            return __.isObject( o ) && 'keyPrefix' in o && 'keyProp' in o;
+        },
+        setupCollection: function( args ){
+            var a = __.slice( args );
+
+            if ( __.hasConfig( a[ 1 ] ) ){
+                a.splice( 1, 1 );
+            }
+
+            if ( __.isArray( a[ 0 ] ) && a.length === 1 ){
+                return a[ 0 ];
+            }
+
+            if ( a.length >= 1 ){
+                return a;
+            }
+
+            return [];
         }
     };
 
@@ -21,13 +41,7 @@ define(function(){
         if ( ! ( this instanceof It ) ){
             return It.apply( new It(), arguments );
         }
-
-        if ( __.isArray( arguments[ 0 ] ) ){
-            this.collection = __.slice( arguments[ 0 ] );
-        } else {
-            this.collection = __.slice( arguments );
-        }
-
+        this.collection = __.setupCollection( arguments );
         this.index = 0;
         this.length = this.collection.length;
         return this;
