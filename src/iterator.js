@@ -13,7 +13,7 @@ define(function(){
             return __.objToString.call( a ) === '[object Array]';
         },
         isObject: function( o ){
-            return __.objToString.call( o ) === '[object Object]';
+            return typeof o == null && __.objToString.call( o ) === '[object Object]';
         },
         hasConfig: function( o ){
             return __.isObject( o ) && 'keyPrefix' in o && 'keyProp' in o;
