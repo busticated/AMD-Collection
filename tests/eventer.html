@@ -148,8 +148,15 @@
 				var eventHub2 = new Eventer();
 				var expectedData = { foo: 'bar', baz: 1234 };
 				var myCallback = function( d ) { deepEqual( d, expectedData, 'event data is correct' ); };
+				var myObject = {
+					calls: [],
+					onEvent: function(){
+						this.calls.push( 'y' );
+					}
+				};
 
 				eventHub1.once( 'eventone eventtwo', myCallback );
+				eventHub1.once( 'eventone', myObject.onEvent, myObject );
 
 				eventHub2.on( 'eventone', myCallback );
 				eventHub2.once( 'eventone', myCallback );
@@ -159,7 +166,7 @@
 				eventHub2.on( 'eventone', myCallback );
 
 				strictEqual( Object.keys( eventHub1.getEventHandlers() ).length, 2, 'eventHub1 has correct number of event names registered' );
-				strictEqual( eventHub1.getEventHandlers()[ 'eventone' ].length, 1, 'eventHub1 has correct number of event handlers registered for the "eventone" event name' );
+				strictEqual( eventHub1.getEventHandlers()[ 'eventone' ].length, 2, 'eventHub1 has correct number of event handlers registered for the "eventone" event name' );
 				strictEqual( eventHub1.getEventHandlers()[ 'eventtwo' ].length, 1, 'eventHub1 has correct number of event handlers registered for the "eventtwo" event name' );
 				strictEqual( Object.keys( eventHub2.getEventHandlers() ).length, 1, 'eventHub2 has correct number of event names registered' );
 				strictEqual( eventHub2.getEventHandlers()[ 'eventone' ].length, 6, 'eventHub2 has correct number of event handlers registered for the "eventone" event name' );
@@ -171,7 +178,8 @@
 				strictEqual( Object.keys(eventHub1.getEventHandlers() ).length, 0, 'eventHub1 has correct number of event names registered' );
 				strictEqual( Object.keys(eventHub2.getEventHandlers() ).length, 1, 'eventHub2 has correct number of event names registered' );
 				strictEqual( eventHub2.getEventHandlers()[ 'eventone' ].length, 3, 'eventHub2 has correct number of event handlers registered for the "eventone" event name' );
-				expect( 16 );
+				deepEqual( myObject.calls, [ 'y' ], 'event handler on eventHub1 uses correct context' );
+				expect( 17 );
 			});
 		});
 
