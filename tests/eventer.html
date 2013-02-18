@@ -119,6 +119,9 @@
 					throw new Error( 'event handler should not have been run' );
 				};
 
+				eventHub1.off( 'test', fn );
+				ok( true, 'calling .off() on a non-existant event does not throw' );
+
 				eventHub1.on( 'test', fn );
 				eventHub1.on( 'test', fn );
 				eventHub1.on( 'test', function() { wasCalled = true; } );

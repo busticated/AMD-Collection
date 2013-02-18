@@ -34,9 +34,10 @@ define(function () {
         for ( var i = 0, l = names.length; i < l; i += 1 ){
             name = names[ i ];
             handlers = this.__handlers[ name ];
-            handlerIndex = handlers.length;
 
             if ( !handlers ) { return this; }
+
+            handlerIndex = handlers.length;
 
             while ( handlerIndex >= 0 ){
                 handler = ( handlers[ handlerIndex ] || {} ).fn;
