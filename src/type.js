@@ -42,7 +42,7 @@ define(function () {
             return objToString.call( r ) === '[object RegExp]';
         },
         object: function( o ){
-            return objToString.call( o ) === '[object Object]';
+            return type.is.not.nullOrUndefined( o ) && objToString.call( o ) === '[object Object]';
         },
         array: function( a ){
             return objToString.call( a ) === '[object Array]';
@@ -57,7 +57,7 @@ define(function () {
             return type.is.fn( obj[ key ] );
         },
         property: function( obj, key ){
-            return !type.is.method( obj, key ) && key in obj;
+            return type.is.not.method( obj, key ) && key in obj;
         },
         error: function( err ){
             return objToString.call( err ) === '[object Error]';
