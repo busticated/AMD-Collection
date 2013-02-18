@@ -59,10 +59,10 @@ define(function(){
             return key in this.collection;
         },
         hasNext : function(){
-            return this.has( this.index + 1);
+            return this.hasIndex( this.index + 1);
         },
         hasPrev : function(){
-            return this.has( this.index - 1);
+            return this.hasIndex( this.index - 1);
         },
         isFirst : function( index ){
             if ( typeof index === 'undefined' ){
@@ -144,7 +144,7 @@ define(function(){
             }
 
             for ( var i = fromIdx, l = this.length; i < l; i += 1 ){
-                if ( item === this.collection[ i ] ){
+                if ( item === this.get( i ) ){
                     return i;
                 }
             }
@@ -166,7 +166,7 @@ define(function(){
             return this;
         },
         each : function( callback, context ){
-            var ctx;
+            var ctx, item;
 
             if ( typeof callback !== 'function' ){
                 throw new Error( 'callback is of type ' + typeof callback + ' expected a function' );
@@ -177,7 +177,8 @@ define(function(){
             }
 
             for ( var i = 0, l = this.length; i < l; i += 1 ){
-                callback.call( ctx || this.collection[ i ], this.collection[ i ], i );
+                item = this.get( i );
+                callback.call( ctx || item, item, i );
             }
             return this;
         },
@@ -239,10 +240,11 @@ define(function(){
             return this;
         },
         filter : function( filter ){
-            var newCollection = [];
+            var newCollection = [], item;
             for ( var i = 0, l = this.length; i < l; i += 1 ){
-                if ( filter( this.collection[ i ], i ) ){
-                    newCollection.push( this.collection[ i ] );
+                item = this.get( i );
+                if ( filter( item, i ) ){
+                    newCollection.push( item );
                 }
             }
             return new It( newCollection );
