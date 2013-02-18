@@ -603,39 +603,24 @@
 			});
 
 			test( 'method - .each()', function(){
-				var l,
-				localObj = { iAm: "localObj" },
-				passes = true,
-				callback = function(){
-					strictEqual( )
+				var l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
+				var fn = function( item, index ){
+					strictEqual( this.toExponential(), item + 'e+0', 'calling .each() without a context argument sets context to collection item' );
 				};
-
-				window.iAm = "globalObj";
-
-				l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] );
+				var myObj = {
+					name: 'myObj',
+					test: function( item, index ){
+						strictEqual( l.get( index ), item, 'callback receives the correct item' );
+						strictEqual( l.indexOf( item ), index, 'callback receives the correct index' );
+						strictEqual( this.name, 'myObj', 'callback uses correct context when calling .each() with a context argument' );
+					}
+				};
 
 				raises( function(){ l.each( 'nope' ) }, 'calling .each() without an argument type of "function" throws an error' );
 
-				l.each(function( item, idx ){
-					strictEqual( l.setIndex( idx ).current(), item, '.each() received the correct item ' + item );
-					strictEqual( l.index, idx, '.each() is using the correct index value ' + idx );
-				});
-
-				l.each( function(){
-					if ( this.iAm != localObj.iAm ){
-						passes = false;
-					}
-				}, localObj );
-
-				ok( passes, 'context is set and used when calling .each()' );
-
-				l.each( function(){
-					if ( this.iAm != window.iAm ){
-						passes = false;
-					}
-				});
-
-				ok( passes, 'calling .each() without a context argument sets context to window / global' );
+				l.each( myObj.test, myObj );
+				l.each( fn );
+				expect( 38 );
 			});
 
 			test( 'bugfix - can iteratively remove all collection items', function(){

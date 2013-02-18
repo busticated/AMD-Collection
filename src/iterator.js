@@ -177,7 +177,7 @@ define(function(){
             }
 
             for ( var i = 0, l = this.length; i < l; i += 1 ){
-                callback.call( ctx, this.collection[ i ], i );
+                callback.call( ctx || this.collection[ i ], this.collection[ i ], i );
             }
             return this;
         },
