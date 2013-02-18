@@ -636,18 +636,6 @@
 				});
 
 				ok( passes, 'calling .each() without a context argument sets context to window / global' );
-
-				l = new Iterator( itemFactory( 100000 ) );
-				var start = +( new Date() ),
-					end;
-
-				l.each(function( item, idx ){
-				    if ( idx === l.length - 1 ){
-					    end = +( new Date() );
-					}
-				});
-
-				ok( end - start < 5, 'calling .each() against a collection of 100k objects runs in less than 5ms [ ran in: ' + (end - start) + ' ms ]' );
 			});
 
 			test( 'bugfix - can iteratively remove all collection items', function(){

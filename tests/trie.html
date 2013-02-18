@@ -54,33 +54,6 @@
 			});
 		});
 
-		test( 'should add entries within a reasonable amount of time', function(){
-			testing.req.given( [ 'src/trie' ], function ( Trie ) {
-				var start = +( new Date() );
-				var t = new Trie();
-
-				t.addAll( lotsOfWords.concat([
-					'aequeosalinocalcalinosetaceoaluminosocupreovitriolic',
-					'asseocarnisanguineoviscericartilaginonervomedullary',
-					'pneumonoultramicroscopicsilicovolcanoconiosis',
-					'hepaticocholangiocholecystenterostomies',
-					'hippopotomonstrosesquipedalian',
-					'floccinaucinihilipilification',
-					'antidisestablishmentarianism',
-					'honorificabilitudinitatibus',
-					'electroencephalographically',
-					'antitransubstantiationalist',
-					'antitransubstantiationalist',
-					'disproportionableness',
-					'incomprehensibilities'
-				]));
-
-				var end = +( new Date() );
-window.t = t;
-				ok( end - start >= 0 && end - start < 25 );
-			});
-		});
-
 		test( 'should find a word in the trie', function(){
 			testing.req.given( [ 'src/trie' ], function ( Trie ) {
 				var t = new Trie( 'hello' ).add( 'he' ).add( 'hey' ).add( 'him' );
@@ -108,6 +81,31 @@ window.t = t;
 				var expected = [ 'ant', 'antidote' ];
 
 				deepEqual( t.like( 'ant' ), expected );
+			});
+		});
+
+		test( 'should add multiple entries', function(){
+			testing.req.given( [ 'src/trie' ], function ( Trie ) {
+				var t = new Trie();
+
+				t.addAll( lotsOfWords.concat([
+					'aequeosalinocalcalinosetaceoaluminosocupreovitriolic',
+					'asseocarnisanguineoviscericartilaginonervomedullary',
+					'pneumonoultramicroscopicsilicovolcanoconiosis',
+					'hepaticocholangiocholecystenterostomies',
+					'hippopotomonstrosesquipedalian',
+					'floccinaucinihilipilification',
+					'antidisestablishmentarianism',
+					'honorificabilitudinitatibus',
+					'electroencephalographically',
+					'antitransubstantiationalist',
+					'antitransubstantiationalist',
+					'disproportionableness',
+					'incomprehensibilities'
+				]));
+
+				strictEqual( t.has( 'pneumonoultramicroscopicsilicovolcanoconiosis' ), true );
+				strictEqual( t.has( 'honorificabilitudinitatibus' ), true );
 			});
 		});
 	</script>
