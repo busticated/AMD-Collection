@@ -43,29 +43,34 @@
 			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
 				var eventHub1 = new Eventer();
 				var eventHub2 = new Eventer();
+				var fakeObj = {
+					onTest: function(){}
+				};
 
 				eventHub1.on( 'test', function (){} );
 				var eventHub1Handlers = eventHub1.getEventHandlers();
 
-				eventHub2.on('test', function (){});
-				eventHub2.on('test', function (){});
-				eventHub2.on('test', function (){});
+				eventHub2.on( 'test', function (){} );
+				eventHub2.on( 'test', function (){} );
+				eventHub2.on( 'test', function (){} );
 				var eventHub2Handlers = eventHub2.getEventHandlers();
 
 				ok( testing.utils.isObject( eventHub1Handlers ), 'eventHandlers hash is available' );
 				ok( testing.utils.isArray( eventHub1Handlers.test ), '"test" event name is registered' );
-				strictEqual( typeof eventHub1Handlers.test[ 0 ], 'function', '"test" event handler is a function' );
+				strictEqual( typeof eventHub1Handlers.test[ 0 ].fn, 'function', '"test" event handler is a function' );
 				strictEqual( eventHub1Handlers.test.length, 1, 'number of "test" event handlers is correct' );
 				ok( testing.utils.isObject( eventHub2Handlers ), 'eventHandlers hash is available on 2nd instance' );
 				ok( testing.utils.isArray( eventHub2Handlers.test ), '"test" event name is registered on 2nd instance' );
-				strictEqual( typeof eventHub2Handlers.test[ 0 ], 'function', '"test" event handler on 2nd instance is a function' );
+				strictEqual( typeof eventHub2Handlers.test[ 0 ].fn, 'function', '"test" event handler on 2nd instance is a function' );
 				strictEqual( eventHub2Handlers.test.length, 3, 'number of "test" event handlers is correct on 2nd instance' );
 
 				eventHub1.on( 'test', function (){} );
 				strictEqual( eventHub1.getEventHandlers()[ 'test' ].length, 2, '"eventHub1" has correct number of event handlers registered' );
 
-				eventHub2.on('test', function (){});
+				eventHub2.on( 'test', fakeObj.onTest, fakeObj );
 				strictEqual( eventHub2.getEventHandlers()[ 'test' ].length, 4, '"eventHub2" has correct number of event handlers registered' );
+				strictEqual( eventHub2.getEventHandlers()[ 'test' ][ 3 ].fn, fakeObj.onTest, 'event handler uses the correct function reference' );
+				deepEqual( eventHub2.getEventHandlers()[ 'test' ][ 3 ].ctx, fakeObj, 'event handler uses the correct context' );
 			});
 		});
 
@@ -73,6 +78,12 @@
 			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
 				var eventHub1 = new Eventer();
 				var eventHub2 = new Eventer();
+				var myObject = {
+					name: 'myObj',
+					calls: [],
+					onTest: function(){ this.calls.push( 'ran:' + this.name ); }
+				};
+
 				var eventHandlers = {
 					one: function () {},
 					two: function () {}
@@ -81,16 +92,22 @@
 
 				testing.sandbox.spy( eventHandlers, 'one' );
 				testing.sandbox.spy( eventHandlers, 'two' );
+				testing.sandbox.spy( myObject, 'onTest' );
 
 				eventHub1.on( 'test', eventHandlers.one );
 				eventHub2.on( 'itsatest', eventHandlers.two );
+				eventHub1.on( 'testContext', myObject.onTest, myObject );
+
 				eventHub1.emit( 'test', expectedEventData );
 				eventHub2.emit( 'itsatest', true );
+				eventHub1.emit( 'testContext' );
 
 				ok( eventHandlers.one.calledOnce, 'first event handler is called once' );
 				deepEqual( eventHandlers.one.args[ 0 ][ 0 ], expectedEventData, 'event handler for "test" event is called with the correct data' );
 				ok( eventHandlers.two.calledOnce, 'second event handler is called once' );
 				strictEqual( eventHandlers.two.args[ 0 ][ 0 ], true, 'callback ran successfully' );
+				ok( myObject.onTest.calledOnce, 'third event handler is called once' );
+				deepEqual( myObject.calls, [ 'ran:myObj' ], 'event handler for "testContext" event uses correct context' );
 			});
 		});
 

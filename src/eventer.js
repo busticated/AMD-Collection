@@ -9,7 +9,7 @@ define(function () {
         this.__handlers = {};
     };
 
-    Eventer.prototype.on = function ( eventName, callback ) {
+    Eventer.prototype.on = function ( eventName, callback, context ) {
         var names = eventName.split( ' ' ),
             name;
 
@@ -18,7 +18,7 @@ define(function () {
             if ( !this.__handlers[ name ] ) {
                 this.__handlers[ name ] = [];
             }
-            this.__handlers[ name ].push( callback );
+            this.__handlers[ name ].push( { fn: callback, ctx: context } );
         }
 
         return this;
@@ -27,6 +27,7 @@ define(function () {
     Eventer.prototype.off = function ( eventName, callback ) {
         var names = eventName.split( ' ' ),
             handlers,
+            handler,
             handlerIndex,
             name;
 
@@ -38,7 +39,8 @@ define(function () {
             if ( !handlers ) { return this; }
 
             while ( handlerIndex >= 0 ){
-                if ( ( handlers[ handlerIndex ] || {} ).fn === callback || typeof callback !== 'function' ) {
+                handler = ( handlers[ handlerIndex ] || {} ).fn;
+                if ( handler === callback || typeof callback !== 'function' ) {
                     handlers.splice( handlerIndex, 1 );
                 }
                 handlerIndex -= 1;
@@ -52,25 +54,27 @@ define(function () {
     };
 
     Eventer.prototype.emit = function ( eventName, data ) {
-        var handlers = this.__handlers[ eventName ];
+        var handlers = this.__handlers[ eventName ],
+            handler;
 
         if ( !handlers ) { return this; }
 
         handlers = handlers.concat();
 
         for ( var i = 0, l = handlers.length; i < l; i += 1 ) {
-            handlers[ i ].call( this, data );
+            handler = handlers[ i ];
+            handler.fn.call( handler.ctx || this, data );
         }
         return this;
     };
 
-    Eventer.prototype.once = function ( eventName, callback ) {
+    Eventer.prototype.once = function ( eventName, callback, context ) {
         var self = this,
             names = eventName.split( ' ' ),
             makeHandler = function( name ){
                 var handler = function(){
                     self.off( name, handler );
-                    callback.apply( this, arguments );
+                    callback.apply( context || this, arguments );
                 };
                 return handler;
             },
@@ -78,7 +82,7 @@ define(function () {
 
         for ( var i = 0, l = names.length; i < l; i += 1 ){
             name = names[ i ];
-            this.on( name, makeHandler( name ) );
+            this.on( name, makeHandler( name ), context );
         }
 
         return this;
