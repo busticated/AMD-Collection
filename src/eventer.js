@@ -37,7 +37,7 @@ define(function () {
 
             if ( !handlers ) { return this; }
 
-            handlerIndex = handlers.length;
+            handlerIndex = handlers.length - 1;
 
             while ( handlerIndex >= 0 ){
                 handler = ( handlers[ handlerIndex ] || {} ).fn;
