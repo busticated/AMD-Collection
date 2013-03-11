@@ -1,26 +1,30 @@
 {
-    "author": "Matthew Mirande <itsbusticated@gmail.com>",
-    "name": "AMD-Collection",
-    "description": "Collection of AMD-type javascript modules",
-    "version": "0.0.1",
-    "homepage": "http://busticated.co",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/busticated/AMD-Collection.git"
-    },
-    "engines": {
-        "node": "0.x.x"
-    },
-    "dependencies": {},
-    "devDependencies": {
-        "requirejs": "2.x.x",
-        "grunt-volo": "0.0.x"
-    },
-    "volo": {
-        "baseDir": "tests/lib",
-        "dependencies": {
-            "require": "github:jrburke/requirejs/2.1.4",
-            "sinon": "github:cjohansen/Sinon.JS/v1.5.2"
-        }
+  "author": "Matthew Mirande <itsbusticated@gmail.com>",
+  "name": "AMD-Collection",
+  "description": "Collection of AMD-type javascript modules",
+  "version": "0.0.1",
+  "homepage": "http://busticated.co",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/busticated/AMD-Collection.git"
+  },
+  "engines": {
+    "node": "0.x.x"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "requirejs": "2.x.x",
+    "grunt-volo": "0.0.x",
+    "grunt-contrib-qunit": "~0.2.0",
+    "grunt-contrib-connect": "~0.2.0",
+    "grunt-contrib-watch": "~0.3.1"
+  },
+  "volo": {
+    "baseDir": "tests/lib",
+    "dependencies": {
+      "require": "github:jrburke/requirejs/2.1.4",
+      "sinon": "github:cjohansen/Sinon.JS/v1.5.2"
     }
+  }
 }
