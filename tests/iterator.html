@@ -56,6 +56,7 @@
 			test( 'module has the correct methods & properties', function(){
 				var l,
 				expected = {
+					'key': 'undefined',
 					'has': 'function',
 					'hasIndex': 'function',
 					'hasKey': 'function',
@@ -140,6 +141,11 @@
 				l = new Iterator([ 1, 2, 3 ], [ 'a', 'b', 'c' ] );
 				strictEqual( l.length, 2, 'passing two arrays to constructor creates a collection with two items' );
 				strictEqual( l.get( 1 )[ 1 ], 'b', 'collection contents are correct' );
+
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' } ], { useLookupKey: 'id' } );
+				strictEqual( l.key, 'id', 'passing in a config object sets the iterator\'s lookup key' );
+				strictEqual( l.length, 2, 'passing an array as the 1st argument before config object creates collection with correct number of items' );
+				strictEqual( l.get( 'id1' ).name, 'one', 'can retrieve item by key' );
 			});
 
 			test( 'property - .index', function(){

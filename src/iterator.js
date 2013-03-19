@@ -13,37 +13,45 @@ define(function(){
             return __.objToString.call( a ) === '[object Array]';
         },
         isObject: function( o ){
-            return typeof o == null && __.objToString.call( o ) === '[object Object]';
+            return __.objToString.call( o ) === '[object Object]';
         },
         hasConfig: function( o ){
-            return __.isObject( o ) && 'keyPrefix' in o && 'keyProp' in o;
+            return __.isObject( o ) && 'useLookupKey' in o;
         },
-        setupCollection: function( args ){
-            var a = __.toArray( args );
+        getParams: function( args ){
+            var a = __.toArray( args ),
+                lastParam = a[ a.length - 1 ],
+                params = {};
 
-            if ( __.hasConfig( a[ 1 ] ) ){
-                a.splice( 1, 1 );
+            if ( __.hasConfig( lastParam ) ){
+                params.key = a.splice( a.length - 1, 1 )[ 0 ].useLookupKey;
             }
 
             if ( __.isArray( a[ 0 ] ) && a.length === 1 ){
-                return a[ 0 ];
+                params.collection = a[ 0 ];
+                return params;
             }
 
             if ( a.length >= 1 ){
-                return a;
+                params.collection = a;
+                return params;
             }
 
-            return [];
+            params.collection = [];
+            return params;
         }
     };
 
-    var It = function( collection ){
+    var It = function(){
         if ( ! ( this instanceof It ) ){
             return It.apply( new It(), arguments );
         }
-        this.collection = __.setupCollection( arguments );
+        var p = __.getParams( arguments );
         this.index = 0;
-        this.length = this.collection.length;
+        this.length = 0;
+        this.collection = [];
+        this.key = p.key;
+        this.add( p.collection );
         return this;
     };
 
@@ -64,12 +72,14 @@ define(function(){
         hasPrev : function(){
             return this.hasIndex( this.index - 1);
         },
+        // TODO - update to also handle key-based indexing? (e.g. foo.isFirst('id-1');
         isFirst : function( index ){
             if ( typeof index === 'undefined' ){
                 return this.isFirst( this.index );
             }
             return index === 0;
         },
+        // TODO - update to also handle key-based indexing? (e.g. foo.isLast('id-1');
         isLast : function( index ){
             if ( typeof index === 'undefined' ){
                 return this.isLast( this.index );
@@ -187,7 +197,10 @@ define(function(){
         },
 
         // collection modification methods
+        // TODO - update to optionally add key-based index - e.g. this.collection[ this.keyPrefix + items[ i ][ this.keyProp ] ] = items[ i ];
         add : function( items, index ){
+            var item;
+
             if ( ! __.isArray( items ) ){
                 items = [ items ];
             }
@@ -195,12 +208,20 @@ define(function(){
             if ( typeof index === 'undefined' || ! this.has( index ) ){
                 index = this.length;
             }
+
             for ( var i = 0, l = items.length; i < l; i += 1 ){
-                this.collection.splice( index + i, 0, items[ i ] );
+                item =  items[ i ];
+                this.collection.splice( index + i, 0, item );
+                // TODO - enforce uniqueness, split out into more readable helper?
+                if ( this.key && item[ this.key ] ){
+                    this.collection[ this.key + item[ this.key ] ] = this.collection[ index + i ];
+                }
             }
+
             this.length = this.collection.length;
             return this;
         },
+        // TODO - update to also handle removing by key - e.g. foo.remove( 'id-1' );
         remove : function( index ){
             var key;
 
@@ -220,6 +241,7 @@ define(function(){
             this.length = this.collection.length;
             return this;
         },
+        // TODO - update to also handle key-based indexing? - e.g. foo.update( 'id-1', { id: 1, some: 'bullcrap' } );
         update : function( index, item ){
             if ( ! this.has( index ) ){
                 throw new Error( 'index out of bounds - collection does not include that index' );
@@ -239,6 +261,7 @@ define(function(){
             this.length = this.collection.length;
             return this;
         },
+        // TODO - allow passing in a context
         filter : function( filter ){
             var newCollection = [], item;
             for ( var i = 0, l = this.length; i < l; i += 1 ){
