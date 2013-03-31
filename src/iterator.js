@@ -225,12 +225,16 @@ define(function(){
             this.length = this.collection.length;
             return this;
         },
-        // TODO - update to also handle removing by key - e.g. foo.remove( 'id-1' );
         remove : function( index ){
-            var key;
+            var key, item;
 
             if ( typeof index === 'number' ) {
-                this.collection.splice( index, 1 );
+                item = this.collection.splice( index, 1 );
+                if ( this.key && item[ 0 ] ){
+                    item = item[ 0 ];
+                    key = this.key + item[ this.key ];
+                    delete this.collection[ key ];
+                }
             }
 
             if ( typeof index === 'string' ) {

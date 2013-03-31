@@ -554,38 +554,27 @@
 			});
 
 			test( 'method - .remove()', function(){
-				var l;
+				var l, undef;
 
 				l = Iterator( [ 'a', 'b', 'c', 'd', 'e' ] );
 
 				strictEqual( l.length, 5, 'newly initialized iterator instance has correct length' );
 				l.remove( 1 )
 				strictEqual( l.collection.join( '' ), 'acde', 'target item removed properly' );
-			});
 
-			test( 'method - .remove() - when working with a hash', function(){
-				var l, items, undef;
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
 
-				items = [ 'a', 'b', 'c', 'd', 'e' ];
-				l = Iterator();
-				l.add = createAddOverride( 'key-', l );
-
-				l.add( items );
-				strictEqual( l.length, 5, 'newly initialized iterator instance has correct length' );
-				strictEqual( l.get( 'key-1' ), 'b', 'iterator instance has the correct value for "key-1"' );
-				strictEqual( l.get( 'key-3' ), 'd', 'iterator instance has the correct value for "key-3"' );
-
-				l.remove( 'key-1' );
-				strictEqual( l.collection.join( '' ), 'acde', '"key-1" removed from collection' );
-				strictEqual( l.get( 'key-1' ), undef, 'iterator instance no longer includes "key-1"' );
-
-				l.remove( 'key-666' );
-				strictEqual( l.collection.join( '' ), 'acde', 'collection is unchanged when removing a non-existant key' );
-
-				// bug: cannot remove key-referenced items when removing using an index (vs. key)
-				l.remove( 2 );
-				strictEqual( l.collection.join( '' ), 'ace', 'index 2 removed from collection' );
-				strictEqual( l.get( 'key-3' ), undef, 'iterator instance no longer includes "key-3"' );
+				strictEqual( l.length, 3, 'newly initialized iterator instance has correct length when using key-based lookup' );
+				l.remove( 'id2' );
+				strictEqual( l.get( 'id2' ), undef, 'target item removed properly when removing by key' );
+				strictEqual( l.length, 2, 'iterator has correct length after removing an item by key' );
+				deepEqual( l.collection, [ { id: 1, name: 'one' }, { id: 3, name: 'three' } ], 'iterator collection is correct' );
+				l.remove( 0 );
+				strictEqual( l.get( 'id1' ), undef, 'target item removed properly when removing by index' );
+				strictEqual( l.length, 1, 'iterator has correct length after removing an item by index' );
+				deepEqual( l.collection, [ { id: 3, name: 'three' } ], 'iterator collection is correct' );
+				deepEqual( l.remove( 9999 ), l, 'removing non-existent key does not throw' );
+				deepEqual( l.remove( 'id9999' ), l, 'removing non-existent index does not throw' );
 			});
 
 			test( 'method - .update()', function(){
