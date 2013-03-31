@@ -201,24 +201,27 @@ define(function(){
         },
 
         // collection modification methods
-        // TODO - update to optionally add key-based index - e.g. this.collection[ this.keyPrefix + items[ i ][ this.keyProp ] ] = items[ i ];
-        add : function( items, index ){
+        add : function( items, atIndex ){
             var item;
 
             if ( ! __.isArray( items ) ){
                 items = [ items ];
             }
 
-            if ( typeof index === 'undefined' || ! this.has( index ) ){
-                index = this.length;
+            if ( typeof atIndex === 'string' ){
+                atIndex = this.indexOfKey( atIndex );
+            }
+
+            if ( typeof atIndex === 'undefined' || ! this.has( atIndex ) ){
+                atIndex = this.length;
             }
 
             for ( var i = 0, l = items.length; i < l; i += 1 ){
                 item =  items[ i ];
-                this.collection.splice( index + i, 0, item );
+                this.collection.splice( atIndex + i, 0, item );
                 // TODO - enforce uniqueness, split out into more readable helper?
                 if ( this.key && item[ this.key ] ){
-                    this.collection[ this.key + item[ this.key ] ] = this.collection[ index + i ];
+                    this.collection[ this.key + item[ this.key ] ] = this.collection[ atIndex + i ];
                 }
             }
 

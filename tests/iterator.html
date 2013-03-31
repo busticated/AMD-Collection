@@ -551,6 +551,12 @@
 				l.add({ a:1, b:2, c: 3 });
 				strictEqual( l.length, 2, 'passing a single object to .add() adds an object to the collection' );
 				strictEqual( l.get( 1 ).b, 2, 'collection contents are correct' );
+
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+				strictEqual( l.length, 3, 'key-based iterator instance has correct number of items' );
+				l.add( { id: 1.5, name: 'one point five' }, 'id2' );
+				strictEqual( l.length, 4, 'key-based iterator instance has correct number of items after adding an item by a given key' );
+				strictEqual( l.get( 1 ).name, 'one point five', 'new item is added at the correct index' );
 			});
 
 			test( 'method - .remove()', function(){
