@@ -267,6 +267,22 @@
 				l.last();
 				strictEqual( l.isFirst( 0 ), true, 'isFirst( 0 ) returns true' );
 				strictEqual( l.isFirst( 3 ), false, 'isFirst( 3 ) returns false' );
+
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+
+				strictEqual( l.isFirst(), true, 'isFirst() returns true when called on a newly initialized iterator instance which uses key-based lookup' );
+				l.last();
+				strictEqual( l.isFirst(), false, 'isFirst() returns false when current item is last item' );
+				l.setIndex( 1 );
+				strictEqual( l.isFirst(), false, 'isFirst() returns false when current item is in the middle of the collection' );
+				l.first();
+				strictEqual( l.isFirst(), true, 'isFirst() returns true when current item is first' );
+				l.last();
+				strictEqual( l.isFirst( 0 ), true, 'isFirst( 0 ) returns true' );
+				strictEqual( l.isFirst( 3 ), false, 'isFirst( 3 ) returns false' );
+				strictEqual( l.isFirst( 'id1' ), true, 'isFirst( \'id1\' ) returns true' );
+				strictEqual( l.isFirst( 'id2' ), false, 'isFirst( \'id2\' ) returns false' );
+				strictEqual( l.isFirst( 'id3' ), false, 'isFirst( \'id3\' ) returns false' );
 			});
 
 			test( 'method - .isLast()', function(){
@@ -284,6 +300,22 @@
 				strictEqual( l.isLast( 0 ), false, 'isFirst( 0 ) returns false' );
 				strictEqual( l.isLast( 3 ), false, 'isFirst( 3 ) returns false' );
 				strictEqual( l.isLast( l.length - 1 ), true, 'isFirst( l.length -1 ) returns true' );
+
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+
+				strictEqual( l.isLast(), false, 'isLast() returns false when called on a newly initialized iterator instance which uses key-based lookup' );
+				l.last();
+				strictEqual( l.isLast(), true, 'isLast() returns true when current item is last item' );
+				l.setIndex( 1 );
+				strictEqual( l.isLast(), false, 'isLast() returns false when current item is in the middle of the collection' );
+				l.first();
+				strictEqual( l.isLast(), false, 'isLast() returns false when current item is first' );
+				strictEqual( l.isLast( 0 ), false, 'isFirst( 0 ) returns false' );
+				strictEqual( l.isLast( 3 ), false, 'isFirst( 3 ) returns false' );
+				strictEqual( l.isLast( l.length - 1 ), true, 'isFirst( l.length -1 ) returns true' );
+				strictEqual( l.isLast( 'id1' ), false, 'isLast( \'id1\' ) returns false' );
+				strictEqual( l.isLast( 'id2' ), false, 'isLast( \'id2\' ) returns false' );
+				strictEqual( l.isLast( 'id3' ), true, 'isLast( \'id3\' ) returns true' );
 			});
 
 			test( 'method - .isEmpty()', function(){

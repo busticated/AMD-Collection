@@ -72,17 +72,21 @@ define(function(){
         hasPrev : function(){
             return this.hasIndex( this.index - 1);
         },
-        // TODO - update to also handle key-based indexing? (e.g. foo.isFirst('id-1');
         isFirst : function( index ){
             if ( typeof index === 'undefined' ){
                 return this.isFirst( this.index );
             }
+            if ( typeof index === 'string' ){
+                index = this.indexOfKey( index );
+            }
             return index === 0;
         },
-        // TODO - update to also handle key-based indexing? (e.g. foo.isLast('id-1');
         isLast : function( index ){
             if ( typeof index === 'undefined' ){
                 return this.isLast( this.index );
+            }
+            if ( typeof index === 'string' ){
+                index = this.indexOfKey( index );
             }
             return index === this.length - 1;
         },
