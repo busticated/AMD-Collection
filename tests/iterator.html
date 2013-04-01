@@ -75,6 +75,8 @@
 					'last': 'function',
 					'indexOf': 'function',
 					'indexOfKey': 'function',
+					'getKeyForIndex': 'function',
+					'getKeyForItem': 'function',
 					'setIndex': 'function',
 					'loop': 'function',
 					'add': 'function',
@@ -473,6 +475,31 @@
 				strictEqual( l.indexOfKey( 'key-0', 1 ), -1, 'returned -1 (not found) for first item when starting from later index - .indexOfKey( "key-0", 1 )' );
 				strictEqual( l.indexOfKey( 'key-3' ), 3, 'returned correct index for third item - .indexOfKey( "key-3" )' );
 				strictEqual( l.indexOfKey( 'key-3', 2 ), 3, 'returned correct index for third item when starting from later index - .indexOfKey( "key-3", 2 )' );
+			});
+
+			test( 'method - .getKeyForIndex()', function(){
+				var l, undef;
+
+				l = Iterator( [ 'a', 'b', 'c' ] );
+
+				strictEqual( l.getKeyForIndex( 1 ), undef, 'undefined is returned when collection does not use key-based lookup' );
+
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+
+				strictEqual( l.getKeyForIndex( 1 ), 'id2', 'lookup key is returned when collection uses key-based lookup' );
+			});
+
+			test( 'method - .getKeyForItem()', function(){
+				var l, undef;
+
+				l = Iterator( [ 'a', 'b', 'c' ] );
+
+				raises( function(){ l.getKeyForItem( 'a' ) }, 'getting a key without providing an item object throws an error' );
+
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+
+				strictEqual( l.getKeyForItem( { id: 4, name: 'four' } ), 'id4', 'lookup key is returned for item when collection uses key-based lookup' );
+				strictEqual( l.getKeyForItem( { not: 'a', supported: 'object' } ), undef, 'undefined is returned when item does not have key' );
 			});
 
 			test( 'method - .setIndex()', function(){

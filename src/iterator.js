@@ -168,6 +168,24 @@ define(function(){
         indexOfKey : function( key, fromIdx ){
             return this.indexOf( this.get( key ), fromIdx );
         },
+        getKeyForIndex : function( index ){
+            var key;
+
+            if ( this.key && this.collection[ index ][ this.key ] ){
+                key = this.key + this.collection[ index ][ this.key ];
+            }
+
+            return key;
+        },
+        getKeyForItem : function( item ){
+            var undef;
+
+            if ( ! __.isObject( item ) ){
+                throw new Error( 'item must be an object in order to get key' );
+            }
+
+            return item[ this.key ] ? this.key + item[ this.key ] : undef;
+        },
         setIndex : function( index ){
             if ( ! this.has( index ) ){
                 throw new Error( 'index out of bounds - collection does not include that index' );
@@ -221,7 +239,7 @@ define(function(){
                 this.collection.splice( atIndex + i, 0, item );
                 // TODO - enforce uniqueness, split out into more readable helper?
                 if ( this.key && item[ this.key ] ){
-                    this.collection[ this.key + item[ this.key ] ] = this.collection[ atIndex + i ];
+                    this.collection[ this.getKeyForItem( item ) ] = this.collection[ atIndex + i ];
                 }
             }
 
@@ -235,7 +253,7 @@ define(function(){
                 item = this.collection.splice( index, 1 );
                 if ( this.key && item[ 0 ] ){
                     item = item[ 0 ];
-                    key = this.key + item[ this.key ];
+                    key = this.getKeyForItem( item );
                     delete this.collection[ key ];
                 }
             }
@@ -267,7 +285,7 @@ define(function(){
             this.collection[ index ] = item;
             if ( this.key && this.hasKey( key ) ){
                 delete this.collection[ key ];
-                key = this.key + this.collection[ index ][ this.key ];
+                key = this.getKeyForIndex( index );
                 this.collection[ key ] = item;
             }
 
