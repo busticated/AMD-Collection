@@ -236,13 +236,12 @@ define(function(){
             return this;
         },
         remove : function( index ){
-            var key, item;
+            var key, removedItem;
 
             if ( typeof index === 'number' ) {
-                item = this.collection.splice( index, 1 );
-                if ( this.key && item[ 0 ] ){
-                    item = item[ 0 ];
-                    key = this.getKeyForItem( item );
+                removedItem = this.collection.splice( index, 1 )[ 0 ];
+                if ( this.key && removedItem ){
+                    key = this.getKeyForItem( removedItem );
                     delete this.collection[ key ];
                 }
             }
@@ -251,7 +250,6 @@ define(function(){
                 key = index;
                 index = this.indexOfKey( key );
                 if ( index >= 0 ){
-                    delete this.collection[ key ];
                     return this.remove( index );
                 }
             }
@@ -275,7 +273,7 @@ define(function(){
             if ( this.key && this.hasKey( key ) ){
                 delete this.collection[ key ];
                 key = this.getKeyForIndex( index );
-                this.collection[ key ] = item;
+                this.collection[ key ] = this.collection[ index ];
             }
 
             return this;

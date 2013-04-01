@@ -603,6 +603,9 @@
 				strictEqual( l.length, 5, 'newly initialized iterator instance has correct length' );
 				l.remove( 1 )
 				strictEqual( l.collection.join( '' ), 'acde', 'target item removed properly' );
+				strictEqual( l.length, 4, 'iterator has the correct length after removing the target iten' );
+				l.remove( 9999 );
+				strictEqual( l.length, 4, 'removing non-existent index does not throw an error' );
 
 				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
 
