@@ -191,19 +191,15 @@ define(function(){
             return this;
         },
         each : function( callback, context ){
-            var ctx, item;
+            var item;
 
             if ( typeof callback !== 'function' ){
                 throw new Error( 'callback is of type ' + typeof callback + ' expected a function' );
             }
 
-            if ( context ){
-                ctx = context;
-            }
-
             for ( var i = 0, l = this.length; i < l; i += 1 ){
                 item = this.get( i );
-                callback.call( ctx || item, item, i );
+                callback.call( context || item, item, i );
             }
             return this;
         },
