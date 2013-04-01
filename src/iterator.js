@@ -252,12 +252,25 @@ define(function(){
             this.length = this.collection.length;
             return this;
         },
-        // TODO - update to also handle key-based indexing? - e.g. foo.update( 'id-1', { id: 1, some: 'bullcrap' } );
         update : function( index, item ){
+            var key;
+
+            if ( typeof index === 'string' ) {
+                key = index;
+                index = this.indexOfKey( key );
+            }
+
             if ( ! this.has( index ) ){
                 throw new Error( 'index out of bounds - collection does not include that index' );
             }
+
             this.collection[ index ] = item;
+            if ( this.key && this.hasKey( key ) ){
+                delete this.collection[ key ];
+                key = this.key + this.collection[ index ][ this.key ];
+                this.collection[ key ] = item;
+            }
+
             return this;
         },
         replace : function( fromIndex, items ){

@@ -584,7 +584,7 @@
 			});
 
 			test( 'method - .update()', function(){
-				var l;
+				var l, expectedItem, undef;
 
 				l = Iterator( [ 'a', 'b', 'c' ] );
 
@@ -594,6 +594,15 @@
 
 				strictEqual( l.collection.join( '' ), 'bad', 'target items updated properly' );
 				raises( function(){ l.update( 666, 'nope' ) }, 'updating an unknown index throws an error' );
+
+				expectedItem = { id: 2.5, name: 'two point five' };
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+				l.update( 'id3', expectedItem );
+
+				strictEqual( l.length, 3, 'iterator has correct length after updating an item by key' );
+				deepEqual( l.get( 2 ), expectedItem, 'updated item uses the correct index when updating by key' );
+				deepEqual( l.get( 'id2.5' ), expectedItem, 'updated item uses the correct key when updating by key' );
+				deepEqual( l.get( 'id3' ), undef, 'key for original item is no longer available when updating by key' );
 			});
 
 			test( 'method - .replace()', function(){
