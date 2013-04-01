@@ -148,6 +148,11 @@
 				strictEqual( l.key, 'id', 'passing in a config object sets the iterator\'s lookup key' );
 				strictEqual( l.length, 2, 'passing an array as the 1st argument before config object creates collection with correct number of items' );
 				strictEqual( l.get( 'id1' ).name, 'one', 'can retrieve item by key' );
+
+				l = new Iterator( { id: 1, name: 'one' }, { id: 2, name: 'two' }, { useLookupKey: 'id' } );
+				strictEqual( l.key, 'id', 'passing in a config object sets the iterator\'s lookup key' );
+				strictEqual( l.length, 2, 'passing a series of object arguments before config object creates collection with correct number of items' );
+				strictEqual( l.get( 'id1' ).name, 'one', 'can retrieve item by key' );
 			});
 
 			test( 'property - .index', function(){
