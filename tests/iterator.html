@@ -78,7 +78,6 @@
 					'getKeyForIndex': 'function',
 					'getKeyForItem': 'function',
 					'setIndex': 'function',
-					'loop': 'function',
 					'add': 'function',
 					'remove': 'function',
 					'update': 'function',
@@ -89,7 +88,8 @@
 					'each': 'function',
 					'collection': 'object',
 					'index': 'number',
-					'length': 'number'
+					'length': 'number',
+					'isLooping': 'boolean'
 				};
 
 				l = Iterator( [ 'fe', 'fi', 'fo', 'fum' ] );
@@ -180,6 +180,35 @@
 				strictEqual( l.length, 5, 'instance has correct length after removing item to the collection' );
 				l.add( [ 7, 8, 9 ] );
 				strictEqual( l.length, 8, 'instance has correct length after adding multiple items to the collection' );
+			});
+
+			test( 'property - .isLooping', function() {
+				var l = Iterator( [ '00', '01', '02', '03', '04', '05', '06', '07', '08', '09' ] );
+
+				l.isLooping = true;
+
+				strictEqual( l.current(), '00', 'current item is correct' );
+				strictEqual( l.getNext(), '01', '.getNext() returns correct item' );
+				strictEqual( l.next(), '01', '.next() returns correct item' );
+				strictEqual( l.last(), '09', 'last item is correct' );
+				strictEqual( l.getNext(), '00', 'requesting .getNext() at end of collection returns 1st item' );
+				strictEqual( l.next(), '00', 'requesting .next() at end of collection returns 1st item and increments the collection\'s idx' );
+				strictEqual( l.current(), '00', 'current item is correct' );
+				strictEqual( l.next(), '01', '.next() returns correct item' );
+				strictEqual( l.setIndex(3).prev(), '02', 'setting an idx and requesting .prev() returns correct item' );
+				strictEqual( l.first(), '00', 'first item is correct' );
+				strictEqual( l.getPrev(), '09', 'requesting .getPrev() at start of collection returns last item' );
+				strictEqual( l.prev(), '09', 'requesting .prev() at start of collection returns last item and increments the collection\'s idx' );
+				strictEqual( l.current(), '09', 'current item is correct' );
+				strictEqual( l.getPrev(), '08', '.getPrev() returns correct item' );
+				strictEqual( l.prev(), '08', '.prev() returns correct item' );
+
+				l = Iterator( [ '00', '01', '02', '03', '04', '05', '06', '07', '08', '09' ] );
+				l.isLooping = true;
+
+				strictEqual( l.getPrev(), '09', 'requsting .getPrev() after initializing a collection returns correct item' );
+				strictEqual( l.prev(), '09', 'requsting .prev() after initializing a collection returns correct item and increments the collection\'s idx' );
+				strictEqual( l.current(), '09', 'current item is correct' );
 			});
 
 			test( 'method - .has()', function(){
@@ -387,12 +416,13 @@
 				strictEqual( l.current(), 1, 'after requesting .first(), .current() value is correct' );
 				l.setIndex( 6 );
 				strictEqual( l.current(), 7, 'after setting a arbitrary index via .setIndex(), .current() value is correct' );
+				l.isLooping = true;
 				l.last();
-				l.loop().next();
-				strictEqual( l.current(), 1, 'after looping to 1st via .loop().next(), .current() value is correct' );
+				l.next();
+				strictEqual( l.current(), 1, 'when looping, .current() value is correct after calling .next() while on last item' );
 				l.first();
-				l.loop().prev();
-				strictEqual( l.current(), 13, 'after looping to last via .loop().prev(), .current() value is correct' );
+				l.prev();
+				strictEqual( l.current(), 13, 'when looping, .current() value is correct after calling .prev() while on first item' );
 			});
 
 			test( 'method - .next()', function(){
@@ -510,32 +540,6 @@
 				strictEqual( l.first(), 1, 'newly initialized iterator instance has the correct first item' );
 				strictEqual( l.setIndex( 3 ).current(), 4, 'current item is correct after setting new index' );
 				raises( function(){ l.setIndex( 666 ) }, 'setting index to an unknown / unavailable item throws an error' );
-			});
-
-			test( 'method - .loop()', function(){
-				var l = Iterator(['00','01','02','03','04','05','06','07','08','09']);
-
-				strictEqual( l.current(), '00', 'current item is correct' );
-				strictEqual( l.loop().getNext(), '01', '.getNext() returns correct item' );
-				strictEqual( l.loop().next(), '01', '.next() returns correct item' );
-				strictEqual( l.last(), '09', 'last item is correct' );
-				strictEqual( l.loop().getNext(), '00', 'requesting .getNext() at end of collection returns 1st item' );
-				strictEqual( l.loop().next(), '00', 'requesting .next() at end of collection returns 1st item and increments the collection\'s idx' );
-				strictEqual( l.current(), '00', 'current item is correct' );
-				strictEqual( l.loop().next(), '01', '.next() returns correct item' );
-
-				strictEqual( l.setIndex( 3 ).prev(), '02', 'setting an idx and requesting .prev() returns correct item' );
-				strictEqual( l.first(), '00', 'first item is correct' );
-				strictEqual( l.loop().getPrev(), '09', 'requesting .getPrev() at start of collection returns last item' );
-				strictEqual( l.loop().prev(), '09', 'requesting .prev() at start of collection returns last item and increments the collection\'s idx' );
-				strictEqual( l.current(), '09', 'current item is correct' );
-				strictEqual( l.loop().getPrev(), '08', '.getPrev() returns correct item' );
-				strictEqual( l.loop().prev(), '08', '.prev() returns correct item' );
-
-				l = Iterator(['00','01','02','03','04','05','06','07','08','09']);
-				strictEqual( l.loop().getPrev(), '09', 'requsting .getPrev() after initializing a collection returns correct item' );
-				strictEqual( l.loop().prev(), '09', 'requsting .prev() after initializing a collection returns correct item and increments the collection\'s idx' );
-				strictEqual( l.current(), '09', 'current item is correct' );
 			});
 
 			test( 'method - .toJSON()', function(){
@@ -695,8 +699,9 @@
 			test( 'bugfix - can iteratively remove all collection items', function(){
 				var l = new Iterator( itemFactory( 10 ) );
 
+				l.isLooping = true;
 				while ( l.length ){
-					l.loop().next();
+					l.next();
 					l.remove( l.index );
 				}
 

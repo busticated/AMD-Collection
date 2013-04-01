@@ -56,6 +56,7 @@ define(function(){
     };
 
     It.prototype = {
+        isLooping : false,
         // test methods - return bool
         has : function( index ){
             return this.hasIndex( index ) || this.hasKey( index );
@@ -102,7 +103,6 @@ define(function(){
             var index = this.index + 1;
 
             if ( this.isLooping && ! this.hasNext() ){
-                this.isLooping = false;
                 index = 0;
             }
 
@@ -112,7 +112,6 @@ define(function(){
             var index = this.index - 1;
 
             if ( this.isLooping && ! this.hasPrev() ){
-                this.isLooping = false;
                 index = this.length - 1;
             }
 
@@ -126,7 +125,6 @@ define(function(){
                 return this.setIndex( this.index + 1 ).current();
             }
             if ( this.isLooping ) {
-                this.isLooping = false;
                 return this.first();
             }
             return null;
@@ -136,7 +134,6 @@ define(function(){
                 return this.setIndex( this.index - 1 ).current();
             }
             if ( this.isLooping ){
-                this.isLooping = false;
                 return this.last();
             }
             return null;
@@ -191,10 +188,6 @@ define(function(){
                 throw new Error( 'index out of bounds - collection does not include that index' );
             }
             this.index = index;
-            return this;
-        },
-        loop : function(){
-            this.isLooping = true;
             return this;
         },
         each : function( callback, context ){
