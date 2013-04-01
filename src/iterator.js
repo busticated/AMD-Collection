@@ -20,10 +20,10 @@ define(function(){
         },
         getParams: function( args ){
             var a = __.toArray( args ),
-                lastParam = a[ a.length - 1 ],
+                lastArg = a[ a.length - 1 ],
                 params = {};
 
-            if ( __.hasConfig( lastParam ) ){
+            if ( __.hasConfig( lastArg ) ){
                 params.key = a.splice( a.length - 1, 1 )[ 0 ].useLookupKey;
             }
 
