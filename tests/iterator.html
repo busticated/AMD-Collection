@@ -18,8 +18,9 @@
 					id;
 
 				while ( count-- ){
+					id = ( idPadding + count ).slice( -idPadding.length );
 					items.push({
-						id: ( idPadding + count ).slice( -idPadding.length ),
+						id: id,
 						title: 'Item ' + id,
 						greet: function(){
 							return 'hi! i\'m' + this.title;
@@ -28,18 +29,6 @@
 				}
 
 				return items;
-			};
-
-			var createAddOverride = function( keyPrefix, ctx ){
-				return function( items ){
-					var item;
-					for ( var i = 0, len = items.length; i < len; i += 1 ){
-						item = items[ i ];
-						ctx.collection[ 'key-' + i ] = item;
-						Iterator.prototype.add.call( ctx, item );
-					}
-					return this;
-				};
 			};
 
 			module("Iterator", {
@@ -363,7 +352,6 @@
 				strictEqual( x.index, 0, 'collection index is zero' );
 			});
 
-
 			test( 'method - .get()', function(){
 				var l;
 
@@ -493,16 +481,13 @@
 			test( 'method - .indexOfKey()', function(){
 				var l, items, undef;
 
-				items = [ 'a', 'b', 'c', 'd', 'e' ];
-				l = Iterator();
-				l.add = createAddOverride( 'key-', l );
+				l = Iterator( itemFactory( 5 ), { useLookupKey: 'id' } );
 
-				l.add( items );
-
-				strictEqual( l.indexOfKey( 'key-0' ), 0, 'returned correct index for first item - .indexOfKey( "key-0" )' );
-				strictEqual( l.indexOfKey( 'key-0', 1 ), -1, 'returned -1 (not found) for first item when starting from later index - .indexOfKey( "key-0", 1 )' );
-				strictEqual( l.indexOfKey( 'key-3' ), 3, 'returned correct index for third item - .indexOfKey( "key-3" )' );
-				strictEqual( l.indexOfKey( 'key-3', 2 ), 3, 'returned correct index for third item when starting from later index - .indexOfKey( "key-3", 2 )' );
+				strictEqual( l.indexOfKey( 'id000004' ), 0, 'returned correct index for first item - .indexOfKey( "id000000" )' );
+				strictEqual( l.indexOfKey( 'id000004', 1 ), -1, 'returned -1 (not found) for first item when starting from later index - .indexOfKey( "id000000", 1 )' );
+				strictEqual( l.indexOfKey( 'id000001' ), 3, 'returned correct index for third item - .indexOfKey( "id000002" )' );
+				strictEqual( l.indexOfKey( 'id000001', 2 ), 3, 'returned correct index for third item when starting from later index - .indexOfKey( "id000002", 2 )' );
+				strictEqual( l.indexOfKey( 'id000003' ), l.indexOf( l.get( 'id000003' ) ), '.indexOf( .get( <key> ) ) matches .indexOfKey( <key> )' );
 			});
 
 			test( 'method - .getKeyForIndex()', function(){
