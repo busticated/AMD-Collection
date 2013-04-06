@@ -14,15 +14,15 @@
 
 			var itemFactory = function( count ){
 				var items = [],
-				id;
+					idPadding = '000000',
+					id;
 
 				while ( count-- ){
-					id = Math.floor( Math.random() * (1000 - 0 + 1) + 0 );
 					items.push({
-						id: id,
+						id: ( idPadding + count ).slice( -idPadding.length ),
 						title: 'Item ' + id,
 						greet: function(){
-							return this.title;
+							return 'hi! i\'m' + this.title;
 						}
 					});
 				}
@@ -31,7 +31,6 @@
 			};
 
 			var createAddOverride = function( keyPrefix, ctx ){
-				
 				return function( items ){
 					var item;
 					for ( var i = 0, len = items.length; i < len; i += 1 ){
@@ -219,21 +218,18 @@
 			test( 'method - .has()', function(){
 				var l, items;
 
-				items = [ 0, 1, null, false, {}, [], function(){}, new Date(), /.+/gi, 'last' ];
-				l = Iterator();
-				l.add = createAddOverride( 'key-', l );
-				l.add( items );
-
-				for ( var j = 0, length = items.length; j < length; j += 1 ){
-					strictEqual( l.has( 'key-' + j ), true, 'can check for item by key - .has( "key-' + j + '" )' );
-				}
-				strictEqual( l.hasKey( 'key-' + 666 ), false, 'does not have nonexistant key - .has( "key-666" )' );
+				l = Iterator( itemFactory( 10 ), { useLookupKey: 'id' } );
 
 				strictEqual( l.has( 0 ), true, 'can check for zero index - .has( 0 )' );
 				strictEqual( l.has( 2 ), true, 'can check for 2nd index - .has( 2 )' );
 				strictEqual( l.has( 4 ), true, 'does not have 4th idx - .has( 4 )' );
 				strictEqual( l.has( 7 ), true, 'can check for 7th index - .has( 7 )' );
 				strictEqual( l.has( 666 ), false, 'does not have nonexistant index - .has( 666 )' );
+
+				strictEqual( l.has( 'id000000' ), true, 'can check for item by key - .has( "id000000" )' );
+				strictEqual( l.has( 'id000005' ), true, 'can check for item by key - .has( "id000005" )' );
+				strictEqual( l.has( 'id000009' ), true, 'can check for item by key - .has( "id000009" )' );
+				strictEqual( l.has( 'idNOPE' ), false, 'does not have nonexistant key - .has( "NOPE" )' );
 			});
 
 			test( 'method - .hasIndex()', function(){
@@ -247,17 +243,14 @@
 			});
 
 			test( 'method - .hasKey()', function(){
-				var l, items;
+				var l;
 
-				items = [ 0, 1, null, false, {}, [], function(){}, new Date(), /.+/gi, 'last' ];
-				l = Iterator();
-				l.add = createAddOverride( 'key-', l );
-				l.add( items );
+				l = Iterator( itemFactory( 10 ), { useLookupKey: 'id' } );
 
-				for ( var j = 0, length = items.length; j < length; j += 1 ){
-					strictEqual( l.hasKey( 'key-' + 1 ), true, 'has key' );
-				}
-				strictEqual( l.hasKey( 'key-' + 666 ), false, 'does not have key' );
+				strictEqual( l.hasKey( 'id000000' ), true, 'has key - "id000000"' );
+				strictEqual( l.hasKey( 'id000005' ), true, 'has key - "id000005"' );
+				strictEqual( l.hasKey( 'id000009' ), true, 'has key - "id000009"' );
+				strictEqual( l.hasKey( 'idNOPE' ), false, 'does not have key - "NOPE"' );
 			});
 
 			test( 'method - .hasNext()', function(){
