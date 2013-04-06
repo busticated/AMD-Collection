@@ -290,12 +290,11 @@ define(function(){
             this.length = this.collection.length;
             return this;
         },
-        // TODO - allow passing in a context
-        filter : function( filter ){
+        filter : function( filteringFn, ctx ){
             var newCollection = [], item;
             for ( var i = 0, l = this.length; i < l; i += 1 ){
                 item = this.get( i );
-                if ( filter( item, i ) ){
+                if ( filteringFn.call( ctx, item, i ) ){
                     newCollection.push( item );
                 }
             }
