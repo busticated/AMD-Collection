@@ -314,6 +314,13 @@ define(function(){
             }
 
             return out;
+        },
+        take : function( count ){
+            if ( this.key ){
+                return new It( this.collection.slice( 0, count ),  { useLookupKey: this.key } );
+            }
+
+            return new It( this.collection.slice( 0, count ) );
         }
     };
 

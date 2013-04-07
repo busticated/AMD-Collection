@@ -74,6 +74,7 @@
 					'toJSON': 'function',
 					'filter': 'function',
 					'map': 'function',
+					'take': 'function',
 					'each': 'function',
 					'collection': 'object',
 					'index': 'number',
@@ -711,6 +712,22 @@
 				deepEqual( actual, expected, 'when method and context are provided, items mapped properly' );
 				deepEqual( [ 'tim', 'bob', 'ted', 'matt' ], l.collection, 'when method and context are provided, collection is not modified after calling .map()' );
 				expect( 17 );
+			});
+
+			test( 'method - .take()', function(){
+				var l, actual, expected;
+
+				expected = new Iterator( [ 1, 2, 3, 4, 5 ] );
+				l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
+				actual = l.take( 5 );
+
+				deepEqual( actual, expected, 'new collection with correct number of items is returned' );
+
+				expected = new Iterator( [ { id: 1, name: 'one' } ], { useLookupKey: 'id' } );
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+				actual = l.take( 1 );
+
+				deepEqual( actual, expected, 'when using key-based iterator instance, new collection with correct number of items is returned' );
 			});
 
 			test( 'method - .each()', function(){
