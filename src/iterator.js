@@ -302,13 +302,15 @@ define(function(){
         },
         map : function( fn, ctx ){
             var out = [],
-                item,
-                result;
+                item;
+
+            if ( Array.prototype.map ){
+                return this.collection.map( fn, ctx );
+            }
 
             for ( var i = 0, l = this.length; i < l; i += 1 ){
                 item = this.get( i );
-                result = fn.call( ctx, item, i, this.collection );
-                ( typeof result !== 'undefined' ) && out.push( result );
+                out.push( fn.call( ctx, item, i, this.collection ) );
             }
 
             return out;

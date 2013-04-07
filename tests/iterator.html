@@ -673,7 +673,7 @@
 			});
 
 			test( 'method - .map()', function(){
-				var l, expected, actual, obj;
+				var l, expected, actual, obj, undef;
 
 				function pluralizeAndAssert( word, index, collection ) {
 					var result = word.replace( /o/g, 'e' );
@@ -704,7 +704,7 @@
 					}
 				};
 
-				expected = [ 'tim is a sillybilly', 'bob is a sillybilly', 'ted is a sillybilly' ];
+				expected = [ 'tim is a sillybilly', 'bob is a sillybilly', 'ted is a sillybilly', undef ];
 				l = Iterator( [ 'tim', 'bob', 'ted', 'matt' ] );
 				actual = l.map( obj.taunt, obj );
 
