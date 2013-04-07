@@ -316,11 +316,13 @@ define(function(){
             return out;
         },
         take : function( count ){
+            var items = this.collection.slice( 0, count );
+
             if ( this.key ){
-                return new It( this.collection.slice( 0, count ),  { useLookupKey: this.key } );
+                return new It( items,  { useLookupKey: this.key } );
             }
 
-            return new It( this.collection.slice( 0, count ) );
+            return new It( items );
         }
     };
 
