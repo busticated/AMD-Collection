@@ -299,6 +299,19 @@ define(function(){
                 }
             }
             return new It( newCollection );
+        },
+        map : function( fn, ctx ){
+            var out = [],
+                item,
+                result;
+
+            for ( var i = 0, l = this.length; i < l; i += 1 ){
+                item = this.get( i );
+                result = fn.call( ctx, item, i, this.collection );
+                ( typeof result !== 'undefined' ) && out.push( result );
+            }
+
+            return out;
         }
     };
 

@@ -73,6 +73,7 @@
 					'empty': 'function',
 					'toJSON': 'function',
 					'filter': 'function',
+					'map': 'function',
 					'each': 'function',
 					'collection': 'object',
 					'index': 'number',
@@ -669,6 +670,47 @@
 				strictEqual( newL.length, 10, 'when method and context are provided, filtered instance is the correct length' );
 				strictEqual( newL instanceof Iterator, true, 'when method and context are provided, filtered instance is a child of Iterator' );
 				strictEqual( newL.current(), 10, 'when method and context are provided, filtered instance has correct current item' );
+			});
+
+			test( 'method - .map()', function(){
+				var l, expected, actual, obj;
+
+				function pluralizeAndAssert( word, index, collection ) {
+					var result = word.replace( /o/g, 'e' );
+					if ( word === 'kangaroo' ){
+						result += 'se';
+					}
+
+					strictEqual( word, l.get( index ), 'callback receives correct item - ' + word );
+					strictEqual( index, l.indexOf( word ), 'callback receives correct index - ' + index );
+					deepEqual( collection, l.collection, 'callback receives correct collection' );
+
+					return result;
+				}
+
+				expected = [ 'feet', 'geese', 'meese', 'kangareese' ];
+				l = new Iterator( [ 'foot', 'goose', 'moose', 'kangaroo' ] );
+				actual = l.map( pluralizeAndAssert );
+
+				deepEqual( actual, expected, 'items mapped properly' );
+				deepEqual( [ 'foot', 'goose', 'moose', 'kangaroo' ], l.collection, 'collection is not modified after calling .map()' );
+
+				obj = {
+					phrase: ' is a sillybilly',
+					taunt: function( name ){
+						if ( name !== 'matt' ) {
+							return name + this.phrase;
+						}
+					}
+				};
+
+				expected = [ 'tim is a sillybilly', 'bob is a sillybilly', 'ted is a sillybilly' ];
+				l = Iterator( [ 'tim', 'bob', 'ted', 'matt' ] );
+				actual = l.map( obj.taunt, obj );
+
+				deepEqual( actual, expected, 'when method and context are provided, items mapped properly' );
+				deepEqual( [ 'tim', 'bob', 'ted', 'matt' ], l.collection, 'when method and context are provided, collection is not modified after calling .map()' );
+				expect( 17 );
 			});
 
 			test( 'method - .each()', function(){
