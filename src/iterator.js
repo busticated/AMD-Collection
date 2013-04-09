@@ -298,7 +298,7 @@ define(function(){
                     newCollection.push( item );
                 }
             }
-            return new It( newCollection );
+            return new It( newCollection, { useLookupKey: this.key } );
         },
         map : function( fn, ctx ){
             var out = [],
@@ -317,12 +317,7 @@ define(function(){
         },
         take : function( count ){
             var items = this.collection.slice( 0, count );
-
-            if ( this.key ){
-                return new It( items,  { useLookupKey: this.key } );
-            }
-
-            return new It( items );
+            return new It( items,  { useLookupKey: this.key } );
         }
     };
 
