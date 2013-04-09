@@ -4,21 +4,21 @@ define(function(){
     'use strict';
 
     var __ = {
-        objToString: Object.prototype.toString,
-        arrSlice: Array.prototype.slice,
-        toArray: function( args ){
+        objToString : Object.prototype.toString,
+        arrSlice : Array.prototype.slice,
+        toArray : function( args ){
             return __.arrSlice.call( args );
         },
-        isArray: function( a ){
+        isArray : function( a ){
             return __.objToString.call( a ) === '[object Array]';
         },
-        isObject: function( o ){
+        isObject : function( o ){
             return o != null && __.objToString.call( o ) === '[object Object]';
         },
-        hasConfig: function( o ){
+        hasConfig : function( o ){
             return __.isObject( o ) && 'useLookupKey' in o;
         },
-        getParams: function( args ){
+        getParams : function( args ){
             var a = __.toArray( args ),
                 lastArg = a[ a.length - 1 ],
                 params = {};
@@ -61,7 +61,7 @@ define(function(){
         has : function( index ){
             return this.hasIndex( index ) || this.hasKey( index );
         },
-        hasIndex: function( index ){
+        hasIndex : function( index ){
             return index < this.length && index >= 0;
         },
         hasKey : function( key ){
@@ -146,7 +146,7 @@ define(function(){
         },
 
         // utility methods
-        indexOf: function( item, fromIdx ){
+        indexOf : function( item, fromIdx ){
             fromIdx = fromIdx || 0;
             fromIdx = fromIdx < 0 ? Math.max( 0, this.length + fromIdx ) : fromIdx;
 
@@ -203,7 +203,7 @@ define(function(){
             }
             return this;
         },
-        toJSON: function(){
+        toJSON : function(){
             return this.collection;
         },
 
@@ -285,7 +285,7 @@ define(function(){
             }
             return this;
         },
-        empty: function(){
+        empty : function(){
             this.collection = [];
             this.length = this.collection.length;
             return this;
