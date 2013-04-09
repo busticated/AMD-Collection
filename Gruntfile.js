@@ -16,6 +16,7 @@ module.exports = function( grunt ) {
         connect: {
             server: {
                 options: {
+                    hostname: null, // should be '*' once this drops: https://github.com/gruntjs/grunt-contrib-connect/issues/21
                     port: 3000,
                     base: '.'
                 }
