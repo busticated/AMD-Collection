@@ -722,12 +722,14 @@
 				actual = l.take( 5 );
 
 				deepEqual( actual, expected, 'new collection with correct number of items is returned' );
+				deepEqual( l.collection, [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], 'original collection is unchanged' );
 
 				expected = new Iterator( [ { id: 1, name: 'one' } ], { useLookupKey: 'id' } );
 				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
 				actual = l.take( 1 );
 
 				deepEqual( actual, expected, 'when using key-based iterator instance, new collection with correct number of items is returned' );
+				deepEqual( l.collection, [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], 'original collection is unchanged' );
 			});
 
 			test( 'method - .each()', function(){
