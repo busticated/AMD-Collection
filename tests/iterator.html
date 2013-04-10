@@ -695,7 +695,7 @@
 					return result;
 				}
 
-				expected = [ 'feet', 'geese', 'meese', 'kangareese' ];
+				expected = new Iterator( [ 'feet', 'geese', 'meese', 'kangareese' ] );
 				l = new Iterator( [ 'foot', 'goose', 'moose', 'kangaroo' ] );
 				actual = l.map( pluralizeAndAssert );
 
@@ -711,13 +711,20 @@
 					}
 				};
 
-				expected = [ 'tim is a sillybilly', 'bob is a sillybilly', 'ted is a sillybilly', undef ];
+				expected = new Iterator( [ 'tim is a sillybilly', 'bob is a sillybilly', 'ted is a sillybilly', undef ] );
 				l = Iterator( [ 'tim', 'bob', 'ted', 'matt' ] );
 				actual = l.map( obj.taunt, obj );
 
 				deepEqual( actual, expected, 'when method and context are provided, items mapped properly' );
 				deepEqual( [ 'tim', 'bob', 'ted', 'matt' ], l.collection, 'when method and context are provided, collection is not modified after calling .map()' );
-				expect( 17 );
+
+				expected = new Iterator( [ { id: 1, name: 'one', is: true }, { id: 2, name: 'two', is: true }, { id: 3, name: 'three', is: true } ], { useLookupKey: 'id' } );
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+				actual = l.map( function(x){ x.is = true; return x; } );
+
+				deepEqual( actual, expected, 'items mapped properly when using key-based iterator intance' );
+				deepEqual( actual.get( 'id1' ), { id: 1, name: 'one', is: true }, 'lookup key is retained in new collection' );
+				expect( 19 );
 			});
 
 			test( 'method - .take()', function(){

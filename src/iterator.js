@@ -301,19 +301,19 @@ define(function(){
             return new It( newCollection, { useLookupKey: this.key } );
         },
         map : function( fn, ctx ){
-            var out = [],
+            var items = [],
                 item;
 
             if ( Array.prototype.map ){
-                return this.collection.map( fn, ctx );
+                return new It( this.collection.map( fn, ctx ), { useLookupKey: this.key } );
             }
 
             for ( var i = 0, l = this.length; i < l; i += 1 ){
                 item = this.get( i );
-                out.push( fn.call( ctx, item, i, this.collection ) );
+                items.push( fn.call( ctx, item, i, this.collection ) );
             }
 
-            return out;
+            return new It( items,  { useLookupKey: this.key } );
         },
         take : function( count ){
             var items = this.collection.slice( 0, count );
