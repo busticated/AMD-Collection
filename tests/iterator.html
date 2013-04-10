@@ -53,6 +53,8 @@
 					'isFirst': 'function',
 					'isLast': 'function',
 					'isEmpty': 'function',
+					'some': 'function',
+					'every': 'function',
 					'get': 'function',
 					'getNext': 'function',
 					'getPrev': 'function',
@@ -352,6 +354,32 @@
 				strictEqual( x.isEmpty(), false, 'collection is not empty' );
 				strictEqual( x.length, 5, 'collection length is five' );
 				strictEqual( x.index, 0, 'collection index is zero' );
+			});
+
+			test( 'method - .some()', function(){
+				var l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] ),
+					results = [];
+
+				strictEqual( l.some( function( n ){ var out = n === 5; results.push( out ); return out; } ), true, 'returns true when at least one item match is found' );
+				deepEqual( results, [ false, false, false, false, true ], 'collection is tested up until first true finding' );
+
+				results = [];
+
+				strictEqual( l.some( function( n ){ var out = n === 50; results.push( out ); return out; } ), false, 'returns false when no item matches are found' );
+				deepEqual( results, [ false, false, false, false, false, false, false, false, false ], 'complete collection is tested' );
+			});
+
+			test( 'method - .every()', function(){
+				var l = Iterator( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] ),
+					results = [];
+
+				strictEqual( l.every( function( n ){ var out = typeof n === 'number'; results.push( out ); return out; } ), true, 'returns true when all items match' );
+				deepEqual( results, [ true, true, true, true, true, true, true, true, true ], 'complete collection is tested' );
+
+				results = [];
+
+				strictEqual( l.every( function( n ){ var out = n < 3; results.push( out ); return out; } ), false, 'returns false when one or more items do not match' );
+				deepEqual( results, [ true, true, false ], 'collection is tested up until first false finding' );
 			});
 
 			test( 'method - .get()', function(){

@@ -94,6 +94,32 @@ define(function(){
         isEmpty : function(){
             return this.length === 0;
         },
+        some : function( fn, ctx ){
+            var i = 0,
+                l = this.length;
+
+            while ( i < l ){
+                if ( fn.call( ctx, this.get( i ), i, this.collection ) ){
+                    return true;
+                }
+                i += 1;
+            }
+
+            return false;
+        },
+        every : function( fn, ctx ){
+            var i = 0,
+                l = this.length;
+
+            while ( i < l ){
+                if ( ! fn.call( ctx, this.get( i ), i, this.collection ) ){
+                    return false;
+                }
+                i += 1;
+            }
+
+            return true;
+        },
 
         // iteration methods - return collection item(s)
         get : function( index ){
