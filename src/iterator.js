@@ -95,10 +95,16 @@ define(function(){
             return this.length === 0;
         },
         some : function( fn, ctx ){
-            var i = 0,
-                l = this.length;
+            var i, len;
 
-            while ( i < l ){
+            if ( Array.prototype.some ) {
+                return this.collection.some( fn, ctx );
+            }
+
+            i = 0;
+            len = this.length;
+
+            while ( i < len ){
                 if ( fn.call( ctx, this.get( i ), i, this.collection ) ){
                     return true;
                 }
@@ -108,10 +114,16 @@ define(function(){
             return false;
         },
         every : function( fn, ctx ){
-            var i = 0,
-                l = this.length;
+            var i, len;
 
-            while ( i < l ){
+            if ( Array.prototype.every ) {
+                return this.collection.every( fn, ctx );
+            }
+
+            i = 0;
+            len = this.length;
+
+            while ( i < len ){
                 if ( ! fn.call( ctx, this.get( i ), i, this.collection ) ){
                     return false;
                 }
