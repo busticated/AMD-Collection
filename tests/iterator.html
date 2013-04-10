@@ -222,7 +222,7 @@
 				strictEqual( l.has( 'id000000' ), true, 'can check for item by key - .has( "id000000" )' );
 				strictEqual( l.has( 'id000005' ), true, 'can check for item by key - .has( "id000005" )' );
 				strictEqual( l.has( 'id000009' ), true, 'can check for item by key - .has( "id000009" )' );
-				strictEqual( l.has( 'idNOPE' ), false, 'does not have nonexistant key - .has( "NOPE" )' );
+				strictEqual( l.has( 'NOPE' ), false, 'does not have nonexistant key - .has( "NOPE" )' );
 			});
 
 			test( 'method - .hasIndex()', function(){
@@ -243,7 +243,7 @@
 				strictEqual( l.hasKey( 'id000000' ), true, 'has key - "id000000"' );
 				strictEqual( l.hasKey( 'id000005' ), true, 'has key - "id000005"' );
 				strictEqual( l.hasKey( 'id000009' ), true, 'has key - "id000009"' );
-				strictEqual( l.hasKey( 'idNOPE' ), false, 'does not have key - "NOPE"' );
+				strictEqual( l.hasKey( 'NOPE' ), false, 'does not have key - "NOPE"' );
 			});
 
 			test( 'method - .hasNext()', function(){
