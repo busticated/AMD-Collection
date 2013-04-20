@@ -328,6 +328,18 @@ define(function(){
             this.length = this.collection.length;
             return this;
         },
+        sort : function( fn, ctx ){
+            var sorter;
+
+            if ( fn ){
+                sorter = function( a, b ){ return fn.call( ctx, a, b ); };
+                this.collection.sort( sorter );
+            } else {
+                this.collection.sort(); // die IE8 die!
+            }
+
+            return this;
+        },
         filter : function( filteringFn, ctx ){
             var newCollection = [], item;
             for ( var i = 0, l = this.length; i < l; i += 1 ){

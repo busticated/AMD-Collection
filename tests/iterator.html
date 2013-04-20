@@ -73,6 +73,7 @@
 					'update': 'function',
 					'replace': 'function',
 					'empty': 'function',
+					'sort': 'function',
 					'toJSON': 'function',
 					'filter': 'function',
 					'map': 'function',
@@ -674,6 +675,31 @@
 				strictEqual( l.length, 0, 'collection length is 0' );
 				ok( testing.utils.isArray( l.collection ), 'collection is an array' );
 				deepEqual( l.empty(), l, 'method is chainable' );
+			});
+
+			test( 'method - .sort()', function(){
+				var l, obj;
+
+				l = Iterator( [ 'ape', 'dog', 'cat', 'bat' ] );
+
+				l.sort();
+
+				deepEqual( l.toJSON(), [ 'ape', 'bat', 'cat', 'dog' ], 'collection items sorted properly when sorting function is not provided' );
+
+				l.sort( function( a, b ){ return b.localeCompare( a ); } );
+
+				deepEqual( l.toJSON(), [ 'dog', 'cat', 'bat', 'ape' ], 'collection items sorted properly when using sorting function' );
+
+				obj = {
+					index: 1,
+					sortByChar: function( a, b ){
+						return a[ this.index ].localeCompare( b[ this.index ] );
+					}
+				};
+				l.sort( obj.sortByChar, obj );
+
+				deepEqual( l.toJSON(), [ 'cat', 'bat', 'dog', 'ape' ], 'collection items sorted properly when providing sorting function and context' );
+
 			});
 
 			test( 'method - .filter()', function(){
