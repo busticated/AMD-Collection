@@ -831,7 +831,23 @@
 				actual = l.take( 1 );
 
 				deepEqual( actual, expected, 'when using key-based iterator instance, new collection with correct number of items is returned' );
-				deepEqual( actual.get('id1'), { id: 1, name: 'one' }, 'lookup key is retained in new collection' );
+				deepEqual( actual.get( 'id1' ), { id: 1, name: 'one' }, 'lookup key is retained in new collection' );
+				deepEqual( l.collection, [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], 'original collection is unchanged' );
+
+				expected = new Iterator( [ { id: 1, name: 'one' } ], { useLookupKey: 'id' } );
+				l = new Iterator( [ { id: 1, name: 'one' } ], { useLookupKey: 'id' } );
+				actual = l.take( 10 );
+
+				deepEqual( actual, expected, 'when using key-based iterator instance and taking more items than exist, new collection with correct number of items is returned' );
+				deepEqual( actual.get( 'id1' ), { id: 1, name: 'one' }, 'lookup key is retained in new collection' );
+				deepEqual( l.collection, [ { id: 1, name: 'one' } ], 'original collection is unchanged' );
+
+				expected = new Iterator( [ { id: 1, name: 'one' } ], { useLookupKey: 'id' } );
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+				actual = l.take( -2 );
+
+				deepEqual( actual, expected, 'when using key-based iterator instance and taking negative count, new collection with correct number of items is returned' );
+				deepEqual( actual.get( 'id1' ), { id: 1, name: 'one' }, 'lookup key is retained in new collection' );
 				deepEqual( l.collection, [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], 'original collection is unchanged' );
 			});
 
