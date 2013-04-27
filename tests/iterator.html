@@ -72,6 +72,7 @@
 					'remove': 'function',
 					'update': 'function',
 					'replace': 'function',
+					'swap': 'function',
 					'empty': 'function',
 					'sort': 'function',
 					'toJSON': 'function',
@@ -662,6 +663,40 @@
 
 				strictEqual( l.collection.join( '' ), 'abxxxfg', 'target items replaced' );
 				raises( function(){ l.replace( 666, [ 'nope' ] ) }, 'replacing an unknown index throws an error' );
+			});
+
+			test( 'method - .swap()', function(){
+				var l;
+
+				l = Iterator( [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ] );
+
+				l.swap( 2, 4 );
+
+				raises( function(){ l.swap( 1, 666 ) }, 'swapping an unknown index throws an error' );
+				strictEqual( l.collection.join( '' ), 'abedcfg', 'target items swapped properly when collection is not keyed' );
+
+				l = new Iterator( [ { id: 1, name: 'one' }, { id: 2, name: 'two' }, { id: 3, name: 'three' } ], { useLookupKey: 'id' } );
+
+				l.swap( 0, 2 );
+
+				strictEqual( l.get( 2 ).name, 'one', 'first item is swapped properly when swapping by index' );
+				strictEqual( l.indexOfKey( 'id1' ), 2, 'first item\'s key is correct' );
+				strictEqual( l.get( 0 ).name, 'three', 'second item is swapped properly when swapping by index' );
+				strictEqual( l.indexOfKey( 'id3' ), 0, 'second item\'s key is correct' );
+
+				l.swap( 'id1', 'id3' );
+
+				strictEqual( l.get( 0 ).name, 'one', 'first item is swapped properly when swapping by key' );
+				strictEqual( l.indexOfKey( 'id1' ), 0, 'first item\'s key is correct' );
+				strictEqual( l.get( 2 ).name, 'three', 'second item is swapped properly when swapping by key' );
+				strictEqual( l.indexOfKey( 'id3' ), 2, 'second item\'s key is correct' );
+
+				l.swap( 'id3', 0 );
+
+				strictEqual( l.get( 2 ).name, 'one', 'first item is swapped properly when swapping by key and index' );
+				strictEqual( l.indexOfKey( 'id1' ), 2, 'first item\'s key is correct' );
+				strictEqual( l.get( 0 ).name, 'three', 'second item is swapped properly when swapping by key and index' );
+				strictEqual( l.indexOfKey( 'id3' ), 0, 'second item\'s key is correct' );
 			});
 
 			test( 'method - .empty()', function(){

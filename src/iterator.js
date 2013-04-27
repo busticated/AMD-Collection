@@ -323,6 +323,26 @@ define(function(){
             }
             return this;
         },
+        swap : function( index1, index2 ){
+            var tmp;
+
+            if ( typeof index1 === 'string' ){
+                index1 = this.indexOfKey( index1 );
+            }
+
+            if ( typeof index2 === 'string' ){
+                index2 = this.indexOfKey( index2 );
+            }
+
+            if ( ! ( this.has( index1 ) && this.has( index2 ) ) ){
+                throw new Error( 'index out of bounds - collection does not include that index' );
+            }
+
+            tmp = this.get( index1 );
+            this.update( index1, this.get( index2 ) );
+            this.update( index2, tmp );
+            return this;
+        },
         empty : function(){
             this.collection = [];
             this.length = this.collection.length;
