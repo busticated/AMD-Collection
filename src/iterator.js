@@ -67,6 +67,9 @@ define(function(){
         hasKey : function( key ){
             return key in this.collection;
         },
+        hasKeyFor : function( val ){
+            return this.hasKey( this.key + val );
+        },
         hasNext : function(){
             return this.hasIndex( this.index + 1);
         },

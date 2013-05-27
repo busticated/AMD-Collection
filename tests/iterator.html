@@ -248,6 +248,17 @@
 				strictEqual( l.hasKey( 'NOPE' ), false, 'does not have key - "NOPE"' );
 			});
 
+			test( 'method - .hasKeyFor()', function(){
+				var l;
+
+				l = Iterator( itemFactory( 10 ), { useLookupKey: 'id' } );
+
+				strictEqual( l.hasKeyFor( '000000' ), true, 'has keyed item - "000000"' );
+				strictEqual( l.hasKeyFor( '000005' ), true, 'has keyed item - "000005"' );
+				strictEqual( l.hasKeyFor( '000009' ), true, 'has keyed item - "000009"' );
+				strictEqual( l.hasKeyFor( 'NOPE' ), false, 'does not have keyed item - "NOPE"' );
+			});
+
 			test( 'method - .hasNext()', function(){
 				var l;
 
