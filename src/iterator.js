@@ -364,27 +364,24 @@ define(function(){
             return this;
         },
         filter : function( filteringFn, ctx ){
-            var newCollection = [], item;
-            for ( var i = 0, l = this.length; i < l; i += 1 ){
-                item = this.get( i );
-                if ( filteringFn.call( ctx, item, i ) ){
+            var newCollection = [];
+            this.each(function( item, index ){
+                if ( filteringFn.call( ctx, item, index ) ){
                     newCollection.push( item );
                 }
-            }
+            });
             return new It( newCollection, { useLookupKey: this.key } );
         },
         map : function( fn, ctx ){
-            var items = [],
-                item;
+            var items = [];
 
             if ( Array.prototype.map ){
                 return new It( this.collection.map( fn, ctx ), { useLookupKey: this.key } );
             }
 
-            for ( var i = 0, l = this.length; i < l; i += 1 ){
-                item = this.get( i );
-                items.push( fn.call( ctx, item, i, this.collection ) );
-            }
+            this.each(function( item, index ){
+                items.push( fn.call( ctx, item, index, this.collection ) );
+            });
 
             return new It( items,  { useLookupKey: this.key } );
         },
