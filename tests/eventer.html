@@ -207,6 +207,33 @@
 				strictEqual( Object.keys( eventHub2.getEventHandlers() ).length, 0, 'eventHub2 has correct number of event names registered' );
 			});
 		});
+
+		test( 'when registering event handlers to run once', function() {
+			testing.req.given( [ 'src/eventer', 'src/inherits' ], function ( Eventer, inherits ) {
+				var Foo = function(){
+					Eventer.call( this );
+				};
+				inherits( Foo, Eventer );
+
+				var Bar = function(){
+					Eventer.call( this );
+				};
+				inherits( Bar, Eventer );
+
+				var oneFoo = new Foo();
+				var oneBar = new Bar();
+
+				oneFoo.on( 'event', function( x ){
+					strictEqual( x.is, true, 'oneFoo received event' );
+				});
+
+				oneBar.on( 'event', function(){
+					ok( false, 'oneBar should not receive event' );
+				});
+
+				oneFoo.emit( 'event', { is: true } );
+			});
+		});
 	</script>
 </head>
 <body>
