@@ -25,11 +25,19 @@ define(function () {
     };
 
     Eventer.prototype.off = function ( eventName, callback ) {
-        var names = eventName.split( ' ' ),
+        var names = eventName ? eventName.split( ' ' ) : [],
             handlers,
             handler,
             handlerIndex,
             name;
+
+        if (!names.length) {
+            for (var n in this.__handlers) {
+                if (this.__handlers.hasOwnProperty(n)) {
+                    names.push(n);
+                }
+            }
+        }
 
         for ( var i = 0, l = names.length; i < l; i += 1 ){
             name = names[ i ];
