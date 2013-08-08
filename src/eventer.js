@@ -49,7 +49,7 @@ define(function () {
 
             while ( handlerIndex >= 0 ){
                 handler = ( handlers[ handlerIndex ] || {} ).fn;
-                if ( handler === callback || typeof callback !== 'function' ) {
+                if ( handler === callback || handler._callback === callback || typeof callback !== 'function' ) {
                     handlers.splice( handlerIndex, 1 );
                 }
                 handlerIndex -= 1;
@@ -85,6 +85,7 @@ define(function () {
                     self.off( name, handler );
                     callback.apply( context || this, arguments );
                 };
+                handler._callback = callback;
                 return handler;
             },
             name;
