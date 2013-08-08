@@ -26,6 +26,7 @@
 					'emit': 'function',
 					'once': 'function',
 					'getEventHandlers': 'function',
+					'removeAllListeners': 'function',
 					'__handlers': 'object'
 				};
 
@@ -142,6 +143,37 @@
 
 				eventHub1.emit( 'test' );
 				ok( ! wasCalled, 'all event handlers are removed' );
+
+				eventHub1.once( 'onceTest', fn );
+				eventHub1.once( 'onceTest', function() { wasCalled = true; } );
+
+				eventHub1.off( 'onceTest', fn );
+				strictEqual( eventHub1.getEventHandlers()[ 'onceTest' ].length, 1, 'correct event handler for "onceTest" event is unregistered' );
+
+				eventHub1.emit( 'onceTest' );
+				ok( wasCalled, 'correct event handler is retained' );
+				deepEqual( eventHub1.getEventHandlers(), {}, 'all handlers for "test" event are unregistered' );
+			});
+		});
+
+		test( 'when removing all event handlers from an event emitter instance', function() {
+			testing.req.given( [ 'src/eventer' ], function ( Eventer ) {
+				var eventHub1 = new Eventer();
+				var wasCalled = false;
+				var fn = function() {
+					throw new Error( 'event handler should not have been run' );
+				};
+
+				eventHub1.off( 'test', fn );
+				ok( true, 'calling .off() on a non-existant event does not throw' );
+
+				eventHub1.on( 'test', fn );
+				eventHub1.on( 'test', fn );
+				eventHub1.on( 'test', function() { wasCalled = true; } );
+				eventHub1.once( 'test', fn);
+
+				eventHub1.off();
+				strictEqual( Object.keys(eventHub1.getEventHandlers()).length, 0, 'all events have been unregistered' );
 			});
 		});
 
@@ -220,8 +252,10 @@
 				};
 				inherits( Bar, Eventer );
 
+				Foo.prototype.Bar = Bar;
+
 				var oneFoo = new Foo();
-				var oneBar = new Bar();
+				var oneBar = new oneFoo.Bar();
 
 				oneFoo.on( 'event', function( x ){
 					strictEqual( x.is, true, 'oneFoo received event' );

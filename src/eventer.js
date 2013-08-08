@@ -25,11 +25,15 @@ define(function () {
     };
 
     Eventer.prototype.off = function ( eventName, callback ) {
-        var names = eventName.split( ' ' ),
+        var names = eventName ? eventName.split( ' ' ) : [],
             handlers,
             handler,
             handlerIndex,
             name;
+
+        if (!names.length) {
+            this.removeAllListeners();
+        }
 
         for ( var i = 0, l = names.length; i < l; i += 1 ){
             name = names[ i ];
@@ -41,7 +45,7 @@ define(function () {
 
             while ( handlerIndex >= 0 ){
                 handler = ( handlers[ handlerIndex ] || {} ).fn;
-                if ( handler === callback || typeof callback !== 'function' ) {
+                if ( handler === callback || handler._callback === callback || typeof callback !== 'function' ) {
                     handlers.splice( handlerIndex, 1 );
                 }
                 handlerIndex -= 1;
@@ -77,6 +81,7 @@ define(function () {
                     self.off( name, handler );
                     callback.apply( context || this, arguments );
                 };
+                handler._callback = callback;
                 return handler;
             },
             name;
@@ -86,6 +91,11 @@ define(function () {
             this.on( name, makeHandler( name ), context );
         }
 
+        return this;
+    };
+
+    Eventer.prototype.removeAllListeners = function () {
+        this.__handlers = {};
         return this;
     };
 
