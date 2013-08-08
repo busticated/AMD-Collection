@@ -32,11 +32,7 @@ define(function () {
             name;
 
         if (!names.length) {
-            for (var n in this.__handlers) {
-                if (this.__handlers.hasOwnProperty(n)) {
-                    names.push(n);
-                }
-            }
+            this.removeAllListeners();
         }
 
         for ( var i = 0, l = names.length; i < l; i += 1 ){
@@ -95,6 +91,11 @@ define(function () {
             this.on( name, makeHandler( name ), context );
         }
 
+        return this;
+    };
+
+    Eventer.prototype.removeAllListeners = function () {
+        this.__handlers = {};
         return this;
     };
 
