@@ -23,15 +23,21 @@ define(function(){
             milliseconds: milliseconds,
             ms: ms,
             seconds: seconds,
+            second: seconds,
             sec: sec,
             minutes: minutes,
+            minute: minutes,
             min: min,
             hours: hours,
+            hour: hours,
             hr: hr,
+            day: days,
             days: days,
             weeks: weeks,
+            week: weeks,
             wk: wk,
             years: years,
+            year: years,
             yr: yr
         };
     };

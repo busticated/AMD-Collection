@@ -38,20 +38,26 @@
 			});
 		});
 
-		test( 'calling spanOf() should convert input to milliseconds', function(){
+		test( 'calling spanOf(<ms>) should return collection of conversion methods', function(){
 			testing.req.given( [ 'src/spanof' ], function ( spanOf ) {
 				strictEqual( spanOf( 10 ).milliseconds(), 10, '.milliseconds() converts input properly' );
 				strictEqual( spanOf( 10 ).ms(), 10, '.ms() converts input properly' );
 				strictEqual( spanOf( 10 ).seconds(), 10000, '.seconds() converts input properly' );
+				strictEqual( spanOf( 1 ).second(), 1000, '.second() converts input properly' );
 				strictEqual( spanOf( 10 ).sec(), 10000, '.sec() converts input properly' );
 				strictEqual( spanOf( 10 ).minutes(), 600000, '.minutes() converts input properly' );
+				strictEqual( spanOf( 1 ).minute(), 60000, '.minute() converts input properly' );
 				strictEqual( spanOf( 10 ).min(), 600000, '.min() converts input properly' );
 				strictEqual( spanOf( 10 ).hours(), 36000000, '.hours() converts input properly' );
+				strictEqual( spanOf( 1 ).hour(), 3600000, '.hour() converts input properly' );
 				strictEqual( spanOf( 10 ).hr(), 36000000, '.hr() converts input properly' );
 				strictEqual( spanOf( 10 ).days(), 864000000, '.days() converts input properly' );
+				strictEqual( spanOf( 1 ).day(), 86400000, '.day() converts input properly' );
 				strictEqual( spanOf( 10 ).weeks(), 6048000000, '.weeks() converts input properly' );
+				strictEqual( spanOf( 1 ).week(), 604800000, '.week() converts input properly' );
 				strictEqual( spanOf( 10 ).wk(), 6048000000, '.wk() converts input properly' );
 				strictEqual( spanOf( 10 ).years(), 315569259747, '.years() converts input properly' );
+				strictEqual( spanOf( 1 ).year(), 31556925975, '.year() converts input properly' );
 				strictEqual( spanOf( 10 ).yr(), 315569259747, '.yr() converts input properly' );
 			});
 		});
